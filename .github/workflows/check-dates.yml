@@ -14,96 +14,101 @@ jobs:
       pull-requests: write
 
     steps:
-      - name: Checkout
+      - name: Checkout latest .x branch
         uses: actions/checkout@v4
         with:
-          ref: "1.x"
+          fetch-depth: 0   # need all branches to determine next major version
 
-      - name: Fetch compatibility dates from ESI
-        id: fetch
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.5"
+          extensions: json
+          coverage: none
+          tools: composer:v2
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Detect new compatibility date
+        id: detect
         run: |
-          DATES=$(curl -sf "https://esi.evetech.net/meta/compatibility-dates" | python3 -c "
-          import sys, json
-          data = json.load(sys.stdin)
-          # ESI returns a list of date strings
-          dates = sorted(data) if isinstance(data, list) else sorted(data.get('dates', data.get('compatibility_dates', [])))
-          print('\n'.join(dates))
-          ")
-          echo "dates<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$DATES" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
+          # Fetch latest date from ESI
+          LATEST=$(curl -sf "https://esi.evetech.net/meta/compatibility-dates" \
+            | python3 -c "import sys,json; d=json.load(sys.stdin)['compatibility_dates']; print(sorted(d)[-1])")
 
-      - name: Compare with known dates
-        id: compare
+          echo "latest_date=$LATEST" >> "$GITHUB_OUTPUT"
+
+          # Check if we already track this date
+          if grep -qx "$LATEST" compatibility-dates.txt 2>/dev/null; then
+            echo "is_new=false" >> "$GITHUB_OUTPUT"
+            echo "No new date (already tracking $LATEST)"
+          else
+            echo "is_new=true" >> "$GITHUB_OUTPUT"
+            echo "New date found: $LATEST"
+          fi
+
+      - name: Determine next branch name
+        if: steps.detect.outputs.is_new == 'true'
+        id: branch
         run: |
-          # Read all dates from the known-dates file (one per line)
-          KNOWN=$(cat compatibility-dates.txt 2>/dev/null || echo "")
-          NEW_DATES=""
-          while IFS= read -r date; do
-            if ! echo "$KNOWN" | grep -qx "$date"; then
-              NEW_DATES="$NEW_DATES $date"
-            fi
-          done <<< "${{ steps.fetch.outputs.dates }}"
-          NEW_DATES=$(echo "$NEW_DATES" | xargs)  # trim
-          echo "new_dates=$NEW_DATES" >> "$GITHUB_OUTPUT"
-          echo "has_new=$([ -n "$NEW_DATES" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+          # Find the highest N from existing N.x remote branches
+          LATEST_MAJOR=$(git branch -r | grep -oP '(?<=origin/)\d+(?=\.x$)' | sort -n | tail -1)
+          NEXT_MAJOR=$((LATEST_MAJOR + 1))
+          echo "next_major=$NEXT_MAJOR" >> "$GITHUB_OUTPUT"
+          echo "branch_name=${NEXT_MAJOR}.x" >> "$GITHUB_OUTPUT"
 
-      - name: Open PR for each new date
-        if: steps.compare.outputs.has_new == 'true'
+      - name: Create branch, regenerate DTOs, open PR
+        if: steps.detect.outputs.is_new == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEW_DATE: ${{ steps.detect.outputs.latest_date }}
+          NEW_BRANCH: ${{ steps.branch.outputs.branch_name }}
         run: |
-          # Determine next major version number
-          LATEST_MAJOR=$(git branch -r | grep -oP '(?<=origin/)\d+(?=\.x)' | sort -n | tail -1)
-          NEXT_MAJOR=$((LATEST_MAJOR + 1))
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          for DATE in ${{ steps.compare.outputs.new_dates }}; do
-            BRANCH="${NEXT_MAJOR}.x"
-            echo "Creating branch $BRANCH for date $DATE"
+          # Base the new branch off the current default branch (highest N.x)
+          BASE_BRANCH=$(git branch -r | grep -oP '(?<=origin/)\d+\.x$' | sort -V | tail -1)
+          git checkout -b "$NEW_BRANCH" "origin/$BASE_BRANCH"
 
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Regenerate all DTOs for the new compatibility date
+          php bin/generate.php --compatibility-date="$NEW_DATE"
 
-            # Create new branch from current HEAD
-            git checkout -b "$BRANCH"
+          # Update compatibility-dates.txt
+          echo "$NEW_DATE" >> compatibility-dates.txt
+          sort -u compatibility-dates.txt -o compatibility-dates.txt
 
-            # Update compatibility-dates.txt
-            echo "$DATE" >> compatibility-dates.txt
-            sort -u compatibility-dates.txt -o compatibility-dates.txt
+          # Fix formatting
+          vendor/bin/pint
 
-            # Update EsiSdk COMPATIBILITY_DATE constant
-            sed -i "s/COMPATIBILITY_DATE = '[0-9-]*'/COMPATIBILITY_DATE = '$DATE'/" src/EsiSdk.php
+          # Commit
+          git add -A
+          git commit -m "feat: regenerate DTOs for ESI compatibility date ${NEW_DATE}
 
-            # Commit placeholder (generator must be run manually after branch creation)
-            git add compatibility-dates.txt src/EsiSdk.php
-            git commit -m "chore: bump compatibility date to $DATE (${NEXT_MAJOR}.x)"
+          New ESI compatibility date detected. All 218+ response DTOs
+          regenerated from the updated OpenAPI spec.
 
-            git push origin "$BRANCH"
+          Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
 
-            gh pr create \
-              --base "$(git symbolic-ref --short HEAD~1 2>/dev/null || echo '1.x')" \
-              --head "$BRANCH" \
-              --title "feat: new ESI compatibility date $DATE ($BRANCH)" \
-              --body "CCP published a new ESI compatibility date: \`$DATE\`
+          git push origin "$NEW_BRANCH"
 
-## Steps to complete this PR
+          # Open PR
+          gh pr create \
+            --base "$BASE_BRANCH" \
+            --head "$NEW_BRANCH" \
+            --title "feat: ESI compatibility date ${NEW_DATE} (${NEW_BRANCH})" \
+            --body "CCP published a new ESI compatibility date: \`${NEW_DATE}\`
 
-1. Run the generator locally on the new date:
-   \`\`\`bash
-   git checkout $BRANCH
-   php bin/generate.php --compatibility-date=$DATE
-   composer run lint
-   composer run test:types
-   composer run test:unit
-   \`\`\`
-2. Commit the regenerated files
-3. Update \`composer.json\` version if needed
-4. Review and merge
+          ## What changed
 
----
-*Opened automatically by the [check-dates workflow](../../actions/workflows/check-dates.yml).*"
+          All response DTOs have been regenerated from the updated OpenAPI spec. Review the diff to see which schemas changed.
 
-            NEXT_MAJOR=$((NEXT_MAJOR + 1))
-            # Return to 1.x base for next iteration
-            git checkout 1.x
-          done
+          ## Checklist
+
+          - [ ] Review changed DTOs for breaking changes (removed/renamed properties)
+          - [ ] Update \`CHANGELOG.md\` if needed
+          - [ ] Merge and tag \`${NEW_BRANCH:0:1}.0.0\` once satisfied
+
+          ---
+          *Opened automatically by the [check-dates workflow](../../actions/workflows/check-dates.yml).*"
