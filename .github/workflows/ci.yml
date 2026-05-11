@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: ["1.x", "*.x"]
+  pull_request:
+    branches: ["1.x", "*.x"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: PHP 8.5 — Tests + Static Analysis
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.5"
+          extensions: json
+          coverage: none
+          tools: composer:v2
+
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: COMPOSER_IGNORE_PLATFORM_REQS=1 composer install --no-interaction --prefer-dist
+
+      - name: Pint (style)
+        run: vendor/bin/pint --test
+
+      - name: PHPStan (static analysis)
+        run: vendor/bin/phpstan analyse --no-progress
+
+      - name: Pest (unit tests)
+        run: vendor/bin/pest --no-coverage

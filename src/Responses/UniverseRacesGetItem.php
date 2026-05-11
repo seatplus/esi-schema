@@ -1,0 +1,30 @@
+<?php
+
+namespace Seatplus\EsiSchema\Responses;
+
+use Seatplus\EsiSchema\AbstractEsiDto;
+
+/**
+ * Generated from ESI OpenAPI spec (compatibility date: 2025-12-16).
+ * Do not edit manually — run bin/generate.php instead.
+ */
+final class UniverseRacesGetItem extends AbstractEsiDto
+{
+    public function __construct(
+        public readonly int $alliance_id,
+        public readonly string $description,
+        public readonly string $name,
+        public readonly int $race_id,
+    ) {
+    }
+
+    public static function from(object $data): static
+    {
+        return new static(
+            alliance_id: (int) ($data->alliance_id ?? 0),
+            description: (string) ($data->description ?? ''),
+            name: (string) ($data->name ?? ''),
+            race_id: (int) ($data->race_id ?? 0),
+        );
+    }
+}

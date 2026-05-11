@@ -1,0 +1,109 @@
+name: Check for new ESI compatibility dates
+
+on:
+  schedule:
+    # Run daily at 06:00 UTC
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  check-dates:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: "1.x"
+
+      - name: Fetch compatibility dates from ESI
+        id: fetch
+        run: |
+          DATES=$(curl -sf "https://esi.evetech.net/meta/compatibility-dates" | python3 -c "
+          import sys, json
+          data = json.load(sys.stdin)
+          # ESI returns a list of date strings
+          dates = sorted(data) if isinstance(data, list) else sorted(data.get('dates', data.get('compatibility_dates', [])))
+          print('\n'.join(dates))
+          ")
+          echo "dates<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$DATES" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Compare with known dates
+        id: compare
+        run: |
+          # Read all dates from the known-dates file (one per line)
+          KNOWN=$(cat compatibility-dates.txt 2>/dev/null || echo "")
+          NEW_DATES=""
+          while IFS= read -r date; do
+            if ! echo "$KNOWN" | grep -qx "$date"; then
+              NEW_DATES="$NEW_DATES $date"
+            fi
+          done <<< "${{ steps.fetch.outputs.dates }}"
+          NEW_DATES=$(echo "$NEW_DATES" | xargs)  # trim
+          echo "new_dates=$NEW_DATES" >> "$GITHUB_OUTPUT"
+          echo "has_new=$([ -n "$NEW_DATES" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - name: Open PR for each new date
+        if: steps.compare.outputs.has_new == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Determine next major version number
+          LATEST_MAJOR=$(git branch -r | grep -oP '(?<=origin/)\d+(?=\.x)' | sort -n | tail -1)
+          NEXT_MAJOR=$((LATEST_MAJOR + 1))
+
+          for DATE in ${{ steps.compare.outputs.new_dates }}; do
+            BRANCH="${NEXT_MAJOR}.x"
+            echo "Creating branch $BRANCH for date $DATE"
+
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+
+            # Create new branch from current HEAD
+            git checkout -b "$BRANCH"
+
+            # Update compatibility-dates.txt
+            echo "$DATE" >> compatibility-dates.txt
+            sort -u compatibility-dates.txt -o compatibility-dates.txt
+
+            # Update EsiSdk COMPATIBILITY_DATE constant
+            sed -i "s/COMPATIBILITY_DATE = '[0-9-]*'/COMPATIBILITY_DATE = '$DATE'/" src/EsiSdk.php
+
+            # Commit placeholder (generator must be run manually after branch creation)
+            git add compatibility-dates.txt src/EsiSdk.php
+            git commit -m "chore: bump compatibility date to $DATE (${NEXT_MAJOR}.x)"
+
+            git push origin "$BRANCH"
+
+            gh pr create \
+              --base "$(git symbolic-ref --short HEAD~1 2>/dev/null || echo '1.x')" \
+              --head "$BRANCH" \
+              --title "feat: new ESI compatibility date $DATE ($BRANCH)" \
+              --body "CCP published a new ESI compatibility date: \`$DATE\`
+
+## Steps to complete this PR
+
+1. Run the generator locally on the new date:
+   \`\`\`bash
+   git checkout $BRANCH
+   php bin/generate.php --compatibility-date=$DATE
+   composer run lint
+   composer run test:types
+   composer run test:unit
+   \`\`\`
+2. Commit the regenerated files
+3. Update \`composer.json\` version if needed
+4. Review and merge
+
+---
+*Opened automatically by the [check-dates workflow](../../actions/workflows/check-dates.yml).*"
+
+            NEXT_MAJOR=$((NEXT_MAJOR + 1))
+            # Return to 1.x base for next iteration
+            git checkout 1.x
+          done
