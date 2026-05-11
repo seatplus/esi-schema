@@ -4,6 +4,16 @@
 
 Every response schema from the ESI OpenAPI spec (compatibility date `2025-12-16`) is represented as a typed PHP class with `readonly` properties and a `::from(object $data)` factory method.
 
+## Versioning
+
+Each major version of this package tracks a specific ESI compatibility date. Pin to the branch that matches the date your application requests.
+
+| Branch / Major | ESI Compatibility Date | Composer constraint |
+|---|---|---|
+| `1.x` | `2025-12-16` | `^1.0` |
+
+When CCP publishes a new compatibility date that introduces breaking schema changes, a new major version branch will be created.
+
 ## Requirements
 
 - PHP 8.5+
