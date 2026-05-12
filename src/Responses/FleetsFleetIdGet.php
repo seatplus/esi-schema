@@ -15,8 +15,7 @@ final class FleetsFleetIdGet extends AbstractEsiDto
         public readonly bool $is_registered,
         public readonly bool $is_voice_enabled,
         public readonly string $motd,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

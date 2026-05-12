@@ -21,8 +21,7 @@ final class CorporationsCorporationIdTitlesGetItem extends AbstractEsiDto
         public readonly ?array $roles_at_hq = null,
         public readonly ?array $roles_at_other = null,
         public readonly ?int $title_id = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

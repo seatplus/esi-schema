@@ -25,6 +25,23 @@ use Seatplus\EsiSchema\Responses\CharactersCharacterIdTitlesGetItem;
  */
 class CharacterResource extends AbstractResource
 {
+    protected const array OPERATION_META = [
+        'postCharactersAffiliation' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterId' => ['cacheAge' => 86400, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdAgentsResearch' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdBlueprints' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdCorporationhistory' => ['cacheAge' => 86400, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
+        'postCharactersCharacterIdCspa' => ['cacheAge' => null, 'rateLimit' => ['group' => 'char-detail', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdFatigue' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'char-location', 'max-tokens' => 1200, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdMedals' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-detail', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdNotifications' => ['cacheAge' => 600, 'rateLimit' => ['group' => 'char-notification', 'max-tokens' => 15, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdNotificationsContacts' => ['cacheAge' => 600, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdPortrait' => ['cacheAge' => null, 'rateLimit' => ['group' => 'char-detail', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdRoles' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-detail', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdStandings' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdTitles' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-detail', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+    ];
+
     /**
      * @return EsiResult<array<CharactersAffiliationPostItem>>
      */

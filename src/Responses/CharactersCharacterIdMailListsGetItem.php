@@ -13,8 +13,7 @@ final class CharactersCharacterIdMailListsGetItem extends AbstractEsiDto
     public function __construct(
         public readonly int $mailing_list_id,
         public readonly string $name,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

@@ -18,8 +18,7 @@ final class KillmailsKillmailIdKillmailHashGet extends AbstractEsiDto
         public readonly mixed $victim,
         public readonly ?int $moon_id = null,
         public readonly ?int $war_id = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

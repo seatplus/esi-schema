@@ -17,6 +17,15 @@ use Seatplus\EsiSchema\Responses\CorporationsCorporationIdWalletsDivisionTransac
  */
 class WalletResource extends AbstractResource
 {
+    protected const array OPERATION_META = [
+        'getCharactersCharacterIdWallet' => ['cacheAge' => 120, 'rateLimit' => ['group' => 'char-wallet', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdWalletJournal' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-wallet', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdWalletTransactions' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-wallet', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCorporationsCorporationIdWallets' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'corp-wallet', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Accountant', 'Junior_Accountant'], 'cursor' => false],
+        'getCorporationsCorporationIdWalletsDivisionJournal' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-wallet', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Accountant', 'Junior_Accountant'], 'cursor' => false],
+        'getCorporationsCorporationIdWalletsDivisionTransactions' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-wallet', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Accountant', 'Junior_Accountant'], 'cursor' => false],
+    ];
+
     /**
      * @return EsiResult<float>
      * @scope esi-wallet.read_character_wallet.v1

@@ -13,8 +13,7 @@ final class CorporationsProjectsDetailReward extends AbstractEsiDto
     public function __construct(
         public readonly float $initial,
         public readonly float $remaining,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

@@ -12,6 +12,14 @@ use Seatplus\EsiSchema\EsiResult;
  */
 class UserInterfaceResource extends AbstractResource
 {
+    protected const array OPERATION_META = [
+        'postUiAutopilotWaypoint' => ['cacheAge' => null, 'rateLimit' => ['group' => 'ui', 'max-tokens' => 900, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'postUiOpenwindowContract' => ['cacheAge' => null, 'rateLimit' => ['group' => 'ui', 'max-tokens' => 900, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'postUiOpenwindowInformation' => ['cacheAge' => null, 'rateLimit' => ['group' => 'ui', 'max-tokens' => 900, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'postUiOpenwindowMarketdetails' => ['cacheAge' => null, 'rateLimit' => ['group' => 'ui', 'max-tokens' => 900, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'postUiOpenwindowNewmail' => ['cacheAge' => null, 'rateLimit' => ['group' => 'ui', 'max-tokens' => 900, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+    ];
+
     /**
      * @return EsiResult<null>
      * @scope esi-ui.write_waypoint.v1

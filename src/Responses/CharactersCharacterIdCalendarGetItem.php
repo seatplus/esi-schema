@@ -16,8 +16,7 @@ final class CharactersCharacterIdCalendarGetItem extends AbstractEsiDto
         public readonly ?string $event_response = null,
         public readonly ?int $importance = null,
         public readonly ?string $title = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

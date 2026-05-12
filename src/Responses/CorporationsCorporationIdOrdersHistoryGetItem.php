@@ -27,8 +27,7 @@ final class CorporationsCorporationIdOrdersHistoryGetItem extends AbstractEsiDto
         public readonly ?bool $is_buy_order = null,
         public readonly ?int $issued_by = null,
         public readonly ?int $min_volume = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

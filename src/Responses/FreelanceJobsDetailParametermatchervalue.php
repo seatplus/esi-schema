@@ -13,8 +13,7 @@ final class FreelanceJobsDetailParametermatchervalue extends AbstractEsiDto
     public function __construct(
         public readonly string $value_type,
         public readonly array $values,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

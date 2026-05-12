@@ -14,8 +14,7 @@ final class CorporationsCorporationIdStandingsGetItem extends AbstractEsiDto
         public readonly int $from_id,
         public readonly string $from_type,
         public readonly float $standing,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

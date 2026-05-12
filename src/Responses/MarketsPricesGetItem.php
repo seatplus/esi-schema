@@ -14,8 +14,7 @@ final class MarketsPricesGetItem extends AbstractEsiDto
         public readonly int $type_id,
         public readonly ?float $adjusted_price = null,
         public readonly ?float $average_price = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

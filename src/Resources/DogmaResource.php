@@ -15,6 +15,14 @@ use Seatplus\EsiSchema\Responses\DogmaEffectsEffectIdGet;
  */
 class DogmaResource extends AbstractResource
 {
+    protected const array OPERATION_META = [
+        'getDogmaAttributes' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
+        'getDogmaAttributesAttributeId' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
+        'getDogmaDynamicItemsTypeIdItemId' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
+        'getDogmaEffects' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
+        'getDogmaEffectsEffectId' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
+    ];
+
     /**
      * @return EsiResult<array<int>>
      */

@@ -13,8 +13,7 @@ final class CorporationsCorporationIdMembersTitlesGetItem extends AbstractEsiDto
     public function __construct(
         public readonly int $character_id,
         public readonly array $titles,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

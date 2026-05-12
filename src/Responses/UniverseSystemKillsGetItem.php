@@ -15,8 +15,7 @@ final class UniverseSystemKillsGetItem extends AbstractEsiDto
         public readonly int $pod_kills,
         public readonly int $ship_kills,
         public readonly int $system_id,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

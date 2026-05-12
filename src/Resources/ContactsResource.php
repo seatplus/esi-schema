@@ -18,6 +18,18 @@ use Seatplus\EsiSchema\Responses\CorporationsCorporationIdContactsLabelsGetItem;
  */
 class ContactsResource extends AbstractResource
 {
+    protected const array OPERATION_META = [
+        'getAlliancesAllianceIdContacts' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'alliance-social', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getAlliancesAllianceIdContactsLabels' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'alliance-social', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'deleteCharactersCharacterIdContacts' => ['cacheAge' => null, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdContacts' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'postCharactersCharacterIdContacts' => ['cacheAge' => null, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'putCharactersCharacterIdContacts' => ['cacheAge' => null, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdContactsLabels' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCorporationsCorporationIdContacts' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'corp-social', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCorporationsCorporationIdContactsLabels' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'corp-social', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+    ];
+
     /**
      * @return EsiResult<array<AlliancesAllianceIdContactsGetItem>>
      * @scope esi-alliances.read_contacts.v1

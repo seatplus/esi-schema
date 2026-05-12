@@ -31,6 +31,31 @@ use Seatplus\EsiSchema\Responses\CorporationsCorporationIdTitlesGetItem;
  */
 class CorporationResource extends AbstractResource
 {
+    protected const array OPERATION_META = [
+        'getCorporationsNpccorps' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
+        'getCorporationsCorporationId' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
+        'getCorporationsCorporationIdAlliancehistory' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
+        'getCorporationsCorporationIdBlueprints' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false],
+        'getCorporationsCorporationIdContainersLogs' => ['cacheAge' => 600, 'rateLimit' => null, 'requiredRoles' => ['Director'], 'cursor' => false],
+        'getCorporationsCorporationIdDivisions' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-wallet', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false],
+        'getCorporationsCorporationIdFacilities' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => ['Factory_Manager'], 'cursor' => false],
+        'getCorporationsCorporationIdIcons' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
+        'getCorporationsCorporationIdMedals' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-detail', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCorporationsCorporationIdMedalsIssued' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-detail', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false],
+        'getCorporationsCorporationIdMembers' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-member', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCorporationsCorporationIdMembersLimit' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-member', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false],
+        'getCorporationsCorporationIdMembersTitles' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-member', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false],
+        'getCorporationsCorporationIdMembertracking' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-member', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false],
+        'getCorporationsCorporationIdRoles' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-member', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCorporationsCorporationIdRolesHistory' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-member', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false],
+        'getCorporationsCorporationIdShareholders' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-detail', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false],
+        'getCorporationsCorporationIdStandings' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-member', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCorporationsCorporationIdStarbases' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => ['Director'], 'cursor' => false],
+        'getCorporationsCorporationIdStarbasesStarbaseId' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => ['Director'], 'cursor' => false],
+        'getCorporationsCorporationIdStructures' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => ['Station_Manager'], 'cursor' => false],
+        'getCorporationsCorporationIdTitles' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-detail', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false],
+    ];
+
     /**
      * @return EsiResult<array<int>>
      */

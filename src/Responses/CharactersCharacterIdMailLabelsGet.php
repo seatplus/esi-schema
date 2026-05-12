@@ -13,8 +13,7 @@ final class CharactersCharacterIdMailLabelsGet extends AbstractEsiDto
     public function __construct(
         public readonly ?array $labels = null,
         public readonly ?int $total_unread_count = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

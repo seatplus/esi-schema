@@ -17,8 +17,7 @@ final class UniverseStargatesStargateIdGet extends AbstractEsiDto
         public readonly int $stargate_id,
         public readonly int $system_id,
         public readonly int $type_id,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

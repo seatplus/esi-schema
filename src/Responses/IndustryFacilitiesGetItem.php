@@ -17,8 +17,7 @@ final class IndustryFacilitiesGetItem extends AbstractEsiDto
         public readonly int $solar_system_id,
         public readonly int $type_id,
         public readonly ?float $tax = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

@@ -14,8 +14,7 @@ final class ErrorDetail extends AbstractEsiDto
         public readonly ?string $location = null,
         public readonly ?string $message = null,
         public readonly mixed $value = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

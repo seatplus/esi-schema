@@ -14,8 +14,7 @@ final class CharactersCharacterIdShipGet extends AbstractEsiDto
         public readonly int $ship_item_id,
         public readonly string $ship_name,
         public readonly int $ship_type_id,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

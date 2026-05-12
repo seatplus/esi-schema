@@ -22,8 +22,7 @@ final class UniverseBloodlinesGetItem extends AbstractEsiDto
         public readonly int $race_id,
         public readonly int $ship_type_id,
         public readonly int $willpower,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

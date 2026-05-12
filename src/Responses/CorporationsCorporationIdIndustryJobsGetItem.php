@@ -33,8 +33,7 @@ final class CorporationsCorporationIdIndustryJobsGetItem extends AbstractEsiDto
         public readonly ?float $probability = null,
         public readonly ?int $product_type_id = null,
         public readonly ?int $successful_runs = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

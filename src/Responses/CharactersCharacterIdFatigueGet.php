@@ -14,8 +14,7 @@ final class CharactersCharacterIdFatigueGet extends AbstractEsiDto
         public readonly ?string $jump_fatigue_expire_date = null,
         public readonly ?string $last_jump_date = null,
         public readonly ?string $last_update_date = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

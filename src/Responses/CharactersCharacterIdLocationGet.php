@@ -14,8 +14,7 @@ final class CharactersCharacterIdLocationGet extends AbstractEsiDto
         public readonly int $solar_system_id,
         public readonly ?int $station_id = null,
         public readonly ?int $structure_id = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

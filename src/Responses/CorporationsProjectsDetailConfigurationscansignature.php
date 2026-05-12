@@ -13,8 +13,7 @@ final class CorporationsProjectsDetailConfigurationscansignature extends Abstrac
     public function __construct(
         public readonly ?array $locations = null,
         public readonly ?array $signatures = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

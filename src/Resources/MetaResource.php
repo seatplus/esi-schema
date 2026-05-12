@@ -14,6 +14,12 @@ use Seatplus\EsiSchema\Responses\MetaStatus;
  */
 class MetaResource extends AbstractResource
 {
+    protected const array OPERATION_META = [
+        'getMetaChangelog' => ['cacheAge' => 0, 'rateLimit' => ['group' => 'meta', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getMetaCompatibilityDates' => ['cacheAge' => 0, 'rateLimit' => ['group' => 'meta', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getMetaStatus' => ['cacheAge' => 0, 'rateLimit' => ['group' => 'meta', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+    ];
+
     /**
      * @return MetaChangelog
      */

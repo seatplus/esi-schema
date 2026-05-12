@@ -23,8 +23,7 @@ final class UniverseStationsStationIdGet extends AbstractEsiDto
         public readonly int $type_id,
         public readonly ?int $owner = null,
         public readonly ?int $race_id = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

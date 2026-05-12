@@ -15,8 +15,7 @@ final class CharactersCharacterIdRolesGet extends AbstractEsiDto
         public readonly ?array $roles_at_base = null,
         public readonly ?array $roles_at_hq = null,
         public readonly ?array $roles_at_other = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

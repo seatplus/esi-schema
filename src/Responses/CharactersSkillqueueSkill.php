@@ -19,8 +19,7 @@ final class CharactersSkillqueueSkill extends AbstractEsiDto
         public readonly ?int $level_start_sp = null,
         public readonly ?string $start_date = null,
         public readonly ?int $training_start_sp = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

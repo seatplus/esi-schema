@@ -18,8 +18,7 @@ final class CharactersCharacterIdPlanetsGetItem extends AbstractEsiDto
         public readonly string $planet_type,
         public readonly int $solar_system_id,
         public readonly int $upgrade_level,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

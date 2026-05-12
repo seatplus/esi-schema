@@ -15,8 +15,7 @@ final class CharactersCharacterIdMiningGetItem extends AbstractEsiDto
         public readonly int $quantity,
         public readonly int $solar_system_id,
         public readonly int $type_id,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

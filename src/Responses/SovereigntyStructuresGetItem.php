@@ -18,8 +18,7 @@ final class SovereigntyStructuresGetItem extends AbstractEsiDto
         public readonly ?float $vulnerability_occupancy_level = null,
         public readonly ?string $vulnerable_end_time = null,
         public readonly ?string $vulnerable_start_time = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

@@ -13,6 +13,11 @@ use Seatplus\EsiSchema\Responses\CharactersCharacterIdClonesGet;
  */
 class ClonesResource extends AbstractResource
 {
+    protected const array OPERATION_META = [
+        'getCharactersCharacterIdClones' => ['cacheAge' => 120, 'rateLimit' => ['group' => 'char-location', 'max-tokens' => 1200, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdImplants' => ['cacheAge' => 120, 'rateLimit' => ['group' => 'char-detail', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+    ];
+
     /**
      * @return CharactersCharacterIdClonesGet
      * @scope esi-clones.read_clones.v1

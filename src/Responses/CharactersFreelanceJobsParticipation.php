@@ -14,8 +14,7 @@ final class CharactersFreelanceJobsParticipation extends AbstractEsiDto
         public readonly int $contributed,
         public readonly string $last_modified,
         public readonly string $state,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

@@ -14,8 +14,7 @@ final class MetaStatusRoutestatus extends AbstractEsiDto
         public readonly string $method,
         public readonly string $path,
         public readonly string $status,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

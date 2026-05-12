@@ -12,6 +12,10 @@ use Seatplus\EsiSchema\Responses\Route;
  */
 class RoutesResource extends AbstractResource
 {
+    protected const array OPERATION_META = [
+        'postRoute' => ['cacheAge' => 0, 'rateLimit' => ['group' => 'routes', 'max-tokens' => 3600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+    ];
+
     /**
      * @return Route
      */

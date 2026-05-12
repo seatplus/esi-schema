@@ -13,8 +13,7 @@ final class CorporationsProjectsContribution extends AbstractEsiDto
     public function __construct(
         public readonly int $contributed,
         public readonly ?string $last_modified = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

@@ -126,3 +126,39 @@ it('EsiResult::fromRaw carries isCachedLoad', function (): void {
     expect($result->isCachedLoad)->toBeTrue()
         ->and($result->pages)->toBe(5);
 });
+
+// ---------------------------------------------------------------------------
+// OPERATION_META / metaFor()
+// ---------------------------------------------------------------------------
+
+it('AssetsResource::metaFor returns correct metadata for char endpoint', function (): void {
+    $meta = AssetsResource::metaFor('getCharactersCharacterIdAssets');
+
+    expect($meta['cacheAge'])->toBe(3600)
+        ->and($meta['requiredRoles'])->toBeEmpty()
+        ->and($meta['cursor'])->toBeFalse()
+        ->and($meta['rateLimit'])->toMatchArray(['group' => 'char-asset', 'max-tokens' => 1800]);
+});
+
+it('AssetsResource::metaFor returns corp rate-limit group and required Director role', function (): void {
+    $meta = AssetsResource::metaFor('getCorporationsCorporationIdAssets');
+
+    expect($meta['rateLimit']['group'])->toBe('corp-asset')
+        ->and($meta['requiredRoles'])->toBe(['Director']);
+});
+
+it('metaFor returns safe defaults for unknown operationId', function (): void {
+    $meta = AssetsResource::metaFor('doesNotExist');
+
+    expect($meta['cacheAge'])->toBeNull()
+        ->and($meta['rateLimit'])->toBeNull()
+        ->and($meta['requiredRoles'])->toBeEmpty()
+        ->and($meta['cursor'])->toBeFalse();
+});
+
+it('FreelanceJobsResource::metaFor marks cursor endpoints correctly', function (): void {
+    $meta = \Seatplus\EsiSchema\Resources\FreelanceJobsResource::metaFor('getFreelanceJobsListing');
+
+    expect($meta['cursor'])->toBeTrue();
+});
+

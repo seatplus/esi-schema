@@ -12,8 +12,7 @@ final class CorporationsProjectsDetailConfigurationmatcherarchetype extends Abst
 {
     public function __construct(
         public readonly ?int $archetype_id = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

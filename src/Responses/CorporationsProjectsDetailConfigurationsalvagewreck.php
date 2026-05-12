@@ -12,8 +12,7 @@ final class CorporationsProjectsDetailConfigurationsalvagewreck extends Abstract
 {
     public function __construct(
         public readonly ?array $locations = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

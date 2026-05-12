@@ -14,8 +14,7 @@ final class CorporationsCorporationIdShareholdersGetItem extends AbstractEsiDto
         public readonly int $share_count,
         public readonly int $shareholder_id,
         public readonly string $shareholder_type,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

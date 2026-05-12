@@ -21,6 +21,18 @@ use Seatplus\EsiSchema\Responses\CorporationsCorporationIdContractsContractIdIte
  */
 class ContractsResource extends AbstractResource
 {
+    protected const array OPERATION_META = [
+        'getCharactersCharacterIdContracts' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'char-contract', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdContractsContractIdBids' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'char-contract', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdContractsContractIdItems' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-contract', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getContractsPublicBidsContractId' => ['cacheAge' => 300, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
+        'getContractsPublicItemsContractId' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
+        'getContractsPublicRegionId' => ['cacheAge' => 1800, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
+        'getCorporationsCorporationIdContracts' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'corp-contract', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCorporationsCorporationIdContractsContractIdBids' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-contract', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCorporationsCorporationIdContractsContractIdItems' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-contract', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+    ];
+
     /**
      * @return EsiResult<array<CharactersCharacterIdContractsGetItem>>
      * @scope esi-contracts.read_character_contracts.v1

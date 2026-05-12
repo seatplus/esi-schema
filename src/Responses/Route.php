@@ -12,8 +12,7 @@ final class Route extends AbstractEsiDto
 {
     public function __construct(
         public readonly array $route,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

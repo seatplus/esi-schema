@@ -13,8 +13,7 @@ final class CharactersCharacterIdLoyaltyPointsGetItem extends AbstractEsiDto
     public function __construct(
         public readonly int $corporation_id,
         public readonly int $loyalty_points,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

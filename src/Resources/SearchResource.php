@@ -12,6 +12,10 @@ use Seatplus\EsiSchema\Responses\CharactersCharacterIdSearchGet;
  */
 class SearchResource extends AbstractResource
 {
+    protected const array OPERATION_META = [
+        'getCharactersCharacterIdSearch' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
+    ];
+
     /**
      * @return CharactersCharacterIdSearchGet
      * @scope esi-search.search_structures.v1

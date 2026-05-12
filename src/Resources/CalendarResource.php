@@ -15,6 +15,13 @@ use Seatplus\EsiSchema\Responses\CharactersCharacterIdCalendarEventIdAttendeesGe
  */
 class CalendarResource extends AbstractResource
 {
+    protected const array OPERATION_META = [
+        'getCharactersCharacterIdCalendar' => ['cacheAge' => 5, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdCalendarEventId' => ['cacheAge' => 5, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'putCharactersCharacterIdCalendarEventId' => ['cacheAge' => 5, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdCalendarEventIdAttendees' => ['cacheAge' => 600, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+    ];
+
     /**
      * @return EsiResult<array<CharactersCharacterIdCalendarGetItem>>
      * @scope esi-calendar.read_calendar_events.v1

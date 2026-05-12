@@ -371,6 +371,7 @@ function generateResourceFile(string $tag, array $ops): string
 
     $useStatements = [];
     $methods       = [];
+    $metaEntries   = [];
 
     foreach ($ops as $op) {
         $sig  = buildMethodSig($op);
@@ -396,10 +397,37 @@ function generateResourceFile(string $tag, array $ops): string
         {$body}
             }
         PHP;
+
+        // Build OPERATION_META entry
+        $cacheAge      = $op['cacheAge'] !== null ? (string) $op['cacheAge'] : 'null';
+        $requiredRoles = empty($op['requiredRoles']) ? '[]' : "['" . implode("', '", $op['requiredRoles']) . "']";
+        $cursor        = $op['cursor'] ? 'true' : 'false';
+
+        if ($op['rateLimit'] !== null) {
+            $rl = $op['rateLimit'];
+            $rateLimitStr = sprintf(
+                "['group' => '%s', 'max-tokens' => %d, 'window-size' => '%s']",
+                $rl['group'],
+                (int) $rl['max-tokens'],
+                $rl['window-size'],
+            );
+        } else {
+            $rateLimitStr = 'null';
+        }
+
+        $metaEntries[$op['methodName']] = sprintf(
+            "        '%s' => ['cacheAge' => %s, 'rateLimit' => %s, 'requiredRoles' => %s, 'cursor' => %s]",
+            $op['methodName'],
+            $cacheAge,
+            $rateLimitStr,
+            $requiredRoles,
+            $cursor,
+        );
     }
 
     $useBlock     = empty($useStatements) ? '' : implode("\n", array_unique($useStatements)) . "\n";
     $methodsBlock = implode("\n\n", $methods);
+    $metaBlock    = implode(",\n", array_values($metaEntries));
 
     return <<<PHP
     <?php
@@ -416,6 +444,10 @@ function generateResourceFile(string $tag, array $ops): string
      */
     class {$resourceClass} extends AbstractResource
     {
+        protected const array OPERATION_META = [
+    {$metaBlock},
+        ];
+
     {$methodsBlock}
     }
     PHP;
@@ -503,20 +535,25 @@ foreach ($paths as $path => $pathItem) {
         }
 
         $tagOps[$tag][] = [
-            'path'            => $path,
-            'httpMethod'      => $httpMethod,
-            'methodName'      => $methodName,
-            'params'          => $params,
-            'requestBody'     => $requestBody,
-            'isAuth'          => $isAuth,
-            'scopes'          => $scopes,
-            'schemaName'      => $schemaName,
-            'responseType'    => $responseType,
-            'dtoClass'        => $dtoClass,
-            'phpDocReturn'    => $phpDocReturn,
-            'xPages'          => $xPages,
-            'primitiveType'   => $primitiveType ?? ($primitivePhp ?? null),
+            'path'              => $path,
+            'httpMethod'        => $httpMethod,
+            'methodName'        => $methodName,
+            'params'            => $params,
+            'requestBody'       => $requestBody,
+            'isAuth'            => $isAuth,
+            'scopes'            => $scopes,
+            'schemaName'        => $schemaName,
+            'responseType'      => $responseType,
+            'dtoClass'          => $dtoClass,
+            'phpDocReturn'      => $phpDocReturn,
+            'xPages'            => $xPages,
+            'primitiveType'     => $primitiveType ?? ($primitivePhp ?? null),
             '_commonModelTypes' => $commonModelTypes,
+            // ESI spec extensions — baked in at generation time
+            'cacheAge'          => isset($op['x-cache-age']) ? (int) $op['x-cache-age'] : null,
+            'rateLimit'         => $op['x-rate-limit'] ?? null,
+            'requiredRoles'     => $op['x-required-roles'] ?? [],
+            'cursor'            => ($op['x-pagination'] ?? null) === 'cursor',
         ];
     }
 }

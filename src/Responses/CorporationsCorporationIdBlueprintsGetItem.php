@@ -19,8 +19,7 @@ final class CorporationsCorporationIdBlueprintsGetItem extends AbstractEsiDto
         public readonly int $runs,
         public readonly int $time_efficiency,
         public readonly int $type_id,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

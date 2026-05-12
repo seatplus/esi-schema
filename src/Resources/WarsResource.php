@@ -14,6 +14,12 @@ use Seatplus\EsiSchema\Responses\WarsWarIdKillmailsGetItem;
  */
 class WarsResource extends AbstractResource
 {
+    protected const array OPERATION_META = [
+        'getWars' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'killmail', 'max-tokens' => 3600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getWarsWarId' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'killmail', 'max-tokens' => 3600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getWarsWarIdKillmails' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'killmail', 'max-tokens' => 3600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+    ];
+
     /**
      * @return EsiResult<array<int>>
      */

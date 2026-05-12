@@ -14,6 +14,12 @@ use Seatplus\EsiSchema\Responses\CharactersCharacterIdShipGet;
  */
 class LocationResource extends AbstractResource
 {
+    protected const array OPERATION_META = [
+        'getCharactersCharacterIdLocation' => ['cacheAge' => 5, 'rateLimit' => ['group' => 'char-location', 'max-tokens' => 1200, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdOnline' => ['cacheAge' => 60, 'rateLimit' => ['group' => 'char-location', 'max-tokens' => 1200, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdShip' => ['cacheAge' => 5, 'rateLimit' => ['group' => 'char-location', 'max-tokens' => 1200, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+    ];
+
     /**
      * @return CharactersCharacterIdLocationGet
      * @scope esi-location.read_location.v1

@@ -13,8 +13,7 @@ final class CorporationsCorporationIdWalletsGetItem extends AbstractEsiDto
     public function __construct(
         public readonly float $balance,
         public readonly int $division,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

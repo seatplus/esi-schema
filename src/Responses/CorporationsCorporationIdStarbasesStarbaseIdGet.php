@@ -25,8 +25,7 @@ final class CorporationsCorporationIdStarbasesStarbaseIdGet extends AbstractEsiD
         public readonly ?float $attack_security_status_threshold = null,
         public readonly ?float $attack_standing_threshold = null,
         public readonly ?array $fuels = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

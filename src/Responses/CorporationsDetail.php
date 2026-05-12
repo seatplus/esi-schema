@@ -25,8 +25,7 @@ final class CorporationsDetail extends AbstractEsiDto
         public readonly ?int $shares = null,
         public readonly ?string $url = null,
         public readonly ?bool $war_eligible = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

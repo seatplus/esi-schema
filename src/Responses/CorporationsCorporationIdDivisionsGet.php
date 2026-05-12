@@ -13,8 +13,7 @@ final class CorporationsCorporationIdDivisionsGet extends AbstractEsiDto
     public function __construct(
         public readonly ?array $hangar = null,
         public readonly ?array $wallet = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

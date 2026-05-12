@@ -15,6 +15,13 @@ use Seatplus\EsiSchema\Responses\CorporationsProjectsContributors;
  */
 class CorporationProjectsResource extends AbstractResource
 {
+    protected const array OPERATION_META = [
+        'getCorporationsProjectsListing' => ['cacheAge' => 0, 'rateLimit' => ['group' => 'corp-project', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => true],
+        'getCorporationsProjectsDetail' => ['cacheAge' => 60, 'rateLimit' => ['group' => 'corp-project', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCorporationsProjectsContribution' => ['cacheAge' => 60, 'rateLimit' => ['group' => 'corp-project', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCorporationsProjectsContributors' => ['cacheAge' => 0, 'rateLimit' => ['group' => 'corp-project', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => ['Project_Manager'], 'cursor' => true],
+    ];
+
     /**
      * @return CorporationsProjectsListing
      * @scope esi-corporations.read_projects.v1

@@ -13,8 +13,7 @@ final class Cursor extends AbstractEsiDto
     public function __construct(
         public readonly ?string $after = null,
         public readonly ?string $before = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

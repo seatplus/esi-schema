@@ -12,8 +12,7 @@ final class CorporationsProjectsDetailConfigurationmatchercorporation extends Ab
 {
     public function __construct(
         public readonly ?int $corporation_id = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

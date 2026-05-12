@@ -11,11 +11,42 @@ use Seatplus\EsiSchema\Contracts\EsiTransportInterface;
  *
  * Generated from ESI OpenAPI spec — do not edit manually.
  * Run bin/generate.php to regenerate.
+ *
+ * @phpstan-type OperationMeta array{
+ *   cacheAge: int|null,
+ *   rateLimit: array{group: string, max-tokens: int, window-size: string}|null,
+ *   requiredRoles: list<string>,
+ *   cursor: bool,
+ * }
  */
 abstract class AbstractResource
 {
+    /** @var array<string, OperationMeta> */
+    protected const array OPERATION_META = [];
+
     public function __construct(
         protected readonly EsiTransportInterface $transport,
     ) {
+    }
+
+    /**
+     * Return ESI spec metadata for a specific operation on this resource.
+     *
+     * - cacheAge:      Expected cache TTL in seconds (null = no-cache endpoint).
+     * - rateLimit:     Rate-limit bucket from the spec (group/max-tokens/window-size).
+     *                  Note: per-request remaining tokens are in EsiRawResponse, not here.
+     * - requiredRoles: EVE corporation roles required for this endpoint.
+     * - cursor:        True if this endpoint uses cursor-based pagination.
+     *
+     * @return OperationMeta
+     */
+    public static function metaFor(string $operationId): array
+    {
+        return static::OPERATION_META[$operationId] ?? [
+            'cacheAge'      => null,
+            'rateLimit'     => null,
+            'requiredRoles' => [],
+            'cursor'        => false,
+        ];
     }
 }

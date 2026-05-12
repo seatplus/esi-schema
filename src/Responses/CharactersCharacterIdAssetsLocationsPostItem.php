@@ -13,8 +13,7 @@ final class CharactersCharacterIdAssetsLocationsPostItem extends AbstractEsiDto
     public function __construct(
         public readonly int $item_id,
         public readonly mixed $position,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

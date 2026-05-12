@@ -13,6 +13,10 @@ use Seatplus\EsiSchema\Responses\IncursionsGetItem;
  */
 class IncursionsResource extends AbstractResource
 {
+    protected const array OPERATION_META = [
+        'getIncursions' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'incursion', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+    ];
+
     /**
      * @return EsiResult<array<IncursionsGetItem>>
      */

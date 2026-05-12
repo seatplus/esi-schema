@@ -14,8 +14,7 @@ final class CorporationsProjectsDetailConfigurationdeliveritem extends AbstractE
         public readonly ?array $docking_locations = null,
         public readonly ?array $items = null,
         public readonly ?int $office_id = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

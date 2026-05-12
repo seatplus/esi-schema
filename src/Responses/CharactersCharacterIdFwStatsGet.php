@@ -17,8 +17,7 @@ final class CharactersCharacterIdFwStatsGet extends AbstractEsiDto
         public readonly ?string $enlisted_on = null,
         public readonly ?int $faction_id = null,
         public readonly ?int $highest_rank = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

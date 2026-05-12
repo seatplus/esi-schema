@@ -26,8 +26,7 @@ final class CharactersCharacterIdOrdersHistoryGetItem extends AbstractEsiDto
         public readonly ?float $escrow = null,
         public readonly ?bool $is_buy_order = null,
         public readonly ?int $min_volume = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

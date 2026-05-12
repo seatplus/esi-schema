@@ -17,6 +17,15 @@ use Seatplus\EsiSchema\Responses\FreelanceJobsDetail;
  */
 class FreelanceJobsResource extends AbstractResource
 {
+    protected const array OPERATION_META = [
+        'getCharactersFreelanceJobsListing' => ['cacheAge' => 60, 'rateLimit' => ['group' => 'char-freelance-job', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersFreelanceJobsParticipation' => ['cacheAge' => 60, 'rateLimit' => ['group' => 'char-freelance-job', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCorporationsFreelanceJobsListing' => ['cacheAge' => 0, 'rateLimit' => ['group' => 'corp-freelance-job', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Project_Manager'], 'cursor' => true],
+        'getCorporationsFreelanceJobsParticipants' => ['cacheAge' => 0, 'rateLimit' => ['group' => 'corp-freelance-job', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Project_Manager'], 'cursor' => true],
+        'getFreelanceJobsListing' => ['cacheAge' => 0, 'rateLimit' => ['group' => 'freelance-job', 'max-tokens' => 900, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => true],
+        'getFreelanceJobsDetail' => ['cacheAge' => 60, 'rateLimit' => ['group' => 'freelance-job', 'max-tokens' => 900, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+    ];
+
     /**
      * @return CharactersFreelanceJobsListing
      * @scope esi-characters.read_freelance_jobs.v1

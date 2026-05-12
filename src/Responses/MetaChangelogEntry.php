@@ -16,8 +16,7 @@ final class MetaChangelogEntry extends AbstractEsiDto
         public readonly string $method,
         public readonly string $path,
         public readonly string $type,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

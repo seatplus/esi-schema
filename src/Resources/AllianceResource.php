@@ -14,6 +14,13 @@ use Seatplus\EsiSchema\Responses\AlliancesAllianceIdIconsGet;
  */
 class AllianceResource extends AbstractResource
 {
+    protected const array OPERATION_META = [
+        'getAlliances' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
+        'getAlliancesAllianceId' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
+        'getAlliancesAllianceIdCorporations' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
+        'getAlliancesAllianceIdIcons' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
+    ];
+
     /**
      * @return EsiResult<array<int>>
      */

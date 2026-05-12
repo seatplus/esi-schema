@@ -21,8 +21,7 @@ final class FleetsFleetIdMembersGetItem extends AbstractEsiDto
         public readonly bool $takes_fleet_warp,
         public readonly int $wing_id,
         public readonly ?int $station_id = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

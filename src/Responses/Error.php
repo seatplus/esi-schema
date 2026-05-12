@@ -13,8 +13,7 @@ final class Error extends AbstractEsiDto
     public function __construct(
         public readonly string $error,
         public readonly ?array $details = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

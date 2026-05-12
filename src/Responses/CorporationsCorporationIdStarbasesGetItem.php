@@ -19,8 +19,7 @@ final class CorporationsCorporationIdStarbasesGetItem extends AbstractEsiDto
         public readonly ?string $reinforced_until = null,
         public readonly ?string $state = null,
         public readonly ?string $unanchor_at = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

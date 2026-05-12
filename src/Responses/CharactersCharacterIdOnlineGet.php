@@ -15,8 +15,7 @@ final class CharactersCharacterIdOnlineGet extends AbstractEsiDto
         public readonly ?string $last_login = null,
         public readonly ?string $last_logout = null,
         public readonly ?int $logins = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

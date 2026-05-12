@@ -14,8 +14,7 @@ final class CorporationsProjectsDetailConfigurationremoteboostshield extends Abs
         public readonly ?array $identities = null,
         public readonly ?array $locations = null,
         public readonly ?array $ships = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

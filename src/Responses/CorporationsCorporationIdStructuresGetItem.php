@@ -26,8 +26,7 @@ final class CorporationsCorporationIdStructuresGetItem extends AbstractEsiDto
         public readonly ?string $state_timer_end = null,
         public readonly ?string $state_timer_start = null,
         public readonly ?string $unanchors_at = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

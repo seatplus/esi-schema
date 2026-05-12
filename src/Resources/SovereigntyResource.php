@@ -15,6 +15,12 @@ use Seatplus\EsiSchema\Responses\SovereigntyStructuresGetItem;
  */
 class SovereigntyResource extends AbstractResource
 {
+    protected const array OPERATION_META = [
+        'getSovereigntyCampaigns' => ['cacheAge' => 5, 'rateLimit' => ['group' => 'sovereignty', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getSovereigntyMap' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'sovereignty', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getSovereigntyStructures' => ['cacheAge' => 120, 'rateLimit' => ['group' => 'sovereignty', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+    ];
+
     /**
      * @return EsiResult<array<SovereigntyCampaignsGetItem>>
      */

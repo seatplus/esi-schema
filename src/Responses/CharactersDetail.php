@@ -22,8 +22,7 @@ final class CharactersDetail extends AbstractEsiDto
         public readonly ?int $faction_id = null,
         public readonly ?float $security_status = null,
         public readonly ?string $title = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

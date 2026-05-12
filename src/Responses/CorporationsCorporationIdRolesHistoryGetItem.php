@@ -17,8 +17,7 @@ final class CorporationsCorporationIdRolesHistoryGetItem extends AbstractEsiDto
         public readonly array $new_roles,
         public readonly array $old_roles,
         public readonly string $role_type,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

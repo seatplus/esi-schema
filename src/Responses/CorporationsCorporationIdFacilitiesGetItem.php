@@ -14,8 +14,7 @@ final class CorporationsCorporationIdFacilitiesGetItem extends AbstractEsiDto
         public readonly int $facility_id,
         public readonly int $system_id,
         public readonly int $type_id,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

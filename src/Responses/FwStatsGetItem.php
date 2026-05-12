@@ -16,8 +16,7 @@ final class FwStatsGetItem extends AbstractEsiDto
         public readonly int $pilots,
         public readonly int $systems_controlled,
         public readonly mixed $victory_points,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

@@ -27,8 +27,7 @@ final class UniverseTypesTypeIdGet extends AbstractEsiDto
         public readonly ?int $portion_size = null,
         public readonly ?float $radius = null,
         public readonly ?float $volume = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

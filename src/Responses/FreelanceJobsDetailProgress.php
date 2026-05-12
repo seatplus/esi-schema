@@ -13,8 +13,7 @@ final class FreelanceJobsDetailProgress extends AbstractEsiDto
     public function __construct(
         public readonly int $current,
         public readonly int $desired,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

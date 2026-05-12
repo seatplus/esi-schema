@@ -23,8 +23,7 @@ final class CorporationsCorporationIdContainersLogsGetItem extends AbstractEsiDt
         public readonly ?string $password_type = null,
         public readonly ?int $quantity = null,
         public readonly ?int $type_id = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

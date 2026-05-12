@@ -21,8 +21,7 @@ final class CharactersCharacterIdWalletTransactionsGetItem extends AbstractEsiDt
         public readonly int $transaction_id,
         public readonly int $type_id,
         public readonly float $unit_price,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

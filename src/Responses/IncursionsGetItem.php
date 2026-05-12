@@ -19,8 +19,7 @@ final class IncursionsGetItem extends AbstractEsiDto
         public readonly int $staging_solar_system_id,
         public readonly string $state,
         public readonly string $type,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

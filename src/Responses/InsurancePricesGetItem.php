@@ -13,8 +13,7 @@ final class InsurancePricesGetItem extends AbstractEsiDto
     public function __construct(
         public readonly array $levels,
         public readonly int $type_id,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

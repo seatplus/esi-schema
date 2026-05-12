@@ -13,6 +13,10 @@ use Seatplus\EsiSchema\Responses\InsurancePricesGetItem;
  */
 class InsuranceResource extends AbstractResource
 {
+    protected const array OPERATION_META = [
+        'getInsurancePrices' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'insurance', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+    ];
+
     /**
      * @return EsiResult<array<InsurancePricesGetItem>>
      */

@@ -13,8 +13,7 @@ final class AlliancesAllianceIdIconsGet extends AbstractEsiDto
     public function __construct(
         public readonly ?string $px128x128 = null,
         public readonly ?string $px64x64 = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

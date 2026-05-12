@@ -13,8 +13,7 @@ final class CorporationsCorporationIdAssetsLocationsPostItem extends AbstractEsi
     public function __construct(
         public readonly int $item_id,
         public readonly mixed $position,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

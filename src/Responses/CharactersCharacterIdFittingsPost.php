@@ -12,8 +12,7 @@ final class CharactersCharacterIdFittingsPost extends AbstractEsiDto
 {
     public function __construct(
         public readonly int $fitting_id,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

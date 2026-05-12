@@ -12,8 +12,7 @@ final class CorporationsProjectsDetailConfigurationmatchersignature extends Abst
 {
     public function __construct(
         public readonly ?int $signature_type_id = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

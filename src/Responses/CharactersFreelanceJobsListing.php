@@ -4,6 +4,8 @@ namespace Seatplus\EsiSchema\Responses;
 
 use Seatplus\EsiSchema\AbstractEsiDto;
 
+use Seatplus\EsiSchema\Responses\FreelanceJobsDetailFreelancejob;
+
 /**
  * Generated from ESI OpenAPI spec (compatibility date: 2025-12-16).
  * Do not edit manually — run bin/generate.php instead.
@@ -12,13 +14,12 @@ final class CharactersFreelanceJobsListing extends AbstractEsiDto
 {
     public function __construct(
         public readonly array $freelance_jobs,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {
         return new static(
-            freelance_jobs: array_map(fn (object $i) => FreelanceJobsDetailFreelancejob::from($i), (array) ($data->freelance_jobs ?? [])),
+            freelance_jobs: array_map(fn(object $i) => FreelanceJobsDetailFreelancejob::from($i), (array) ($data->freelance_jobs ?? [])),
         );
     }
 }

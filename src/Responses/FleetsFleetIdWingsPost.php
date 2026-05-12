@@ -12,8 +12,7 @@ final class FleetsFleetIdWingsPost extends AbstractEsiDto
 {
     public function __construct(
         public readonly int $wing_id,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

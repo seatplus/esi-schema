@@ -18,8 +18,7 @@ final class LoyaltyStoresCorporationIdOffersGetItem extends AbstractEsiDto
         public readonly array $required_items,
         public readonly int $type_id,
         public readonly ?int $ak_cost = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

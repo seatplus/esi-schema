@@ -15,8 +15,7 @@ final class UniverseMoonsMoonIdGet extends AbstractEsiDto
         public readonly string $name,
         public readonly mixed $position,
         public readonly int $system_id,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {

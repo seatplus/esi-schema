@@ -21,8 +21,7 @@ final class SovereigntyCampaignsGetItem extends AbstractEsiDto
         public readonly ?int $defender_id = null,
         public readonly ?float $defender_score = null,
         public readonly ?array $participants = null,
-    ) {
-    }
+    ) {}
 
     public static function from(object $data): static
     {
