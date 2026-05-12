@@ -27,7 +27,7 @@ class UserInterfaceResource extends AbstractResource
     public function postUiAutopilotWaypoint(bool $addToBeginning, bool $clearOtherWaypoints, int $destinationId): EsiResult
     {
         $response = $this->transport->invoke('post', '/ui/autopilot/waypoint', [], ['add_to_beginning' => $addToBeginning, 'clear_other_waypoints' => $clearOtherWaypoints, 'destination_id' => $destinationId], []);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['postUiAutopilotWaypoint'] ?? null);
     }
 
     /**
@@ -37,7 +37,7 @@ class UserInterfaceResource extends AbstractResource
     public function postUiOpenwindowContract(int $contractId): EsiResult
     {
         $response = $this->transport->invoke('post', '/ui/openwindow/contract', [], ['contract_id' => $contractId], []);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['postUiOpenwindowContract'] ?? null);
     }
 
     /**
@@ -47,7 +47,7 @@ class UserInterfaceResource extends AbstractResource
     public function postUiOpenwindowInformation(int $targetId): EsiResult
     {
         $response = $this->transport->invoke('post', '/ui/openwindow/information', [], ['target_id' => $targetId], []);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['postUiOpenwindowInformation'] ?? null);
     }
 
     /**
@@ -57,7 +57,7 @@ class UserInterfaceResource extends AbstractResource
     public function postUiOpenwindowMarketdetails(int $typeId): EsiResult
     {
         $response = $this->transport->invoke('post', '/ui/openwindow/marketdetails', [], ['type_id' => $typeId], []);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['postUiOpenwindowMarketdetails'] ?? null);
     }
 
     /**
@@ -67,6 +67,6 @@ class UserInterfaceResource extends AbstractResource
     public function postUiOpenwindowNewmail(mixed $requestBody): EsiResult
     {
         $response = $this->transport->invoke('post', '/ui/openwindow/newmail', [], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['postUiOpenwindowNewmail'] ?? null);
     }
 }

@@ -29,7 +29,7 @@ class LoyaltyResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdLoyaltyPointsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdLoyaltyPoints'] ?? null);
     }
 
     /**
@@ -41,6 +41,6 @@ class LoyaltyResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => LoyaltyStoresCorporationIdOffersGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getLoyaltyStoresCorporationIdOffers'] ?? null);
     }
 }

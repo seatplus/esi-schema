@@ -15,7 +15,8 @@ final class UniverseCategoriesCategoryIdGet extends AbstractEsiDto
         public readonly array $groups,
         public readonly string $name,
         public readonly bool $published,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

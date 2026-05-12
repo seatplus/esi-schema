@@ -286,10 +286,11 @@ function buildInvoke(array $op): string
 
 function buildReturn(array $op): string
 {
-    $invoke  = buildInvoke($op);
-    $type    = $op['responseType'];
-    $dto     = $op['dtoClass'];
-    $primT   = $op['primitiveType'] ?? 'int';
+    $invoke     = buildInvoke($op);
+    $type       = $op['responseType'];
+    $dto        = $op['dtoClass'];
+    $primT      = $op['primitiveType'] ?? 'int';
+    $methodName = $op['methodName'];
 
     return match ($type) {
         'object' => <<<PHP
@@ -297,6 +298,7 @@ function buildReturn(array $op): string
                 \$dto = {$dto}::from((object) \$response->data);
                 \$dto->isCachedLoad = \$response->isCachedLoad;
                 \$dto->pages = \$response->pages;
+                \$dto->operationMeta = static::OPERATION_META['{$methodName}'] ?? null;
                 return \$dto;
         PHP,
 
@@ -305,26 +307,26 @@ function buildReturn(array $op): string
                 return EsiResult::fromRaw(\$response, array_map(
                     fn(object \$item) => {$dto}::from(\$item),
                     (array) \$response->data,
-                ));
+                ), static::OPERATION_META['{$methodName}'] ?? null);
         PHP,
 
         'array_primitive' => <<<PHP
                 \$response = {$invoke};
                 /** @var array<{$primT}> \$data */
                 \$data = array_map(fn(mixed \$i) => ({$primT}) \$i, (array) \$response->data);
-                return EsiResult::fromRaw(\$response, \$data);
+                return EsiResult::fromRaw(\$response, \$data, static::OPERATION_META['{$methodName}'] ?? null);
         PHP,
 
         'primitive' => <<<PHP
                 \$response = {$invoke};
                 /** @var {$primT} \$scalar */
                 \$scalar = ({$primT}) \$response->data;
-                return EsiResult::fromRaw(\$response, \$scalar);
+                return EsiResult::fromRaw(\$response, \$scalar, static::OPERATION_META['{$methodName}'] ?? null);
         PHP,
 
         default => <<<PHP
                 \$response = {$invoke};
-                return EsiResult::fromRaw(\$response, null);
+                return EsiResult::fromRaw(\$response, null, static::OPERATION_META['{$methodName}'] ?? null);
         PHP,
     };
 }

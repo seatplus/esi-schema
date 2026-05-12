@@ -4,9 +4,6 @@ namespace Seatplus\EsiSchema\Responses;
 
 use Seatplus\EsiSchema\AbstractEsiDto;
 
-use Seatplus\EsiSchema\Responses\CorporationsProjectsDetailProgress;
-use Seatplus\EsiSchema\Responses\CorporationsProjectsDetailReward;
-
 /**
  * Generated from ESI OpenAPI spec (compatibility date: 2025-12-16).
  * Do not edit manually — run bin/generate.php instead.
@@ -20,7 +17,8 @@ final class CorporationsProjectsDetailProject extends AbstractEsiDto
         public readonly CorporationsProjectsDetailProgress $progress,
         public readonly string $state,
         public readonly ?CorporationsProjectsDetailReward $reward = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

@@ -16,7 +16,8 @@ final class CharactersCharacterIdFleetGet extends AbstractEsiDto
         public readonly string $role,
         public readonly int $squad_id,
         public readonly int $wing_id,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

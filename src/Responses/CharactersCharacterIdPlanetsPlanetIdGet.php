@@ -14,7 +14,8 @@ final class CharactersCharacterIdPlanetsPlanetIdGet extends AbstractEsiDto
         public readonly array $links,
         public readonly array $pins,
         public readonly array $routes,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

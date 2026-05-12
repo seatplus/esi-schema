@@ -15,7 +15,8 @@ final class SovereigntyMapGetItem extends AbstractEsiDto
         public readonly ?int $alliance_id = null,
         public readonly ?int $corporation_id = null,
         public readonly ?int $faction_id = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

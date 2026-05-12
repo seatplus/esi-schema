@@ -29,7 +29,7 @@ class FittingsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdFittingsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdFittings'] ?? null);
     }
 
     /**
@@ -39,7 +39,7 @@ class FittingsResource extends AbstractResource
     public function postCharactersCharacterIdFittings(mixed $requestBody, int $characterId): EsiResult
     {
         $response = $this->transport->invoke('post', '/characters/{character_id}/fittings', ['character_id' => $characterId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['postCharactersCharacterIdFittings'] ?? null);
     }
 
     /**
@@ -49,6 +49,6 @@ class FittingsResource extends AbstractResource
     public function deleteCharactersCharacterIdFittingsFittingId(int $characterId, int $fittingId): EsiResult
     {
         $response = $this->transport->invoke('delete', '/characters/{character_id}/fittings/{fitting_id}', ['character_id' => $characterId, 'fitting_id' => $fittingId], [], []);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['deleteCharactersCharacterIdFittingsFittingId'] ?? null);
     }
 }

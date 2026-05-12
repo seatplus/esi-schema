@@ -16,7 +16,8 @@ final class MarketsGroupsMarketGroupIdGet extends AbstractEsiDto
         public readonly string $name,
         public readonly array $types,
         public readonly ?int $parent_group_id = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

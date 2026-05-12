@@ -25,6 +25,7 @@ class StatusResource extends AbstractResource
         $dto = StatusGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getStatus'] ?? null;
         return $dto;
     }
 }

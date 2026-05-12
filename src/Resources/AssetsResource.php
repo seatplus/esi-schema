@@ -38,7 +38,7 @@ class AssetsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdAssetsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdAssets'] ?? null);
     }
 
     /**
@@ -51,7 +51,7 @@ class AssetsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdAssetsLocationsPostItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['postCharactersCharacterIdAssetsLocations'] ?? null);
     }
 
     /**
@@ -64,7 +64,7 @@ class AssetsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdAssetsNamesPostItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['postCharactersCharacterIdAssetsNames'] ?? null);
     }
 
     /**
@@ -78,7 +78,7 @@ class AssetsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdAssetsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCorporationsCorporationIdAssets'] ?? null);
     }
 
     /**
@@ -91,7 +91,7 @@ class AssetsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdAssetsLocationsPostItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['postCorporationsCorporationIdAssetsLocations'] ?? null);
     }
 
     /**
@@ -104,6 +104,6 @@ class AssetsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdAssetsNamesPostItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['postCorporationsCorporationIdAssetsNames'] ?? null);
     }
 }

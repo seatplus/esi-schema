@@ -28,6 +28,7 @@ class ClonesResource extends AbstractResource
         $dto = CharactersCharacterIdClonesGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdClones'] ?? null;
         return $dto;
     }
 
@@ -40,6 +41,6 @@ class ClonesResource extends AbstractResource
         $response = $this->transport->invoke('get', '/characters/{character_id}/implants', ['character_id' => $characterId], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data);
+        return EsiResult::fromRaw($response, $data, static::OPERATION_META['getCharactersCharacterIdImplants'] ?? null);
     }
 }

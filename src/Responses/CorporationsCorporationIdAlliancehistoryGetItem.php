@@ -15,7 +15,8 @@ final class CorporationsCorporationIdAlliancehistoryGetItem extends AbstractEsiD
         public readonly string $start_date,
         public readonly ?int $alliance_id = null,
         public readonly ?bool $is_deleted = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

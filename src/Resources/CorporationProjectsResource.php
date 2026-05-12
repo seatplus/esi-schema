@@ -32,6 +32,7 @@ class CorporationProjectsResource extends AbstractResource
         $dto = CorporationsProjectsListing::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCorporationsProjectsListing'] ?? null;
         return $dto;
     }
 
@@ -45,6 +46,7 @@ class CorporationProjectsResource extends AbstractResource
         $dto = CorporationsProjectsDetail::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCorporationsProjectsDetail'] ?? null;
         return $dto;
     }
 
@@ -58,6 +60,7 @@ class CorporationProjectsResource extends AbstractResource
         $dto = CorporationsProjectsContribution::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCorporationsProjectsContribution'] ?? null;
         return $dto;
     }
 
@@ -71,6 +74,7 @@ class CorporationProjectsResource extends AbstractResource
         $dto = CorporationsProjectsContributors::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCorporationsProjectsContributors'] ?? null;
         return $dto;
     }
 }

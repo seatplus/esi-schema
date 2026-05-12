@@ -41,6 +41,7 @@ class FactionWarfareResource extends AbstractResource
         $dto = CharactersCharacterIdFwStatsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdFwStats'] ?? null;
         return $dto;
     }
 
@@ -54,6 +55,7 @@ class FactionWarfareResource extends AbstractResource
         $dto = CorporationsCorporationIdFwStatsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCorporationsCorporationIdFwStats'] ?? null;
         return $dto;
     }
 
@@ -66,6 +68,7 @@ class FactionWarfareResource extends AbstractResource
         $dto = FwLeaderboardsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getFwLeaderboards'] ?? null;
         return $dto;
     }
 
@@ -78,6 +81,7 @@ class FactionWarfareResource extends AbstractResource
         $dto = FwLeaderboardsCharactersGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getFwLeaderboardsCharacters'] ?? null;
         return $dto;
     }
 
@@ -90,6 +94,7 @@ class FactionWarfareResource extends AbstractResource
         $dto = FwLeaderboardsCorporationsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getFwLeaderboardsCorporations'] ?? null;
         return $dto;
     }
 
@@ -102,7 +107,7 @@ class FactionWarfareResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => FwStatsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getFwStats'] ?? null);
     }
 
     /**
@@ -114,7 +119,7 @@ class FactionWarfareResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => FwSystemsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getFwSystems'] ?? null);
     }
 
     /**
@@ -126,6 +131,6 @@ class FactionWarfareResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => FwWarsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getFwWars'] ?? null);
     }
 }

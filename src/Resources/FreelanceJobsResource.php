@@ -36,6 +36,7 @@ class FreelanceJobsResource extends AbstractResource
         $dto = CharactersFreelanceJobsListing::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCharactersFreelanceJobsListing'] ?? null;
         return $dto;
     }
 
@@ -49,6 +50,7 @@ class FreelanceJobsResource extends AbstractResource
         $dto = CharactersFreelanceJobsParticipation::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCharactersFreelanceJobsParticipation'] ?? null;
         return $dto;
     }
 
@@ -62,6 +64,7 @@ class FreelanceJobsResource extends AbstractResource
         $dto = CorporationsFreelanceJobsListing::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCorporationsFreelanceJobsListing'] ?? null;
         return $dto;
     }
 
@@ -75,6 +78,7 @@ class FreelanceJobsResource extends AbstractResource
         $dto = CorporationsFreelanceJobsParticipants::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCorporationsFreelanceJobsParticipants'] ?? null;
         return $dto;
     }
 
@@ -87,6 +91,7 @@ class FreelanceJobsResource extends AbstractResource
         $dto = FreelanceJobsListing::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getFreelanceJobsListing'] ?? null;
         return $dto;
     }
 
@@ -99,6 +104,7 @@ class FreelanceJobsResource extends AbstractResource
         $dto = FreelanceJobsDetail::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getFreelanceJobsDetail'] ?? null;
         return $dto;
     }
 }

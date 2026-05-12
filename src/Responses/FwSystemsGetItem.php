@@ -17,7 +17,8 @@ final class FwSystemsGetItem extends AbstractEsiDto
         public readonly int $solar_system_id,
         public readonly int $victory_points,
         public readonly int $victory_points_threshold,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

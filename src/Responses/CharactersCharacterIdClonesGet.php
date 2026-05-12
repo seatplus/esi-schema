@@ -15,7 +15,8 @@ final class CharactersCharacterIdClonesGet extends AbstractEsiDto
         public readonly mixed $home_location = null,
         public readonly ?string $last_clone_jump_date = null,
         public readonly ?string $last_station_change_date = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

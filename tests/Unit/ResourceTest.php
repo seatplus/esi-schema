@@ -163,44 +163,67 @@ it('FreelanceJobsResource::metaFor marks cursor endpoints correctly', function (
 });
 
 // ---------------------------------------------------------------------------
-// Typed convenience accessors
+// Result-level metadata accessors (injected at call time from OPERATION_META)
 // ---------------------------------------------------------------------------
 
-it('AssetsResource::rateLimitGroup returns the group name', function (): void {
-    expect(AssetsResource::rateLimitGroup('getCharactersCharacterIdAssets'))->toBe('char-asset')
-        ->and(AssetsResource::rateLimitGroup('getCorporationsCorporationIdAssets'))->toBe('corp-asset');
+it('EsiResult carries rate-limit metadata from char assets call', function (): void {
+    $payload = [
+        (object) [
+            'item_id'       => 1001,
+            'location_id'   => 60003760,
+            'location_flag' => 'Hangar',
+            'location_type' => 'station',
+            'type_id'       => 35,
+            'quantity'      => 100,
+            'is_singleton'  => false,
+        ],
+    ];
+
+    $resource = new AssetsResource(mockTransport($payload));
+    $result   = $resource->getCharactersCharacterIdAssets(12345);
+
+    expect($result->rateLimitGroup())->toBe('char-asset')
+        ->and($result->rateLimitMaxTokens())->toBe(1800)
+        ->and($result->rateLimitWindow())->toBe('15m')
+        ->and($result->cacheAge())->toBe(3600)
+        ->and($result->requiredRoles())->toBeEmpty()
+        ->and($result->usesCursor())->toBeFalse();
 });
 
-it('AssetsResource::rateLimitMaxTokens returns the bucket size', function (): void {
-    expect(AssetsResource::rateLimitMaxTokens('getCharactersCharacterIdAssets'))->toBe(1800);
+it('EsiResult carries different rate-limit group for corp assets call', function (): void {
+    $resource = new AssetsResource(mockTransport([]));
+    $result   = $resource->getCorporationsCorporationIdAssets(98000001);
+
+    expect($result->rateLimitGroup())->toBe('corp-asset')
+        ->and($result->requiredRoles())->toBe(['Director']);
 });
 
-it('AssetsResource::rateLimitWindow returns the window string', function (): void {
-    expect(AssetsResource::rateLimitWindow('getCharactersCharacterIdAssets'))->toBe('15m');
+it('DTO carries metadata from object endpoint call', function (): void {
+    $payload = (object) [
+        'name'                   => 'Goonswarm Federation',
+        'ticker'                 => 'CONDI',
+        'creator_id'             => 1,
+        'creator_corporation_id' => 2,
+        'date_founded'           => '2006-12-26T00:00:00Z',
+    ];
+
+    $resource = new \Seatplus\EsiSchema\Resources\AllianceResource(mockTransport($payload));
+    $dto      = $resource->getAlliancesAllianceId(99000006);
+
+    expect($dto->rateLimitGroup())->toBeNull()  // alliance endpoint has no rate-limit in spec
+        ->and($dto->cacheAge())->toBeGreaterThan(0)
+        ->and($dto->requiredRoles())->toBeEmpty();
 });
 
-it('AssetsResource::cacheAge returns TTL for cached endpoints', function (): void {
-    expect(AssetsResource::cacheAge('getCharactersCharacterIdAssets'))->toBe(3600)
-        ->and(AssetsResource::cacheAge('postCharactersCharacterIdAssetsLocations'))->toBeNull();
-});
+it('EsiResult meta accessors return null/false when no meta is set', function (): void {
+    $raw    = new EsiRawResponse(data: [], isCachedLoad: false, pages: 1);
+    $result = EsiResult::fromRaw($raw, []);  // no meta passed
 
-it('AssetsResource::requiredRoles returns roles for corp endpoints', function (): void {
-    expect(AssetsResource::requiredRoles('getCorporationsCorporationIdAssets'))->toBe(['Director'])
-        ->and(AssetsResource::requiredRoles('getCharactersCharacterIdAssets'))->toBeEmpty();
+    expect($result->rateLimitGroup())->toBeNull()
+        ->and($result->rateLimitMaxTokens())->toBeNull()
+        ->and($result->rateLimitWindow())->toBeNull()
+        ->and($result->cacheAge())->toBeNull()
+        ->and($result->requiredRoles())->toBeEmpty()
+        ->and($result->usesCursor())->toBeFalse();
 });
-
-it('FreelanceJobsResource::usesCursor is true for cursor routes', function (): void {
-    expect(\Seatplus\EsiSchema\Resources\FreelanceJobsResource::usesCursor('getFreelanceJobsListing'))->toBeTrue()
-        ->and(AssetsResource::usesCursor('getCharactersCharacterIdAssets'))->toBeFalse();
-});
-
-it('accessors return null/empty for unknown operationId', function (): void {
-    expect(AssetsResource::rateLimitGroup('doesNotExist'))->toBeNull()
-        ->and(AssetsResource::rateLimitMaxTokens('doesNotExist'))->toBeNull()
-        ->and(AssetsResource::rateLimitWindow('doesNotExist'))->toBeNull()
-        ->and(AssetsResource::cacheAge('doesNotExist'))->toBeNull()
-        ->and(AssetsResource::requiredRoles('doesNotExist'))->toBeEmpty()
-        ->and(AssetsResource::usesCursor('doesNotExist'))->toBeFalse();
-});
-
 

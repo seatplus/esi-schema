@@ -21,7 +21,8 @@ final class UniverseIdsPost extends AbstractEsiDto
         public readonly ?array $regions = null,
         public readonly ?array $stations = null,
         public readonly ?array $systems = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

@@ -14,7 +14,8 @@ final class CorporationCorporationIdMiningObserversGetItem extends AbstractEsiDt
         public readonly string $last_updated,
         public readonly int $observer_id,
         public readonly string $observer_type,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

@@ -21,7 +21,8 @@ final class DogmaAttributesAttributeIdGet extends AbstractEsiDto
         public readonly ?bool $published = null,
         public readonly ?bool $stackable = null,
         public readonly ?int $unit_id = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

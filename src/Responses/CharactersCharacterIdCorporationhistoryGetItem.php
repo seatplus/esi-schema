@@ -15,7 +15,8 @@ final class CharactersCharacterIdCorporationhistoryGetItem extends AbstractEsiDt
         public readonly int $record_id,
         public readonly string $start_date,
         public readonly ?bool $is_deleted = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

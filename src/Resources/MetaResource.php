@@ -29,6 +29,7 @@ class MetaResource extends AbstractResource
         $dto = MetaChangelog::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getMetaChangelog'] ?? null;
         return $dto;
     }
 
@@ -41,6 +42,7 @@ class MetaResource extends AbstractResource
         $dto = MetaCompatibilityDates::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getMetaCompatibilityDates'] ?? null;
         return $dto;
     }
 
@@ -53,6 +55,7 @@ class MetaResource extends AbstractResource
         $dto = MetaStatus::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getMetaStatus'] ?? null;
         return $dto;
     }
 }

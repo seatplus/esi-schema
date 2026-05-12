@@ -32,7 +32,8 @@ final class DogmaEffectsEffectIdGet extends AbstractEsiDto
         public readonly ?int $range_attribute_id = null,
         public readonly ?bool $range_chance = null,
         public readonly ?int $tracking_speed_attribute_id = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

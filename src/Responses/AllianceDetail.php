@@ -18,7 +18,8 @@ final class AllianceDetail extends AbstractEsiDto
         public readonly string $ticker,
         public readonly ?int $executor_corporation_id = null,
         public readonly ?int $faction_id = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

@@ -15,7 +15,8 @@ final class CharactersSkillsSkill extends AbstractEsiDto
         public readonly int $skill_id,
         public readonly int $skillpoints_in_skill,
         public readonly int $trained_skill_level,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

@@ -18,7 +18,8 @@ final class CharactersCharacterIdMailGetItem extends AbstractEsiDto
         public readonly ?array $recipients = null,
         public readonly ?string $subject = null,
         public readonly ?string $timestamp = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

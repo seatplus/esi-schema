@@ -15,7 +15,8 @@ final class CharactersCharacterIdContractsContractIdBidsGetItem extends Abstract
         public readonly int $bid_id,
         public readonly int $bidder_id,
         public readonly string $date_bid,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

@@ -14,7 +14,8 @@ final class CorporationsProjectsDetailConfigurationmanufactureitem extends Abstr
         public readonly string $owner,
         public readonly ?array $docking_locations = null,
         public readonly ?array $items = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

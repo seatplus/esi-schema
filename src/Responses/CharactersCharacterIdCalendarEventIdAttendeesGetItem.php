@@ -13,7 +13,8 @@ final class CharactersCharacterIdCalendarEventIdAttendeesGetItem extends Abstrac
     public function __construct(
         public readonly ?int $character_id = null,
         public readonly ?string $event_response = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

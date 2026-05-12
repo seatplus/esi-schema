@@ -14,7 +14,8 @@ final class FleetsFleetIdWingsGetItem extends AbstractEsiDto
         public readonly int $id,
         public readonly string $name,
         public readonly array $squads,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

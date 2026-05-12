@@ -16,7 +16,8 @@ final class CorporationCorporationIdMiningObserversObserverIdGetItem extends Abs
         public readonly int $quantity,
         public readonly int $recorded_corporation_id,
         public readonly int $type_id,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

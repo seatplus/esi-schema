@@ -20,7 +20,8 @@ final class ContractsPublicItemsContractIdGetItem extends AbstractEsiDto
         public readonly ?int $material_efficiency = null,
         public readonly ?int $runs = null,
         public readonly ?int $time_efficiency = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

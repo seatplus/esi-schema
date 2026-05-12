@@ -13,7 +13,8 @@ final class WarsWarIdKillmailsGetItem extends AbstractEsiDto
     public function __construct(
         public readonly string $killmail_hash,
         public readonly int $killmail_id,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

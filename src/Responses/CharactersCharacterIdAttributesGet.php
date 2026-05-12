@@ -19,7 +19,8 @@ final class CharactersCharacterIdAttributesGet extends AbstractEsiDto
         public readonly ?string $accrued_remap_cooldown_date = null,
         public readonly ?int $bonus_remaps = null,
         public readonly ?string $last_remap_date = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

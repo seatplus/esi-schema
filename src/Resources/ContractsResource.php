@@ -44,7 +44,7 @@ class ContractsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdContractsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdContracts'] ?? null);
     }
 
     /**
@@ -57,7 +57,7 @@ class ContractsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdContractsContractIdBidsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdContractsContractIdBids'] ?? null);
     }
 
     /**
@@ -70,7 +70,7 @@ class ContractsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdContractsContractIdItemsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdContractsContractIdItems'] ?? null);
     }
 
     /**
@@ -83,7 +83,7 @@ class ContractsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => ContractsPublicBidsContractIdGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getContractsPublicBidsContractId'] ?? null);
     }
 
     /**
@@ -96,7 +96,7 @@ class ContractsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => ContractsPublicItemsContractIdGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getContractsPublicItemsContractId'] ?? null);
     }
 
     /**
@@ -109,7 +109,7 @@ class ContractsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => ContractsPublicRegionIdGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getContractsPublicRegionId'] ?? null);
     }
 
     /**
@@ -123,7 +123,7 @@ class ContractsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdContractsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCorporationsCorporationIdContracts'] ?? null);
     }
 
     /**
@@ -137,7 +137,7 @@ class ContractsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdContractsContractIdBidsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCorporationsCorporationIdContractsContractIdBids'] ?? null);
     }
 
     /**
@@ -150,6 +150,6 @@ class ContractsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdContractsContractIdItemsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCorporationsCorporationIdContractsContractIdItems'] ?? null);
     }
 }

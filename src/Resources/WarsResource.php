@@ -28,7 +28,7 @@ class WarsResource extends AbstractResource
         $response = $this->transport->invoke('get', '/wars', [], ['max_war_id' => $maxWarId]);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data);
+        return EsiResult::fromRaw($response, $data, static::OPERATION_META['getWars'] ?? null);
     }
 
     /**
@@ -40,6 +40,7 @@ class WarsResource extends AbstractResource
         $dto = WarsWarIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getWarsWarId'] ?? null;
         return $dto;
     }
 
@@ -53,6 +54,6 @@ class WarsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => WarsWarIdKillmailsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getWarsWarIdKillmails'] ?? null);
     }
 }

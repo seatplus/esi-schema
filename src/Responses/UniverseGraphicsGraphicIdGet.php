@@ -19,7 +19,8 @@ final class UniverseGraphicsGraphicIdGet extends AbstractEsiDto
         public readonly ?string $sof_fation_name = null,
         public readonly ?string $sof_hull_name = null,
         public readonly ?string $sof_race_name = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

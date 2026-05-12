@@ -16,7 +16,8 @@ final class FreelanceJobsDetailContribution extends AbstractEsiDto
         public readonly ?float $reward_per_contribution = null,
         public readonly ?int $submission_limit = null,
         public readonly ?float $submission_multiplier = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

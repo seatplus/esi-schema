@@ -14,7 +14,8 @@ final class ContractsPublicBidsContractIdGetItem extends AbstractEsiDto
         public readonly float $amount,
         public readonly int $bid_id,
         public readonly string $date_bid,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

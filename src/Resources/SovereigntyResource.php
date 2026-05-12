@@ -30,7 +30,7 @@ class SovereigntyResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => SovereigntyCampaignsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getSovereigntyCampaigns'] ?? null);
     }
 
     /**
@@ -42,7 +42,7 @@ class SovereigntyResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => SovereigntyMapGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getSovereigntyMap'] ?? null);
     }
 
     /**
@@ -54,6 +54,6 @@ class SovereigntyResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => SovereigntyStructuresGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getSovereigntyStructures'] ?? null);
     }
 }

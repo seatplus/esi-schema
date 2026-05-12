@@ -13,7 +13,8 @@ final class FreelanceJobsDetailRestrictions extends AbstractEsiDto
     public function __construct(
         public readonly ?int $maximum_age = null,
         public readonly ?int $minimum_age = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

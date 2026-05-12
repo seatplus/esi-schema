@@ -16,7 +16,8 @@ final class DogmaDynamicItemsTypeIdItemIdGet extends AbstractEsiDto
         public readonly array $dogma_effects,
         public readonly int $mutator_type_id,
         public readonly int $source_type_id,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

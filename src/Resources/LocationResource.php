@@ -30,6 +30,7 @@ class LocationResource extends AbstractResource
         $dto = CharactersCharacterIdLocationGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdLocation'] ?? null;
         return $dto;
     }
 
@@ -43,6 +44,7 @@ class LocationResource extends AbstractResource
         $dto = CharactersCharacterIdOnlineGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdOnline'] ?? null;
         return $dto;
     }
 
@@ -56,6 +58,7 @@ class LocationResource extends AbstractResource
         $dto = CharactersCharacterIdShipGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdShip'] ?? null;
         return $dto;
     }
 }

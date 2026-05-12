@@ -35,7 +35,7 @@ class WalletResource extends AbstractResource
         $response = $this->transport->invoke('get', '/characters/{character_id}/wallet', ['character_id' => $characterId], []);
         /** @var float $scalar */
         $scalar = (float) $response->data;
-        return EsiResult::fromRaw($response, $scalar);
+        return EsiResult::fromRaw($response, $scalar, static::OPERATION_META['getCharactersCharacterIdWallet'] ?? null);
     }
 
     /**
@@ -49,7 +49,7 @@ class WalletResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdWalletJournalGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdWalletJournal'] ?? null);
     }
 
     /**
@@ -62,7 +62,7 @@ class WalletResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdWalletTransactionsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdWalletTransactions'] ?? null);
     }
 
     /**
@@ -75,7 +75,7 @@ class WalletResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdWalletsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCorporationsCorporationIdWallets'] ?? null);
     }
 
     /**
@@ -89,7 +89,7 @@ class WalletResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdWalletsDivisionJournalGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCorporationsCorporationIdWalletsDivisionJournal'] ?? null);
     }
 
     /**
@@ -102,6 +102,6 @@ class WalletResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdWalletsDivisionTransactionsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCorporationsCorporationIdWalletsDivisionTransactions'] ?? null);
     }
 }

@@ -15,7 +15,8 @@ final class StatusGet extends AbstractEsiDto
         public readonly string $server_version,
         public readonly string $start_time,
         public readonly ?bool $vip = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

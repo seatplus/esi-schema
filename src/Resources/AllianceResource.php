@@ -29,7 +29,7 @@ class AllianceResource extends AbstractResource
         $response = $this->transport->invoke('get', '/alliances', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data);
+        return EsiResult::fromRaw($response, $data, static::OPERATION_META['getAlliances'] ?? null);
     }
 
     /**
@@ -41,6 +41,7 @@ class AllianceResource extends AbstractResource
         $dto = AllianceDetail::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getAlliancesAllianceId'] ?? null;
         return $dto;
     }
 
@@ -52,7 +53,7 @@ class AllianceResource extends AbstractResource
         $response = $this->transport->invoke('get', '/alliances/{alliance_id}/corporations', ['alliance_id' => $allianceId], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data);
+        return EsiResult::fromRaw($response, $data, static::OPERATION_META['getAlliancesAllianceIdCorporations'] ?? null);
     }
 
     /**
@@ -64,6 +65,7 @@ class AllianceResource extends AbstractResource
         $dto = AlliancesAllianceIdIconsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getAlliancesAllianceIdIcons'] ?? null;
         return $dto;
     }
 }

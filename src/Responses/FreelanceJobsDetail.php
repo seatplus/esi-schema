@@ -4,13 +4,6 @@ namespace Seatplus\EsiSchema\Responses;
 
 use Seatplus\EsiSchema\AbstractEsiDto;
 
-use Seatplus\EsiSchema\Responses\FreelanceJobsDetailAccessandvisibility;
-use Seatplus\EsiSchema\Responses\FreelanceJobsDetailConfiguration;
-use Seatplus\EsiSchema\Responses\FreelanceJobsDetailDetails;
-use Seatplus\EsiSchema\Responses\FreelanceJobsDetailProgress;
-use Seatplus\EsiSchema\Responses\FreelanceJobsDetailContribution;
-use Seatplus\EsiSchema\Responses\FreelanceJobsDetailReward;
-
 /**
  * Generated from ESI OpenAPI spec (compatibility date: 2025-12-16).
  * Do not edit manually — run bin/generate.php instead.
@@ -28,7 +21,8 @@ final class FreelanceJobsDetail extends AbstractEsiDto
         public readonly string $state,
         public readonly ?FreelanceJobsDetailContribution $contribution = null,
         public readonly ?FreelanceJobsDetailReward $reward = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

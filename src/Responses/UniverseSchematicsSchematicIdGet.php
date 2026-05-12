@@ -13,7 +13,8 @@ final class UniverseSchematicsSchematicIdGet extends AbstractEsiDto
     public function __construct(
         public readonly int $cycle_time,
         public readonly string $schematic_name,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

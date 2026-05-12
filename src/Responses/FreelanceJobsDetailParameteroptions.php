@@ -12,7 +12,8 @@ final class FreelanceJobsDetailParameteroptions extends AbstractEsiDto
 {
     public function __construct(
         public readonly array $selected,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

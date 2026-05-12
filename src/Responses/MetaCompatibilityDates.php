@@ -12,7 +12,8 @@ final class MetaCompatibilityDates extends AbstractEsiDto
 {
     public function __construct(
         public readonly array $compatibility_dates,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

@@ -41,7 +41,7 @@ class IndustryResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdIndustryJobsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdIndustryJobs'] ?? null);
     }
 
     /**
@@ -55,7 +55,7 @@ class IndustryResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdMiningGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdMining'] ?? null);
     }
 
     /**
@@ -69,7 +69,7 @@ class IndustryResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationCorporationIdMiningExtractionsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCorporationCorporationIdMiningExtractions'] ?? null);
     }
 
     /**
@@ -83,7 +83,7 @@ class IndustryResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationCorporationIdMiningObserversGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCorporationCorporationIdMiningObservers'] ?? null);
     }
 
     /**
@@ -97,7 +97,7 @@ class IndustryResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationCorporationIdMiningObserversObserverIdGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCorporationCorporationIdMiningObserversObserverId'] ?? null);
     }
 
     /**
@@ -111,7 +111,7 @@ class IndustryResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdIndustryJobsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCorporationsCorporationIdIndustryJobs'] ?? null);
     }
 
     /**
@@ -123,7 +123,7 @@ class IndustryResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => IndustryFacilitiesGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getIndustryFacilities'] ?? null);
     }
 
     /**
@@ -135,6 +135,6 @@ class IndustryResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => IndustrySystemsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getIndustrySystems'] ?? null);
     }
 }

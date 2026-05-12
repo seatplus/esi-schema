@@ -16,7 +16,8 @@ final class CharactersCharacterIdNotificationsContactsGetItem extends AbstractEs
         public readonly string $send_date,
         public readonly int $sender_character_id,
         public readonly float $standing_level,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

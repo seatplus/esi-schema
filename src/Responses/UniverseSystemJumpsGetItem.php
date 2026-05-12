@@ -13,7 +13,8 @@ final class UniverseSystemJumpsGetItem extends AbstractEsiDto
     public function __construct(
         public readonly int $ship_jumps,
         public readonly int $system_id,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

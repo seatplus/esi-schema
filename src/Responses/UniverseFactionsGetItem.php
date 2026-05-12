@@ -21,7 +21,8 @@ final class UniverseFactionsGetItem extends AbstractEsiDto
         public readonly ?int $corporation_id = null,
         public readonly ?int $militia_corporation_id = null,
         public readonly ?int $solar_system_id = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

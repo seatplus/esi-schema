@@ -30,6 +30,7 @@ class SkillsResource extends AbstractResource
         $dto = CharactersCharacterIdAttributesGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdAttributes'] ?? null;
         return $dto;
     }
 
@@ -40,7 +41,7 @@ class SkillsResource extends AbstractResource
     public function getCharactersCharacterIdSkillqueue(int $characterId): EsiResult
     {
         $response = $this->transport->invoke('get', '/characters/{character_id}/skillqueue', ['character_id' => $characterId], []);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['getCharactersCharacterIdSkillqueue'] ?? null);
     }
 
     /**
@@ -53,6 +54,7 @@ class SkillsResource extends AbstractResource
         $dto = CharactersSkills::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdSkills'] ?? null;
         return $dto;
     }
 }

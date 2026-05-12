@@ -22,7 +22,8 @@ final class CharactersCharacterIdSearchGet extends AbstractEsiDto
         public readonly ?array $solar_system = null,
         public readonly ?array $station = null,
         public readonly ?array $structure = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

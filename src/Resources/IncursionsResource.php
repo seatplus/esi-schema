@@ -26,6 +26,6 @@ class IncursionsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => IncursionsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getIncursions'] ?? null);
     }
 }

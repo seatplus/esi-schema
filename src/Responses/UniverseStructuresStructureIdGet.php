@@ -16,7 +16,8 @@ final class UniverseStructuresStructureIdGet extends AbstractEsiDto
         public readonly int $solar_system_id,
         public readonly mixed $position = null,
         public readonly ?int $type_id = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

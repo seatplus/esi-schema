@@ -23,7 +23,8 @@ final class MarketsRegionIdOrdersGetItem extends AbstractEsiDto
         public readonly int $type_id,
         public readonly int $volume_remain,
         public readonly int $volume_total,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

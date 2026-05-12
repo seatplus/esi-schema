@@ -16,7 +16,8 @@ final class CorporationsCorporationIdContactsGetItem extends AbstractEsiDto
         public readonly float $standing,
         public readonly ?bool $is_watched = null,
         public readonly ?array $label_ids = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

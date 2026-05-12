@@ -13,7 +13,8 @@ final class RouteConnection extends AbstractEsiDto
     public function __construct(
         public readonly int $from,
         public readonly int $to,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

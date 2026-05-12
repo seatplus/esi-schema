@@ -12,7 +12,8 @@ final class CorporationsProjectsDetailConfigurationmatcherfaction extends Abstra
 {
     public function __construct(
         public readonly ?int $faction_id = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

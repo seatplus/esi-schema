@@ -38,7 +38,7 @@ class MailResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdMailGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdMail'] ?? null);
     }
 
     /**
@@ -48,7 +48,7 @@ class MailResource extends AbstractResource
     public function postCharactersCharacterIdMail(mixed $requestBody, int $characterId): EsiResult
     {
         $response = $this->transport->invoke('post', '/characters/{character_id}/mail', ['character_id' => $characterId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['postCharactersCharacterIdMail'] ?? null);
     }
 
     /**
@@ -61,6 +61,7 @@ class MailResource extends AbstractResource
         $dto = CharactersCharacterIdMailLabelsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdMailLabels'] ?? null;
         return $dto;
     }
 
@@ -71,7 +72,7 @@ class MailResource extends AbstractResource
     public function postCharactersCharacterIdMailLabels(mixed $requestBody, int $characterId): EsiResult
     {
         $response = $this->transport->invoke('post', '/characters/{character_id}/mail/labels', ['character_id' => $characterId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['postCharactersCharacterIdMailLabels'] ?? null);
     }
 
     /**
@@ -81,7 +82,7 @@ class MailResource extends AbstractResource
     public function deleteCharactersCharacterIdMailLabelsLabelId(int $characterId, int $labelId): EsiResult
     {
         $response = $this->transport->invoke('delete', '/characters/{character_id}/mail/labels/{label_id}', ['character_id' => $characterId, 'label_id' => $labelId], [], []);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['deleteCharactersCharacterIdMailLabelsLabelId'] ?? null);
     }
 
     /**
@@ -94,7 +95,7 @@ class MailResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdMailListsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdMailLists'] ?? null);
     }
 
     /**
@@ -104,7 +105,7 @@ class MailResource extends AbstractResource
     public function deleteCharactersCharacterIdMailMailId(int $characterId, int $mailId): EsiResult
     {
         $response = $this->transport->invoke('delete', '/characters/{character_id}/mail/{mail_id}', ['character_id' => $characterId, 'mail_id' => $mailId], [], []);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['deleteCharactersCharacterIdMailMailId'] ?? null);
     }
 
     /**
@@ -117,6 +118,7 @@ class MailResource extends AbstractResource
         $dto = CharactersCharacterIdMailMailIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdMailMailId'] ?? null;
         return $dto;
     }
 
@@ -127,6 +129,6 @@ class MailResource extends AbstractResource
     public function putCharactersCharacterIdMailMailId(mixed $requestBody, int $characterId, int $mailId): EsiResult
     {
         $response = $this->transport->invoke('put', '/characters/{character_id}/mail/{mail_id}', ['character_id' => $characterId, 'mail_id' => $mailId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['putCharactersCharacterIdMailMailId'] ?? null);
     }
 }

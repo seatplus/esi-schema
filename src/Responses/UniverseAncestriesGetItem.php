@@ -17,7 +17,8 @@ final class UniverseAncestriesGetItem extends AbstractEsiDto
         public readonly string $name,
         public readonly ?int $icon_id = null,
         public readonly ?string $short_description = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

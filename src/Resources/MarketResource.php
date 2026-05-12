@@ -45,7 +45,7 @@ class MarketResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdOrdersGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdOrders'] ?? null);
     }
 
     /**
@@ -59,7 +59,7 @@ class MarketResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdOrdersHistoryGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdOrdersHistory'] ?? null);
     }
 
     /**
@@ -73,7 +73,7 @@ class MarketResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdOrdersGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCorporationsCorporationIdOrders'] ?? null);
     }
 
     /**
@@ -87,7 +87,7 @@ class MarketResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdOrdersHistoryGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCorporationsCorporationIdOrdersHistory'] ?? null);
     }
 
     /**
@@ -98,7 +98,7 @@ class MarketResource extends AbstractResource
         $response = $this->transport->invoke('get', '/markets/groups', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data);
+        return EsiResult::fromRaw($response, $data, static::OPERATION_META['getMarketsGroups'] ?? null);
     }
 
     /**
@@ -110,6 +110,7 @@ class MarketResource extends AbstractResource
         $dto = MarketsGroupsMarketGroupIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getMarketsGroupsMarketGroupId'] ?? null;
         return $dto;
     }
 
@@ -122,7 +123,7 @@ class MarketResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => MarketsPricesGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getMarketsPrices'] ?? null);
     }
 
     /**
@@ -136,7 +137,7 @@ class MarketResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => MarketsStructuresStructureIdGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getMarketsStructuresStructureId'] ?? null);
     }
 
     /**
@@ -148,7 +149,7 @@ class MarketResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => MarketsRegionIdHistoryGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getMarketsRegionIdHistory'] ?? null);
     }
 
     /**
@@ -161,7 +162,7 @@ class MarketResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => MarketsRegionIdOrdersGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getMarketsRegionIdOrders'] ?? null);
     }
 
     /**
@@ -173,6 +174,6 @@ class MarketResource extends AbstractResource
         $response = $this->transport->invoke('get', '/markets/{region_id}/types', ['region_id' => $regionId], ['page' => $page]);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data);
+        return EsiResult::fromRaw($response, $data, static::OPERATION_META['getMarketsRegionIdTypes'] ?? null);
     }
 }

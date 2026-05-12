@@ -15,7 +15,8 @@ final class UniverseRegionsRegionIdGet extends AbstractEsiDto
         public readonly string $name,
         public readonly int $region_id,
         public readonly ?string $description = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

@@ -4,8 +4,6 @@ namespace Seatplus\EsiSchema\Responses;
 
 use Seatplus\EsiSchema\AbstractEsiDto;
 
-use Seatplus\EsiSchema\Responses\FreelanceJobsDetailRestrictions;
-
 /**
  * Generated from ESI OpenAPI spec (compatibility date: 2025-12-16).
  * Do not edit manually — run bin/generate.php instead.
@@ -16,7 +14,8 @@ final class FreelanceJobsDetailAccessandvisibility extends AbstractEsiDto
         public readonly bool $acl_protected,
         public readonly ?array $broadcast_locations = null,
         public readonly ?FreelanceJobsDetailRestrictions $restrictions = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

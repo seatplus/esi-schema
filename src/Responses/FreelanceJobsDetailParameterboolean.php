@@ -12,7 +12,8 @@ final class FreelanceJobsDetailParameterboolean extends AbstractEsiDto
 {
     public function __construct(
         public readonly bool $value,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

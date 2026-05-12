@@ -14,7 +14,8 @@ final class CorporationsCorporationIdIconsGet extends AbstractEsiDto
         public readonly ?string $px128x128 = null,
         public readonly ?string $px256x256 = null,
         public readonly ?string $px64x64 = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

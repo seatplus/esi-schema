@@ -19,7 +19,8 @@ final class CorporationsCorporationIdAssetsGetItem extends AbstractEsiDto
         public readonly int $quantity,
         public readonly int $type_id,
         public readonly ?bool $is_blueprint_copy = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

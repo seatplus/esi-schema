@@ -16,7 +16,8 @@ final class CharactersCharacterIdFittingsGetItem extends AbstractEsiDto
         public readonly array $items,
         public readonly string $name,
         public readonly int $ship_type_id,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

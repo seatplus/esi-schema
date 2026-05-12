@@ -14,7 +14,8 @@ final class CorporationsProjectsDetailConfigurationcapturefwcomplex extends Abst
         public readonly ?array $archetypes = null,
         public readonly ?array $factions = null,
         public readonly ?array $locations = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

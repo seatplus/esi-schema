@@ -17,7 +17,8 @@ final class CharactersCharacterIdContactsGetItem extends AbstractEsiDto
         public readonly ?bool $is_blocked = null,
         public readonly ?bool $is_watched = null,
         public readonly ?array $label_ids = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

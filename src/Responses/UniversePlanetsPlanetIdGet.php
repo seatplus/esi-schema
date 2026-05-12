@@ -16,7 +16,8 @@ final class UniversePlanetsPlanetIdGet extends AbstractEsiDto
         public readonly mixed $position,
         public readonly int $system_id,
         public readonly int $type_id,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

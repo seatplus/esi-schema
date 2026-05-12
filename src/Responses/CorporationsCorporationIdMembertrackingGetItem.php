@@ -18,7 +18,8 @@ final class CorporationsCorporationIdMembertrackingGetItem extends AbstractEsiDt
         public readonly ?string $logon_date = null,
         public readonly ?int $ship_type_id = null,
         public readonly ?string $start_date = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

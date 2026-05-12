@@ -19,7 +19,8 @@ final class UniverseStarsStarIdGet extends AbstractEsiDto
         public readonly string $spectral_class,
         public readonly int $temperature,
         public readonly int $type_id,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

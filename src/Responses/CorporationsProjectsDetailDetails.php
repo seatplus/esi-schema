@@ -16,7 +16,8 @@ final class CorporationsProjectsDetailDetails extends AbstractEsiDto
         public readonly string $description,
         public readonly ?string $expires = null,
         public readonly ?string $finished = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

@@ -13,7 +13,8 @@ final class FwWarsGetItem extends AbstractEsiDto
     public function __construct(
         public readonly int $against_id,
         public readonly int $faction_id,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

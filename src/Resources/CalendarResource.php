@@ -32,7 +32,7 @@ class CalendarResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdCalendarGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdCalendar'] ?? null);
     }
 
     /**
@@ -45,6 +45,7 @@ class CalendarResource extends AbstractResource
         $dto = CharactersCharacterIdCalendarEventIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdCalendarEventId'] ?? null;
         return $dto;
     }
 
@@ -55,7 +56,7 @@ class CalendarResource extends AbstractResource
     public function putCharactersCharacterIdCalendarEventId(mixed $requestBody, int $characterId, int $eventId): EsiResult
     {
         $response = $this->transport->invoke('put', '/characters/{character_id}/calendar/{event_id}', ['character_id' => $characterId, 'event_id' => $eventId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['putCharactersCharacterIdCalendarEventId'] ?? null);
     }
 
     /**
@@ -68,6 +69,6 @@ class CalendarResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdCalendarEventIdAttendeesGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdCalendarEventIdAttendees'] ?? null);
     }
 }

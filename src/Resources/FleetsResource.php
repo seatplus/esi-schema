@@ -43,6 +43,7 @@ class FleetsResource extends AbstractResource
         $dto = CharactersCharacterIdFleetGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdFleet'] ?? null;
         return $dto;
     }
 
@@ -56,6 +57,7 @@ class FleetsResource extends AbstractResource
         $dto = FleetsFleetIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getFleetsFleetId'] ?? null;
         return $dto;
     }
 
@@ -66,7 +68,7 @@ class FleetsResource extends AbstractResource
     public function putFleetsFleetId(mixed $requestBody, int $fleetId): EsiResult
     {
         $response = $this->transport->invoke('put', '/fleets/{fleet_id}', ['fleet_id' => $fleetId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['putFleetsFleetId'] ?? null);
     }
 
     /**
@@ -79,7 +81,7 @@ class FleetsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => FleetsFleetIdMembersGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getFleetsFleetIdMembers'] ?? null);
     }
 
     /**
@@ -89,7 +91,7 @@ class FleetsResource extends AbstractResource
     public function postFleetsFleetIdMembers(mixed $requestBody, int $fleetId): EsiResult
     {
         $response = $this->transport->invoke('post', '/fleets/{fleet_id}/members', ['fleet_id' => $fleetId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['postFleetsFleetIdMembers'] ?? null);
     }
 
     /**
@@ -99,7 +101,7 @@ class FleetsResource extends AbstractResource
     public function deleteFleetsFleetIdMembersMemberId(int $fleetId, int $memberId): EsiResult
     {
         $response = $this->transport->invoke('delete', '/fleets/{fleet_id}/members/{member_id}', ['fleet_id' => $fleetId, 'member_id' => $memberId], [], []);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['deleteFleetsFleetIdMembersMemberId'] ?? null);
     }
 
     /**
@@ -109,7 +111,7 @@ class FleetsResource extends AbstractResource
     public function putFleetsFleetIdMembersMemberId(mixed $requestBody, int $fleetId, int $memberId): EsiResult
     {
         $response = $this->transport->invoke('put', '/fleets/{fleet_id}/members/{member_id}', ['fleet_id' => $fleetId, 'member_id' => $memberId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['putFleetsFleetIdMembersMemberId'] ?? null);
     }
 
     /**
@@ -119,7 +121,7 @@ class FleetsResource extends AbstractResource
     public function deleteFleetsFleetIdSquadsSquadId(int $fleetId, int $squadId): EsiResult
     {
         $response = $this->transport->invoke('delete', '/fleets/{fleet_id}/squads/{squad_id}', ['fleet_id' => $fleetId, 'squad_id' => $squadId], [], []);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['deleteFleetsFleetIdSquadsSquadId'] ?? null);
     }
 
     /**
@@ -129,7 +131,7 @@ class FleetsResource extends AbstractResource
     public function putFleetsFleetIdSquadsSquadId(mixed $requestBody, int $fleetId, int $squadId): EsiResult
     {
         $response = $this->transport->invoke('put', '/fleets/{fleet_id}/squads/{squad_id}', ['fleet_id' => $fleetId, 'squad_id' => $squadId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['putFleetsFleetIdSquadsSquadId'] ?? null);
     }
 
     /**
@@ -142,7 +144,7 @@ class FleetsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => FleetsFleetIdWingsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getFleetsFleetIdWings'] ?? null);
     }
 
     /**
@@ -152,7 +154,7 @@ class FleetsResource extends AbstractResource
     public function postFleetsFleetIdWings(int $fleetId): EsiResult
     {
         $response = $this->transport->invoke('post', '/fleets/{fleet_id}/wings', ['fleet_id' => $fleetId], [], []);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['postFleetsFleetIdWings'] ?? null);
     }
 
     /**
@@ -162,7 +164,7 @@ class FleetsResource extends AbstractResource
     public function deleteFleetsFleetIdWingsWingId(int $fleetId, int $wingId): EsiResult
     {
         $response = $this->transport->invoke('delete', '/fleets/{fleet_id}/wings/{wing_id}', ['fleet_id' => $fleetId, 'wing_id' => $wingId], [], []);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['deleteFleetsFleetIdWingsWingId'] ?? null);
     }
 
     /**
@@ -172,7 +174,7 @@ class FleetsResource extends AbstractResource
     public function putFleetsFleetIdWingsWingId(mixed $requestBody, int $fleetId, int $wingId): EsiResult
     {
         $response = $this->transport->invoke('put', '/fleets/{fleet_id}/wings/{wing_id}', ['fleet_id' => $fleetId, 'wing_id' => $wingId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['putFleetsFleetIdWingsWingId'] ?? null);
     }
 
     /**
@@ -182,6 +184,6 @@ class FleetsResource extends AbstractResource
     public function postFleetsFleetIdWingsWingIdSquads(int $fleetId, int $wingId): EsiResult
     {
         $response = $this->transport->invoke('post', '/fleets/{fleet_id}/wings/{wing_id}/squads', ['fleet_id' => $fleetId, 'wing_id' => $wingId], [], []);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['postFleetsFleetIdWingsWingIdSquads'] ?? null);
     }
 }

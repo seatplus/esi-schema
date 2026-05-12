@@ -20,7 +20,8 @@ final class CharactersCharacterIdMedalsGetItem extends AbstractEsiDto
         public readonly string $reason,
         public readonly string $status,
         public readonly string $title,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

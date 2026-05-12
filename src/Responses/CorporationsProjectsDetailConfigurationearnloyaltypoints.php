@@ -12,7 +12,8 @@ final class CorporationsProjectsDetailConfigurationearnloyaltypoints extends Abs
 {
     public function __construct(
         public readonly ?array $corporations = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

@@ -24,7 +24,8 @@ final class CorporationsCorporationIdWalletsDivisionJournalGetItem extends Abstr
         public readonly ?int $second_party_id = null,
         public readonly ?float $tax = null,
         public readonly ?int $tax_receiver_id = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

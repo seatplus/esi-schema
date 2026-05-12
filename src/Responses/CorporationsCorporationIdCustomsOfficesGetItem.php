@@ -26,7 +26,8 @@ final class CorporationsCorporationIdCustomsOfficesGetItem extends AbstractEsiDt
         public readonly ?string $standing_level = null,
         public readonly ?float $terrible_standing_tax_rate = null,
         public readonly ?int $type_id = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

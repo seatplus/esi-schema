@@ -16,7 +16,8 @@ final class CorporationCorporationIdMiningExtractionsGetItem extends AbstractEsi
         public readonly int $moon_id,
         public readonly string $natural_decay_time,
         public readonly int $structure_id,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

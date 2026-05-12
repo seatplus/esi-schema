@@ -21,7 +21,8 @@ final class WarsWarIdGet extends AbstractEsiDto
         public readonly ?string $finished = null,
         public readonly ?string $retracted = null,
         public readonly ?string $started = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

@@ -33,7 +33,7 @@ class PlanetaryInteractionResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdPlanetsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdPlanets'] ?? null);
     }
 
     /**
@@ -46,6 +46,7 @@ class PlanetaryInteractionResource extends AbstractResource
         $dto = CharactersCharacterIdPlanetsPlanetIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdPlanetsPlanetId'] ?? null;
         return $dto;
     }
 
@@ -60,7 +61,7 @@ class PlanetaryInteractionResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdCustomsOfficesGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCorporationsCorporationIdCustomsOffices'] ?? null);
     }
 
     /**
@@ -72,6 +73,7 @@ class PlanetaryInteractionResource extends AbstractResource
         $dto = UniverseSchematicsSchematicIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getUniverseSchematicsSchematicId'] ?? null;
         return $dto;
     }
 }

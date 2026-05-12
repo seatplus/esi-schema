@@ -17,7 +17,8 @@ final class CharactersCharacterIdContractsContractIdItemsGetItem extends Abstrac
         public readonly int $record_id,
         public readonly int $type_id,
         public readonly ?int $raw_quantity = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

@@ -17,7 +17,8 @@ final class MarketsRegionIdHistoryGetItem extends AbstractEsiDto
         public readonly float $lowest,
         public readonly int $order_count,
         public readonly int $volume,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

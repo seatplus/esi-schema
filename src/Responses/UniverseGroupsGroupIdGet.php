@@ -16,7 +16,8 @@ final class UniverseGroupsGroupIdGet extends AbstractEsiDto
         public readonly string $name,
         public readonly bool $published,
         public readonly array $types,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

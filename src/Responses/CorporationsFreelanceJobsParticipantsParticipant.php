@@ -15,7 +15,8 @@ final class CorporationsFreelanceJobsParticipantsParticipant extends AbstractEsi
         public readonly int $id,
         public readonly string $name,
         public readonly string $state,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

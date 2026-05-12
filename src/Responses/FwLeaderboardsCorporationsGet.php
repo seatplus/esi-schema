@@ -13,7 +13,8 @@ final class FwLeaderboardsCorporationsGet extends AbstractEsiDto
     public function __construct(
         public readonly mixed $kills,
         public readonly mixed $victory_points,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

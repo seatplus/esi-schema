@@ -16,7 +16,8 @@ final class CharactersCharacterIdAgentsResearchGetItem extends AbstractEsiDto
         public readonly float $remainder_points,
         public readonly int $skill_type_id,
         public readonly string $started_at,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

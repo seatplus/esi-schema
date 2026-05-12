@@ -12,7 +12,8 @@ final class CorporationsProjectsDetailConfigurationmanual extends AbstractEsiDto
 {
     public function __construct(
 
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

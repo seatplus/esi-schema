@@ -15,7 +15,8 @@ final class RouteRequestBody extends AbstractEsiDto
         public readonly ?array $connections = null,
         public readonly ?string $preference = null,
         public readonly ?int $security_penalty = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

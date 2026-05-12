@@ -21,7 +21,8 @@ final class UniverseSystemsSystemIdGet extends AbstractEsiDto
         public readonly ?int $star_id = null,
         public readonly ?array $stargates = null,
         public readonly ?array $stations = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

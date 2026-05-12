@@ -16,7 +16,8 @@ final class CorporationsCorporationIdFwStatsGet extends AbstractEsiDto
         public readonly ?string $enlisted_on = null,
         public readonly ?int $faction_id = null,
         public readonly ?int $pilots = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

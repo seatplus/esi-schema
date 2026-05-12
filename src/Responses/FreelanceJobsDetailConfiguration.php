@@ -14,7 +14,8 @@ final class FreelanceJobsDetailConfiguration extends AbstractEsiDto
         public readonly string $method,
         public readonly mixed $parameters,
         public readonly int $version,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

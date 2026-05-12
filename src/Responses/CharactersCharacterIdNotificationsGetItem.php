@@ -18,7 +18,8 @@ final class CharactersCharacterIdNotificationsGetItem extends AbstractEsiDto
         public readonly string $type,
         public readonly ?bool $is_read = null,
         public readonly ?string $text = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

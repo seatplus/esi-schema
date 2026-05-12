@@ -13,7 +13,8 @@ final class CorporationsCorporationIdContactsLabelsGetItem extends AbstractEsiDt
     public function __construct(
         public readonly int $label_id,
         public readonly string $label_name,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

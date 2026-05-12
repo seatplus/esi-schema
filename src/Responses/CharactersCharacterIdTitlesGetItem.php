@@ -13,7 +13,8 @@ final class CharactersCharacterIdTitlesGetItem extends AbstractEsiDto
     public function __construct(
         public readonly ?string $name = null,
         public readonly ?int $title_id = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

@@ -15,7 +15,8 @@ final class UniverseRacesGetItem extends AbstractEsiDto
         public readonly string $description,
         public readonly string $name,
         public readonly int $race_id,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

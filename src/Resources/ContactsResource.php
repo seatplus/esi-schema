@@ -41,7 +41,7 @@ class ContactsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => AlliancesAllianceIdContactsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getAlliancesAllianceIdContacts'] ?? null);
     }
 
     /**
@@ -54,7 +54,7 @@ class ContactsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => AlliancesAllianceIdContactsLabelsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getAlliancesAllianceIdContactsLabels'] ?? null);
     }
 
     /**
@@ -64,7 +64,7 @@ class ContactsResource extends AbstractResource
     public function deleteCharactersCharacterIdContacts(int $characterId, array $contactIds): EsiResult
     {
         $response = $this->transport->invoke('delete', '/characters/{character_id}/contacts', ['character_id' => $characterId], ['contact_ids' => $contactIds], []);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['deleteCharactersCharacterIdContacts'] ?? null);
     }
 
     /**
@@ -78,7 +78,7 @@ class ContactsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdContactsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdContacts'] ?? null);
     }
 
     /**
@@ -88,7 +88,7 @@ class ContactsResource extends AbstractResource
     public function postCharactersCharacterIdContacts(mixed $requestBody, int $characterId, float $standing, ?array $labelIds = null, ?bool $watched = null): EsiResult
     {
         $response = $this->transport->invoke('post', '/characters/{character_id}/contacts', ['character_id' => $characterId], ['label_ids' => $labelIds, 'standing' => $standing, 'watched' => $watched], (array) $requestBody);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['postCharactersCharacterIdContacts'] ?? null);
     }
 
     /**
@@ -98,7 +98,7 @@ class ContactsResource extends AbstractResource
     public function putCharactersCharacterIdContacts(mixed $requestBody, int $characterId, float $standing, ?array $labelIds = null, ?bool $watched = null): EsiResult
     {
         $response = $this->transport->invoke('put', '/characters/{character_id}/contacts', ['character_id' => $characterId], ['label_ids' => $labelIds, 'standing' => $standing, 'watched' => $watched], (array) $requestBody);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['putCharactersCharacterIdContacts'] ?? null);
     }
 
     /**
@@ -111,7 +111,7 @@ class ContactsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdContactsLabelsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdContactsLabels'] ?? null);
     }
 
     /**
@@ -125,7 +125,7 @@ class ContactsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdContactsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCorporationsCorporationIdContacts'] ?? null);
     }
 
     /**
@@ -138,6 +138,6 @@ class ContactsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdContactsLabelsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCorporationsCorporationIdContactsLabels'] ?? null);
     }
 }

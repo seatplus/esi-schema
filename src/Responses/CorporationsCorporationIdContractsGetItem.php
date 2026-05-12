@@ -33,7 +33,8 @@ final class CorporationsCorporationIdContractsGetItem extends AbstractEsiDto
         public readonly ?int $start_location_id = null,
         public readonly ?string $title = null,
         public readonly ?float $volume = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

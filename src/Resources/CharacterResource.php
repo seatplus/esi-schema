@@ -51,7 +51,7 @@ class CharacterResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersAffiliationPostItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['postCharactersAffiliation'] ?? null);
     }
 
     /**
@@ -63,6 +63,7 @@ class CharacterResource extends AbstractResource
         $dto = CharactersDetail::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterId'] ?? null;
         return $dto;
     }
 
@@ -76,7 +77,7 @@ class CharacterResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdAgentsResearchGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdAgentsResearch'] ?? null);
     }
 
     /**
@@ -90,7 +91,7 @@ class CharacterResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdBlueprintsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdBlueprints'] ?? null);
     }
 
     /**
@@ -102,7 +103,7 @@ class CharacterResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdCorporationhistoryGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdCorporationhistory'] ?? null);
     }
 
     /**
@@ -112,7 +113,7 @@ class CharacterResource extends AbstractResource
     public function postCharactersCharacterIdCspa(mixed $requestBody, int $characterId): EsiResult
     {
         $response = $this->transport->invoke('post', '/characters/{character_id}/cspa', ['character_id' => $characterId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null);
+        return EsiResult::fromRaw($response, null, static::OPERATION_META['postCharactersCharacterIdCspa'] ?? null);
     }
 
     /**
@@ -125,6 +126,7 @@ class CharacterResource extends AbstractResource
         $dto = CharactersCharacterIdFatigueGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdFatigue'] ?? null;
         return $dto;
     }
 
@@ -138,7 +140,7 @@ class CharacterResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdMedalsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdMedals'] ?? null);
     }
 
     /**
@@ -151,7 +153,7 @@ class CharacterResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdNotificationsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdNotifications'] ?? null);
     }
 
     /**
@@ -164,7 +166,7 @@ class CharacterResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdNotificationsContactsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdNotificationsContacts'] ?? null);
     }
 
     /**
@@ -176,6 +178,7 @@ class CharacterResource extends AbstractResource
         $dto = CharactersCharacterIdPortraitGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdPortrait'] ?? null;
         return $dto;
     }
 
@@ -189,6 +192,7 @@ class CharacterResource extends AbstractResource
         $dto = CharactersCharacterIdRolesGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdRoles'] ?? null;
         return $dto;
     }
 
@@ -202,7 +206,7 @@ class CharacterResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdStandingsGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdStandings'] ?? null);
     }
 
     /**
@@ -215,6 +219,6 @@ class CharacterResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdTitlesGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdTitles'] ?? null);
     }
 }

@@ -4,8 +4,6 @@ namespace Seatplus\EsiSchema\Responses;
 
 use Seatplus\EsiSchema\AbstractEsiDto;
 
-use Seatplus\EsiSchema\Responses\FreelanceJobsDetailParametermatcher;
-
 /**
  * Generated from ESI OpenAPI spec (compatibility date: 2025-12-16).
  * Do not edit manually — run bin/generate.php instead.
@@ -15,7 +13,8 @@ final class FreelanceJobsDetailParametercorporationitemdelivery extends Abstract
     public function __construct(
         public readonly FreelanceJobsDetailParametermatcher $corporation_office_location,
         public readonly FreelanceJobsDetailParametermatcher $item_type,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

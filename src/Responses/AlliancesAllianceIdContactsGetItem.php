@@ -15,7 +15,8 @@ final class AlliancesAllianceIdContactsGetItem extends AbstractEsiDto
         public readonly string $contact_type,
         public readonly float $standing,
         public readonly ?array $label_ids = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

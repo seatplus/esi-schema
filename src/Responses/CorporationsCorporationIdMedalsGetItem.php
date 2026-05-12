@@ -16,7 +16,8 @@ final class CorporationsCorporationIdMedalsGetItem extends AbstractEsiDto
         public readonly string $description,
         public readonly int $medal_id,
         public readonly string $title,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

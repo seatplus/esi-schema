@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Seatplus\EsiSchema;
 
+use Seatplus\EsiSchema\Concerns\HasOperationMeta;
 use Seatplus\EsiSchema\Contracts\EsiRawResponse;
 
 /**
@@ -16,15 +17,19 @@ use Seatplus\EsiSchema\Contracts\EsiRawResponse;
  */
 readonly class EsiResult
 {
+    use HasOperationMeta;
+
     /**
-     * @param  T     $data          Typed response body (array of DTOs or primitives).
-     * @param  int   $pages         Total pages reported by X-Pages (1 when not paginated).
-     * @param  bool  $isCachedLoad  Whether the response was served from RFC 7234 cache.
+     * @param  T          $data           Typed response body (array of DTOs or primitives).
+     * @param  int        $pages          Total pages reported by X-Pages (1 when not paginated).
+     * @param  bool       $isCachedLoad   Whether the response was served from RFC 7234 cache.
+     * @param  array<string, mixed>|null  $operationMeta  ESI spec metadata baked in at generation time.
      */
     public function __construct(
         public mixed $data,
         public int $pages = 1,
         public bool $isCachedLoad = false,
+        public ?array $operationMeta = null,
     ) {
     }
 
@@ -33,15 +38,17 @@ readonly class EsiResult
      *
      * @template TData
      *
-     * @param  TData  $typedData
+     * @param  TData                      $typedData
+     * @param  array<string, mixed>|null  $meta       OPERATION_META entry for this operation.
      * @return EsiResult<TData>
      */
-    public static function fromRaw(EsiRawResponse $response, mixed $typedData): self
+    public static function fromRaw(EsiRawResponse $response, mixed $typedData, ?array $meta = null): self
     {
         return new self(
             data: $typedData,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
+            operationMeta: $meta,
         );
     }
 }

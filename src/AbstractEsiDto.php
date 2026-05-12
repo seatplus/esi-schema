@@ -2,6 +2,8 @@
 
 namespace Seatplus\EsiSchema;
 
+use Seatplus\EsiSchema\Concerns\HasOperationMeta;
+
 /**
  * Base class for all generated ESI response DTOs.
  *
@@ -11,9 +13,14 @@ namespace Seatplus\EsiSchema;
  */
 abstract class AbstractEsiDto
 {
+    use HasOperationMeta;
+
     /** True when the response was served from the RFC 7234 cache (HTTP 304). */
     public bool $isCachedLoad = false;
 
     /** Total pages reported by X-Pages header. 1 for non-paginated endpoints. */
     public int $pages = 1;
+
+    /** ESI spec metadata baked in at generation time (from OPERATION_META). */
+    public ?array $operationMeta = null;
 }

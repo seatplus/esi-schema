@@ -32,7 +32,7 @@ class KillmailsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdKillmailsRecentGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCharactersCharacterIdKillmailsRecent'] ?? null);
     }
 
     /**
@@ -46,7 +46,7 @@ class KillmailsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdKillmailsRecentGetItem::from($item),
             (array) $response->data,
-        ));
+        ), static::OPERATION_META['getCorporationsCorporationIdKillmailsRecent'] ?? null);
     }
 
     /**
@@ -58,6 +58,7 @@ class KillmailsResource extends AbstractResource
         $dto = KillmailsKillmailIdKillmailHashGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->operationMeta = static::OPERATION_META['getKillmailsKillmailIdKillmailHash'] ?? null;
         return $dto;
     }
 }

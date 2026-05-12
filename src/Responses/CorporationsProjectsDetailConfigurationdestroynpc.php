@@ -12,7 +12,8 @@ final class CorporationsProjectsDetailConfigurationdestroynpc extends AbstractEs
 {
     public function __construct(
         public readonly ?array $locations = null,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

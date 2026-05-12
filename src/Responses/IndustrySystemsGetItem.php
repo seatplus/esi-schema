@@ -13,7 +13,8 @@ final class IndustrySystemsGetItem extends AbstractEsiDto
     public function __construct(
         public readonly array $cost_indices,
         public readonly int $solar_system_id,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

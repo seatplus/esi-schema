@@ -16,7 +16,8 @@ final class UniverseConstellationsConstellationIdGet extends AbstractEsiDto
         public readonly mixed $position,
         public readonly int $region_id,
         public readonly array $systems,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

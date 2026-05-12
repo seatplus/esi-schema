@@ -12,7 +12,8 @@ final class MetaChangelog extends AbstractEsiDto
 {
     public function __construct(
         public readonly mixed $changelog,
-    ) {}
+    ) {
+    }
 
     public static function from(object $data): static
     {

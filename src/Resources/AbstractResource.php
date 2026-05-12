@@ -32,6 +32,10 @@ abstract class AbstractResource
     /**
      * Return all ESI spec metadata for a specific operation.
      *
+     * Use this for pre-call introspection (e.g. JobChecker checking required
+     * roles before dispatching a job). For post-call access, use the result
+     * object's own methods: $result->rateLimitGroup(), ->cacheAge(), etc.
+     *
      * - cacheAge:      Expected cache TTL in seconds (null = no-cache endpoint).
      * - rateLimit:     Rate-limit bucket definition from the spec.
      * - requiredRoles: EVE corporation roles required for this endpoint.
@@ -47,61 +51,5 @@ abstract class AbstractResource
             'requiredRoles' => [],
             'cursor'        => false,
         ];
-    }
-
-    /**
-     * Expected cache TTL in seconds for this operation.
-     * Returns null for event-based or no-cache endpoints.
-     */
-    public static function cacheAge(string $operationId): ?int
-    {
-        return static::metaFor($operationId)['cacheAge'];
-    }
-
-    /**
-     * EVE corporation roles required for this operation (e.g. ['Director']).
-     * Empty array means no in-game corporation role is required.
-     *
-     * @return list<string>
-     */
-    public static function requiredRoles(string $operationId): array
-    {
-        return static::metaFor($operationId)['requiredRoles'];
-    }
-
-    /**
-     * True if this operation uses cursor-based pagination (x-pagination: cursor).
-     * Cursor tokens are returned in EsiRawResponse::$cursor after each call.
-     */
-    public static function usesCursor(string $operationId): bool
-    {
-        return static::metaFor($operationId)['cursor'];
-    }
-
-    /**
-     * Rate-limit group name for this operation (e.g. 'char-asset').
-     * Returns null for operations with no rate-limit group in the spec.
-     */
-    public static function rateLimitGroup(string $operationId): ?string
-    {
-        return static::metaFor($operationId)['rateLimit']['group'] ?? null;
-    }
-
-    /**
-     * Maximum token count for the rate-limit bucket (e.g. 1800 for 'char-asset').
-     * Returns null for operations with no rate-limit in the spec.
-     */
-    public static function rateLimitMaxTokens(string $operationId): ?int
-    {
-        return static::metaFor($operationId)['rateLimit']['max-tokens'] ?? null;
-    }
-
-    /**
-     * Rate-limit window duration as a human-readable string (e.g. '15m').
-     * Returns null for operations with no rate-limit in the spec.
-     */
-    public static function rateLimitWindow(string $operationId): ?string
-    {
-        return static::metaFor($operationId)['rateLimit']['window-size'] ?? null;
     }
 }
