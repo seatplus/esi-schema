@@ -14,12 +14,13 @@ use Seatplus\EsiSchema\Responses\CharactersCharacterIdAssetsGetItem;
 
 function mockTransport(mixed $data, bool $isCachedLoad = false, int $pages = 1): EsiTransportInterface
 {
-    return new class($data, $isCachedLoad, $pages) implements EsiTransportInterface {
+    return new class ($data, $isCachedLoad, $pages) implements EsiTransportInterface {
         public function __construct(
             private readonly mixed $data,
             private readonly bool $isCachedLoad,
             private readonly int $pages,
-        ) {}
+        ) {
+        }
 
         public function invoke(
             string $method,
