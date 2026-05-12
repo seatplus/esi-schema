@@ -162,3 +162,45 @@ it('FreelanceJobsResource::metaFor marks cursor endpoints correctly', function (
     expect($meta['cursor'])->toBeTrue();
 });
 
+// ---------------------------------------------------------------------------
+// Typed convenience accessors
+// ---------------------------------------------------------------------------
+
+it('AssetsResource::rateLimitGroup returns the group name', function (): void {
+    expect(AssetsResource::rateLimitGroup('getCharactersCharacterIdAssets'))->toBe('char-asset')
+        ->and(AssetsResource::rateLimitGroup('getCorporationsCorporationIdAssets'))->toBe('corp-asset');
+});
+
+it('AssetsResource::rateLimitMaxTokens returns the bucket size', function (): void {
+    expect(AssetsResource::rateLimitMaxTokens('getCharactersCharacterIdAssets'))->toBe(1800);
+});
+
+it('AssetsResource::rateLimitWindow returns the window string', function (): void {
+    expect(AssetsResource::rateLimitWindow('getCharactersCharacterIdAssets'))->toBe('15m');
+});
+
+it('AssetsResource::cacheAge returns TTL for cached endpoints', function (): void {
+    expect(AssetsResource::cacheAge('getCharactersCharacterIdAssets'))->toBe(3600)
+        ->and(AssetsResource::cacheAge('postCharactersCharacterIdAssetsLocations'))->toBeNull();
+});
+
+it('AssetsResource::requiredRoles returns roles for corp endpoints', function (): void {
+    expect(AssetsResource::requiredRoles('getCorporationsCorporationIdAssets'))->toBe(['Director'])
+        ->and(AssetsResource::requiredRoles('getCharactersCharacterIdAssets'))->toBeEmpty();
+});
+
+it('FreelanceJobsResource::usesCursor is true for cursor routes', function (): void {
+    expect(\Seatplus\EsiSchema\Resources\FreelanceJobsResource::usesCursor('getFreelanceJobsListing'))->toBeTrue()
+        ->and(AssetsResource::usesCursor('getCharactersCharacterIdAssets'))->toBeFalse();
+});
+
+it('accessors return null/empty for unknown operationId', function (): void {
+    expect(AssetsResource::rateLimitGroup('doesNotExist'))->toBeNull()
+        ->and(AssetsResource::rateLimitMaxTokens('doesNotExist'))->toBeNull()
+        ->and(AssetsResource::rateLimitWindow('doesNotExist'))->toBeNull()
+        ->and(AssetsResource::cacheAge('doesNotExist'))->toBeNull()
+        ->and(AssetsResource::requiredRoles('doesNotExist'))->toBeEmpty()
+        ->and(AssetsResource::usesCursor('doesNotExist'))->toBeFalse();
+});
+
+
