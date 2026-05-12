@@ -1,22 +1,10 @@
 # seatplus/esi-schema
 
-**Pure DTO library** for the EVE Online ESI API. Zero runtime dependencies.
+**Typed ESI SDK for PHP.** Every EVE Online ESI endpoint has a strongly-typed resource method that returns a fully-typed DTO or paginated result — no string parsing, no `array` guesswork.
 
-Every response schema from the ESI OpenAPI spec (compatibility date `2025-12-16`) is represented as a typed PHP class with `readonly` properties and a `::from(object $data)` factory method.
+Generated from the ESI OpenAPI spec (`compatibility_date=2025-12-16`). Zero runtime dependencies.
 
-## Versioning
-
-Each major version of this package tracks a specific ESI compatibility date. Pin to the branch that matches the date your application requests.
-
-| Branch / Major | ESI Compatibility Date | Composer constraint |
-|---|---|---|
-| `1.x` | `2025-12-16` | `^1.0` |
-
-When CCP publishes a new compatibility date that introduces breaking schema changes, a new major version branch will be created.
-
-## Requirements
-
-- PHP 8.5+
+---
 
 ## Installation
 
@@ -24,59 +12,176 @@ When CCP publishes a new compatibility date that introduces breaking schema chan
 composer require seatplus/esi-schema
 ```
 
-## Usage
+**Requirements:** PHP 8.3+
 
-DTOs are located in `Seatplus\EsiSchema\Responses\` and all extend `AbstractEsiDto`.
+---
 
-```php
-use Seatplus\EsiSchema\Responses\AllianceDetail;
+## Quick Start
 
-// Construct from raw ESI response data
-$alliance = AllianceDetail::from($esiResponseBody);
-
-echo $alliance->name;        // typed readonly string
-echo $alliance->ticker;      // typed readonly string
-
-// HTTP metadata (set by the SDK/transport layer)
-$alliance->isCachedLoad;    // bool — was this response served from cache?
-$alliance->pages;            // int — X-Pages header value (1 for single-object endpoints)
-```
-
-### With esi-client (SDK layer)
-
-The [seatplus/esi-client](https://github.com/seatplus/esi-client) package uses these DTOs as return types from its resource methods:
+Wire up a transport (provided by [seatplus/esi-client](https://github.com/seatplus/esi-client)) and you're done:
 
 ```php
-$alliance = $sdk->alliance()->getAlliancesAllianceId(99000006);
-// $alliance is AllianceDetail — not wrapped in any EsiResult
-echo $alliance->name;
-$alliance->isCachedLoad; // true if response came from HTTP cache
+use Seatplus\EsiSchema\Resources\AllianceResource;
+use Seatplus\EsiSchema\Resources\AssetsResource;
+
+// Inject any EsiTransportInterface implementation
+$alliance  = new AllianceResource($transport);
+$assets    = new AssetsResource($transport);
+
+// Single-object endpoints — returns a typed DTO directly
+$info = $alliance->getAlliancesAllianceId(99000006);
+echo $info->name;    // 'Goonswarm Federation'  (typed string)
+echo $info->ticker;  // 'CONDI'
+
+// Paginated endpoints — returns EsiResult<T>
+$page = $assets->getCharactersCharacterIdAssets(characterId: 12345, page: 1);
+foreach ($page->data as $item) {
+    echo $item->type_id;    // typed int
+    echo $item->quantity;   // typed int
+}
+echo $page->pages;         // total pages from X-Pages header
+echo $page->isCachedLoad;  // true when served from RFC 7234 cache
 ```
 
-## Design
+---
 
-- **Zero runtime dependencies** — only PHP 8.5+ is required.
-- **Defensive `from()` methods** — all fields use `?? <default>` fallbacks to survive CCP stealth field changes (fields removed without bumping the compatibility date).
-- **`AbstractEsiDto` base class** — carries `$isCachedLoad` and `$pages` as mutable properties. These are intentionally not `readonly` so the transport layer can set them after calling `::from()`.
-- **`final` DTOs** — all response classes are `final` and are not intended to be subclassed.
-- **Versioned by compatibility date** — this package tracks ESI compatibility date `2025-12-16`. A future `2.x` would track a newer date.
+## Result-Level Metadata
 
-## Regenerating DTOs
+Every result object carries ESI spec metadata baked in at generation time — no extra calls, no string operationIds:
 
-To regenerate from a new ESI OpenAPI spec:
+```php
+$result = $assets->getCharactersCharacterIdAssets(12345);
+
+$result->rateLimitGroup();     // 'char-asset'
+$result->rateLimitMaxTokens(); // 1800
+$result->rateLimitWindow();    // '15m'
+$result->cacheAge();           // 3600  (null for no-cache endpoints)
+$result->requiredRoles();      // []    (['Director'] for corp endpoints)
+$result->usesCursor();         // false (true for cursor-paginated endpoints)
+
+// Corporation endpoint — different rate-limit group, requires Director role
+$corpAssets = $assets->getCorporationsCorporationIdAssets(98000001);
+$corpAssets->rateLimitGroup(); // 'corp-asset'
+$corpAssets->requiredRoles();  // ['Director']
+```
+
+Object endpoints (single-DTO returns) carry the same accessors:
+
+```php
+$info = $alliance->getAlliancesAllianceId(99000006);
+$info->cacheAge();       // 3600
+$info->rateLimitGroup(); // null (alliance endpoints have no rate-limit group)
+```
+
+### Pre-call introspection
+
+Use `AbstractResource::metaFor()` when you need metadata *before* making a call (e.g. to check required roles before dispatching a job):
+
+```php
+use Seatplus\EsiSchema\Resources\AssetsResource;
+
+$meta = AssetsResource::metaFor('getCharactersCharacterIdAssets');
+// ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-asset', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false]
+```
+
+---
+
+## Implementing a Transport
+
+All Resources depend only on `EsiTransportInterface`. Implement it to connect any HTTP client:
+
+```php
+use Seatplus\EsiSchema\Contracts\EsiTransportInterface;
+use Seatplus\EsiSchema\Contracts\EsiRawResponse;
+
+class MyTransport implements EsiTransportInterface
+{
+    public function invoke(
+        string $method,
+        string $path,
+        array $pathValues = [],
+        array $queryParams = [],
+        array $requestBody = [],
+    ): EsiRawResponse {
+        // ... perform the HTTP request, handle caching, auth etc.
+        return new EsiRawResponse(
+            data: $responseBody,          // decoded JSON (mixed)
+            isCachedLoad: $wasCached,     // bool
+            pages: $xPagesHeader ?? 1,    // int
+            rateLimitRemaining: $remaining,
+            rateLimitUsed: $used,
+            retryAfter: $retryAfter,      // null unless 429
+        );
+    }
+}
+```
+
+The reference implementation is [seatplus/esi-client](https://github.com/seatplus/esi-client), which handles OAuth, RFC 7234 caching, error-limit tracking, and retry logic.
+
+---
+
+## Architecture
+
+```
+EsiTransportInterface          # Contract: any transport implements this
+       │
+       ▼
+AbstractResource               # Base for all 33 generated Resource classes
+ ├── OPERATION_META[]          # Per-operationId spec metadata (rate-limit, cache, roles, cursor)
+ ├── metaFor(string): array    # Pre-call introspection
+ └── getX() / postX() / ...   # Typed endpoint methods
+
+       │ returns
+       ▼
+EsiResult<T>                   # Paginated/array endpoints
+AbstractEsiDto subclass        # Single-object endpoints (e.g. AllianceDetail)
+       │ both carry
+       ▼
+HasOperationMeta trait         # rateLimitGroup(), cacheAge(), requiredRoles(), ...
+```
+
+**Key contracts:**
+
+| Class | Purpose |
+|---|---|
+| `EsiTransportInterface` | Contract for HTTP transport (invoke → EsiRawResponse) |
+| `EsiRawResponse` | Raw transport response: data + HTTP metadata + rate-limit state |
+| `EsiCursor` | Cursor pagination tokens (`$before`, `$after`) |
+| `AbstractEsiDto` | Base DTO: `$isCachedLoad`, `$pages`, `$operationMeta` |
+| `EsiResult<T>` | Typed wrapper for array endpoints |
+| `HasOperationMeta` | Trait giving result/DTO objects 6 metadata accessors |
+
+---
+
+## Versioning
+
+Each major version tracks a specific ESI compatibility date.
+
+| Branch / Major | ESI Compatibility Date | Composer constraint |
+|---|---|---|
+| `1.x` | `2025-12-16` | `^1.0` |
+
+When CCP publishes a new compatibility date with breaking schema changes, a new major version branch is created. Non-breaking spec changes (field additions, same date) are released as `1.x` patches.
+
+---
+
+## Regenerating
 
 ```bash
-php bin/generate.php
-vendor/bin/pint  # auto-format generated output
+php bin/generate.php    # fetches latest spec, regenerates all DTOs + Resources
+vendor/bin/pint         # auto-format generated output
 ```
 
-The generator reads `resources/openapi.yaml` (fetched from `https://esi.evetech.net/meta/openapi.yaml?compatibility_date=2025-12-16`).
+The generator reads the live OAS3 spec from `https://esi.evetech.net/meta/openapi.yaml?compatibility_date=2025-12-16`.
+
+---
 
 ## Testing
 
 ```bash
-composer test          # lint + types + unit
-composer test:unit     # Pest tests only
-composer test:types    # PHPStan analysis
-composer lint          # Pint auto-format
+composer test               # lint + types + type-coverage + unit
+composer test:unit          # Pest tests only
+composer test:types         # PHPStan static analysis
+composer test:type-coverage # 100% type coverage check
+composer lint               # Pint auto-format (modifies files)
 ```

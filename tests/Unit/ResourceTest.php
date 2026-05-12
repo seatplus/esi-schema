@@ -226,4 +226,3 @@ it('EsiResult meta accessors return null/false when no meta is set', function ()
         ->and($result->requiredRoles())->toBeEmpty()
         ->and($result->usesCursor())->toBeFalse();
 });
-
