@@ -27,7 +27,7 @@ class MarketResource extends AbstractResource
      */
     public function getCharactersCharacterIdOrders(int $characterId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/orders', ['character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/orders', ['character_id' => $characterId], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdOrdersGetItem::from($item),
             (array) $response->data,
@@ -41,7 +41,7 @@ class MarketResource extends AbstractResource
      */
     public function getCharactersCharacterIdOrdersHistory(int $characterId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/orders/history', ['character_id' => $characterId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/orders/history', ['character_id' => $characterId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdOrdersHistoryGetItem::from($item),
             (array) $response->data,
@@ -55,7 +55,7 @@ class MarketResource extends AbstractResource
      */
     public function getCorporationsCorporationIdOrders(int $corporationId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/orders', ['corporation_id' => $corporationId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/orders', ['corporation_id' => $corporationId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdOrdersGetItem::from($item),
             (array) $response->data,
@@ -69,7 +69,7 @@ class MarketResource extends AbstractResource
      */
     public function getCorporationsCorporationIdOrdersHistory(int $corporationId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/orders/history', ['corporation_id' => $corporationId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/orders/history', ['corporation_id' => $corporationId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdOrdersHistoryGetItem::from($item),
             (array) $response->data,
@@ -81,7 +81,7 @@ class MarketResource extends AbstractResource
      */
     public function getMarketsGroups(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/markets/groups', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/markets/groups', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
         return EsiResult::fromRaw($response, $data);
@@ -92,7 +92,7 @@ class MarketResource extends AbstractResource
      */
     public function getMarketsGroupsMarketGroupId(int $marketGroupId): MarketsGroupsMarketGroupIdGet
     {
-        $response = $this->transport->invoke('get', '/markets/groups/{market_group_id}', ['market_group_id' => $marketGroupId], 'latest', []);
+        $response = $this->transport->invoke('get', '/markets/groups/{market_group_id}', ['market_group_id' => $marketGroupId], []);
         $dto = MarketsGroupsMarketGroupIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -104,7 +104,7 @@ class MarketResource extends AbstractResource
      */
     public function getMarketsPrices(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/markets/prices', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/markets/prices', [], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => MarketsPricesGetItem::from($item),
             (array) $response->data,
@@ -118,7 +118,7 @@ class MarketResource extends AbstractResource
      */
     public function getMarketsStructuresStructureId(int $structureId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/markets/structures/{structure_id}', ['structure_id' => $structureId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/markets/structures/{structure_id}', ['structure_id' => $structureId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => MarketsStructuresStructureIdGetItem::from($item),
             (array) $response->data,
@@ -130,7 +130,7 @@ class MarketResource extends AbstractResource
      */
     public function getMarketsRegionIdHistory(int $regionId, int $typeId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/markets/{region_id}/history', ['region_id' => $regionId], 'latest', ['type_id' => $typeId]);
+        $response = $this->transport->invoke('get', '/markets/{region_id}/history', ['region_id' => $regionId], ['type_id' => $typeId]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => MarketsRegionIdHistoryGetItem::from($item),
             (array) $response->data,
@@ -143,7 +143,7 @@ class MarketResource extends AbstractResource
      */
     public function getMarketsRegionIdOrders(string $orderType, int $regionId, int $page = 1, ?int $typeId = null): EsiResult
     {
-        $response = $this->transport->invoke('get', '/markets/{region_id}/orders', ['region_id' => $regionId], 'latest', ['order_type' => $orderType, 'page' => $page, 'type_id' => $typeId]);
+        $response = $this->transport->invoke('get', '/markets/{region_id}/orders', ['region_id' => $regionId], ['order_type' => $orderType, 'page' => $page, 'type_id' => $typeId]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => MarketsRegionIdOrdersGetItem::from($item),
             (array) $response->data,
@@ -156,7 +156,7 @@ class MarketResource extends AbstractResource
      */
     public function getMarketsRegionIdTypes(int $regionId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/markets/{region_id}/types', ['region_id' => $regionId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/markets/{region_id}/types', ['region_id' => $regionId], ['page' => $page]);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
         return EsiResult::fromRaw($response, $data);

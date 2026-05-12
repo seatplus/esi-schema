@@ -19,7 +19,7 @@ class ClonesResource extends AbstractResource
      */
     public function getCharactersCharacterIdClones(int $characterId): CharactersCharacterIdClonesGet
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/clones', ['character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/clones', ['character_id' => $characterId], []);
         $dto = CharactersCharacterIdClonesGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -32,7 +32,7 @@ class ClonesResource extends AbstractResource
      */
     public function getCharactersCharacterIdImplants(int $characterId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/implants', ['character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/implants', ['character_id' => $characterId], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
         return EsiResult::fromRaw($response, $data);

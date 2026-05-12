@@ -28,7 +28,7 @@ class ContractsResource extends AbstractResource
      */
     public function getCharactersCharacterIdContracts(int $characterId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/contracts', ['character_id' => $characterId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/contracts', ['character_id' => $characterId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdContractsGetItem::from($item),
             (array) $response->data,
@@ -41,7 +41,7 @@ class ContractsResource extends AbstractResource
      */
     public function getCharactersCharacterIdContractsContractIdBids(int $characterId, int $contractId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/contracts/{contract_id}/bids', ['character_id' => $characterId, 'contract_id' => $contractId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/contracts/{contract_id}/bids', ['character_id' => $characterId, 'contract_id' => $contractId], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdContractsContractIdBidsGetItem::from($item),
             (array) $response->data,
@@ -54,7 +54,7 @@ class ContractsResource extends AbstractResource
      */
     public function getCharactersCharacterIdContractsContractIdItems(int $characterId, int $contractId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/contracts/{contract_id}/items', ['character_id' => $characterId, 'contract_id' => $contractId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/contracts/{contract_id}/items', ['character_id' => $characterId, 'contract_id' => $contractId], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdContractsContractIdItemsGetItem::from($item),
             (array) $response->data,
@@ -67,7 +67,7 @@ class ContractsResource extends AbstractResource
      */
     public function getContractsPublicBidsContractId(int $contractId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/contracts/public/bids/{contract_id}', ['contract_id' => $contractId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/contracts/public/bids/{contract_id}', ['contract_id' => $contractId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => ContractsPublicBidsContractIdGetItem::from($item),
             (array) $response->data,
@@ -80,7 +80,7 @@ class ContractsResource extends AbstractResource
      */
     public function getContractsPublicItemsContractId(int $contractId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/contracts/public/items/{contract_id}', ['contract_id' => $contractId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/contracts/public/items/{contract_id}', ['contract_id' => $contractId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => ContractsPublicItemsContractIdGetItem::from($item),
             (array) $response->data,
@@ -93,7 +93,7 @@ class ContractsResource extends AbstractResource
      */
     public function getContractsPublicRegionId(int $regionId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/contracts/public/{region_id}', ['region_id' => $regionId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/contracts/public/{region_id}', ['region_id' => $regionId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => ContractsPublicRegionIdGetItem::from($item),
             (array) $response->data,
@@ -107,7 +107,7 @@ class ContractsResource extends AbstractResource
      */
     public function getCorporationsCorporationIdContracts(int $corporationId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/contracts', ['corporation_id' => $corporationId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/contracts', ['corporation_id' => $corporationId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdContractsGetItem::from($item),
             (array) $response->data,
@@ -121,7 +121,7 @@ class ContractsResource extends AbstractResource
      */
     public function getCorporationsCorporationIdContractsContractIdBids(int $contractId, int $corporationId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/contracts/{contract_id}/bids', ['contract_id' => $contractId, 'corporation_id' => $corporationId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/contracts/{contract_id}/bids', ['contract_id' => $contractId, 'corporation_id' => $corporationId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdContractsContractIdBidsGetItem::from($item),
             (array) $response->data,
@@ -134,7 +134,7 @@ class ContractsResource extends AbstractResource
      */
     public function getCorporationsCorporationIdContractsContractIdItems(int $contractId, int $corporationId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/contracts/{contract_id}/items', ['contract_id' => $contractId, 'corporation_id' => $corporationId], 'latest', []);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/contracts/{contract_id}/items', ['contract_id' => $contractId, 'corporation_id' => $corporationId], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdContractsContractIdItemsGetItem::from($item),
             (array) $response->data,

@@ -23,7 +23,6 @@ interface EsiTransportInterface
         string $method,
         string $path,
         array $pathValues = [],
-        string $version = 'latest',
         array $queryParams = [],
         array $requestBody = [],
     ): EsiRawResponse;

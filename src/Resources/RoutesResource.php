@@ -17,7 +17,7 @@ class RoutesResource extends AbstractResource
      */
     public function postRoute(mixed $requestBody, int $originSystemId, int $destinationSystemId): Route
     {
-        $response = $this->transport->invoke('post', '/route/{origin_system_id}/{destination_system_id}', ['origin_system_id' => $originSystemId, 'destination_system_id' => $destinationSystemId], 'latest', [], (array) $requestBody);
+        $response = $this->transport->invoke('post', '/route/{origin_system_id}/{destination_system_id}', ['origin_system_id' => $originSystemId, 'destination_system_id' => $destinationSystemId], [], (array) $requestBody);
         $dto = Route::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

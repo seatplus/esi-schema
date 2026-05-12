@@ -20,7 +20,7 @@ class DogmaResource extends AbstractResource
      */
     public function getDogmaAttributes(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/dogma/attributes', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/dogma/attributes', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
         return EsiResult::fromRaw($response, $data);
@@ -31,7 +31,7 @@ class DogmaResource extends AbstractResource
      */
     public function getDogmaAttributesAttributeId(int $attributeId): DogmaAttributesAttributeIdGet
     {
-        $response = $this->transport->invoke('get', '/dogma/attributes/{attribute_id}', ['attribute_id' => $attributeId], 'latest', []);
+        $response = $this->transport->invoke('get', '/dogma/attributes/{attribute_id}', ['attribute_id' => $attributeId], []);
         $dto = DogmaAttributesAttributeIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -43,7 +43,7 @@ class DogmaResource extends AbstractResource
      */
     public function getDogmaDynamicItemsTypeIdItemId(int $itemId, int $typeId): DogmaDynamicItemsTypeIdItemIdGet
     {
-        $response = $this->transport->invoke('get', '/dogma/dynamic/items/{type_id}/{item_id}', ['item_id' => $itemId, 'type_id' => $typeId], 'latest', []);
+        $response = $this->transport->invoke('get', '/dogma/dynamic/items/{type_id}/{item_id}', ['item_id' => $itemId, 'type_id' => $typeId], []);
         $dto = DogmaDynamicItemsTypeIdItemIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -55,7 +55,7 @@ class DogmaResource extends AbstractResource
      */
     public function getDogmaEffects(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/dogma/effects', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/dogma/effects', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
         return EsiResult::fromRaw($response, $data);
@@ -66,7 +66,7 @@ class DogmaResource extends AbstractResource
      */
     public function getDogmaEffectsEffectId(int $effectId): DogmaEffectsEffectIdGet
     {
-        $response = $this->transport->invoke('get', '/dogma/effects/{effect_id}', ['effect_id' => $effectId], 'latest', []);
+        $response = $this->transport->invoke('get', '/dogma/effects/{effect_id}', ['effect_id' => $effectId], []);
         $dto = DogmaEffectsEffectIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

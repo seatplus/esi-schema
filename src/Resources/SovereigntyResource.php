@@ -20,7 +20,7 @@ class SovereigntyResource extends AbstractResource
      */
     public function getSovereigntyCampaigns(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/sovereignty/campaigns', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/sovereignty/campaigns', [], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => SovereigntyCampaignsGetItem::from($item),
             (array) $response->data,
@@ -32,7 +32,7 @@ class SovereigntyResource extends AbstractResource
      */
     public function getSovereigntyMap(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/sovereignty/map', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/sovereignty/map', [], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => SovereigntyMapGetItem::from($item),
             (array) $response->data,
@@ -44,7 +44,7 @@ class SovereigntyResource extends AbstractResource
      */
     public function getSovereigntyStructures(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/sovereignty/structures', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/sovereignty/structures', [], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => SovereigntyStructuresGetItem::from($item),
             (array) $response->data,

@@ -20,7 +20,7 @@ class SkillsResource extends AbstractResource
      */
     public function getCharactersCharacterIdAttributes(int $characterId): CharactersCharacterIdAttributesGet
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/attributes', ['character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/attributes', ['character_id' => $characterId], []);
         $dto = CharactersCharacterIdAttributesGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -33,7 +33,7 @@ class SkillsResource extends AbstractResource
      */
     public function getCharactersCharacterIdSkillqueue(int $characterId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/skillqueue', ['character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/skillqueue', ['character_id' => $characterId], []);
         return EsiResult::fromRaw($response, null);
     }
 
@@ -43,7 +43,7 @@ class SkillsResource extends AbstractResource
      */
     public function getCharactersCharacterIdSkills(int $characterId): CharactersSkills
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/skills', ['character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/skills', ['character_id' => $characterId], []);
         $dto = CharactersSkills::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

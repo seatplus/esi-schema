@@ -20,7 +20,7 @@ class LocationResource extends AbstractResource
      */
     public function getCharactersCharacterIdLocation(int $characterId): CharactersCharacterIdLocationGet
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/location', ['character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/location', ['character_id' => $characterId], []);
         $dto = CharactersCharacterIdLocationGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -33,7 +33,7 @@ class LocationResource extends AbstractResource
      */
     public function getCharactersCharacterIdOnline(int $characterId): CharactersCharacterIdOnlineGet
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/online', ['character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/online', ['character_id' => $characterId], []);
         $dto = CharactersCharacterIdOnlineGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -46,7 +46,7 @@ class LocationResource extends AbstractResource
      */
     public function getCharactersCharacterIdShip(int $characterId): CharactersCharacterIdShipGet
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/ship', ['character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/ship', ['character_id' => $characterId], []);
         $dto = CharactersCharacterIdShipGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

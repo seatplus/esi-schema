@@ -18,7 +18,7 @@ class SearchResource extends AbstractResource
      */
     public function getCharactersCharacterIdSearch(array $categories, int $characterId, string $search, ?bool $strict = null): CharactersCharacterIdSearchGet
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/search', ['character_id' => $characterId], 'latest', ['categories' => $categories, 'search' => $search, 'strict' => $strict]);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/search', ['character_id' => $characterId], ['categories' => $categories, 'search' => $search, 'strict' => $strict]);
         $dto = CharactersCharacterIdSearchGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

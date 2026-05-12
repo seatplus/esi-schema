@@ -22,7 +22,7 @@ class KillmailsResource extends AbstractResource
      */
     public function getCharactersCharacterIdKillmailsRecent(int $characterId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/killmails/recent', ['character_id' => $characterId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/killmails/recent', ['character_id' => $characterId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdKillmailsRecentGetItem::from($item),
             (array) $response->data,
@@ -36,7 +36,7 @@ class KillmailsResource extends AbstractResource
      */
     public function getCorporationsCorporationIdKillmailsRecent(int $corporationId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/killmails/recent', ['corporation_id' => $corporationId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/killmails/recent', ['corporation_id' => $corporationId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdKillmailsRecentGetItem::from($item),
             (array) $response->data,
@@ -48,7 +48,7 @@ class KillmailsResource extends AbstractResource
      */
     public function getKillmailsKillmailIdKillmailHash(string $killmailHash, int $killmailId): KillmailsKillmailIdKillmailHashGet
     {
-        $response = $this->transport->invoke('get', '/killmails/{killmail_id}/{killmail_hash}', ['killmail_hash' => $killmailHash, 'killmail_id' => $killmailId], 'latest', []);
+        $response = $this->transport->invoke('get', '/killmails/{killmail_id}/{killmail_hash}', ['killmail_hash' => $killmailHash, 'killmail_id' => $killmailId], []);
         $dto = KillmailsKillmailIdKillmailHashGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

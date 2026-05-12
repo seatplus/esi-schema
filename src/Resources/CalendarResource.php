@@ -21,7 +21,7 @@ class CalendarResource extends AbstractResource
      */
     public function getCharactersCharacterIdCalendar(int $characterId, ?int $fromEvent = null): EsiResult
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/calendar', ['character_id' => $characterId], 'latest', ['from_event' => $fromEvent]);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/calendar', ['character_id' => $characterId], ['from_event' => $fromEvent]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdCalendarGetItem::from($item),
             (array) $response->data,
@@ -34,7 +34,7 @@ class CalendarResource extends AbstractResource
      */
     public function getCharactersCharacterIdCalendarEventId(int $characterId, int $eventId): CharactersCharacterIdCalendarEventIdGet
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/calendar/{event_id}', ['character_id' => $characterId, 'event_id' => $eventId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/calendar/{event_id}', ['character_id' => $characterId, 'event_id' => $eventId], []);
         $dto = CharactersCharacterIdCalendarEventIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -47,7 +47,7 @@ class CalendarResource extends AbstractResource
      */
     public function putCharactersCharacterIdCalendarEventId(mixed $requestBody, int $characterId, int $eventId): EsiResult
     {
-        $response = $this->transport->invoke('put', '/characters/{character_id}/calendar/{event_id}', ['character_id' => $characterId, 'event_id' => $eventId], 'latest', [], (array) $requestBody);
+        $response = $this->transport->invoke('put', '/characters/{character_id}/calendar/{event_id}', ['character_id' => $characterId, 'event_id' => $eventId], [], (array) $requestBody);
         return EsiResult::fromRaw($response, null);
     }
 
@@ -57,7 +57,7 @@ class CalendarResource extends AbstractResource
      */
     public function getCharactersCharacterIdCalendarEventIdAttendees(int $characterId, int $eventId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/calendar/{event_id}/attendees', ['character_id' => $characterId, 'event_id' => $eventId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/calendar/{event_id}/attendees', ['character_id' => $characterId, 'event_id' => $eventId], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdCalendarEventIdAttendeesGetItem::from($item),
             (array) $response->data,

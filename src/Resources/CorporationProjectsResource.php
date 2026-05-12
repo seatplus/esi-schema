@@ -21,7 +21,7 @@ class CorporationProjectsResource extends AbstractResource
      */
     public function getCorporationsProjectsListing(int $corporationId, ?string $after = null, ?string $before = null, ?int $limit = null, ?string $state = null): CorporationsProjectsListing
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/projects', ['corporation_id' => $corporationId], 'latest', ['after' => $after, 'before' => $before, 'limit' => $limit, 'state' => $state]);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/projects', ['corporation_id' => $corporationId], ['after' => $after, 'before' => $before, 'limit' => $limit, 'state' => $state]);
         $dto = CorporationsProjectsListing::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -34,7 +34,7 @@ class CorporationProjectsResource extends AbstractResource
      */
     public function getCorporationsProjectsDetail(int $corporationId, string $projectId): CorporationsProjectsDetail
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/projects/{project_id}', ['corporation_id' => $corporationId, 'project_id' => $projectId], 'latest', []);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/projects/{project_id}', ['corporation_id' => $corporationId, 'project_id' => $projectId], []);
         $dto = CorporationsProjectsDetail::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -47,7 +47,7 @@ class CorporationProjectsResource extends AbstractResource
      */
     public function getCorporationsProjectsContribution(int $corporationId, string $projectId, int $characterId): CorporationsProjectsContribution
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/projects/{project_id}/contribution/{character_id}', ['corporation_id' => $corporationId, 'project_id' => $projectId, 'character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/projects/{project_id}/contribution/{character_id}', ['corporation_id' => $corporationId, 'project_id' => $projectId, 'character_id' => $characterId], []);
         $dto = CorporationsProjectsContribution::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -60,7 +60,7 @@ class CorporationProjectsResource extends AbstractResource
      */
     public function getCorporationsProjectsContributors(int $corporationId, string $projectId, ?string $after = null, ?string $before = null, ?int $limit = null): CorporationsProjectsContributors
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/projects/{project_id}/contributors', ['corporation_id' => $corporationId, 'project_id' => $projectId], 'latest', ['after' => $after, 'before' => $before, 'limit' => $limit]);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/projects/{project_id}/contributors', ['corporation_id' => $corporationId, 'project_id' => $projectId], ['after' => $after, 'before' => $before, 'limit' => $limit]);
         $dto = CorporationsProjectsContributors::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

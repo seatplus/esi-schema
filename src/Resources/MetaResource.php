@@ -19,7 +19,7 @@ class MetaResource extends AbstractResource
      */
     public function getMetaChangelog(): MetaChangelog
     {
-        $response = $this->transport->invoke('get', '/meta/changelog', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/meta/changelog', [], []);
         $dto = MetaChangelog::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -31,7 +31,7 @@ class MetaResource extends AbstractResource
      */
     public function getMetaCompatibilityDates(): MetaCompatibilityDates
     {
-        $response = $this->transport->invoke('get', '/meta/compatibility-dates', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/meta/compatibility-dates', [], []);
         $dto = MetaCompatibilityDates::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -43,7 +43,7 @@ class MetaResource extends AbstractResource
      */
     public function getMetaStatus(): MetaStatus
     {
-        $response = $this->transport->invoke('get', '/meta/status', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/meta/status', [], []);
         $dto = MetaStatus::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

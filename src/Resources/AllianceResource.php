@@ -19,7 +19,7 @@ class AllianceResource extends AbstractResource
      */
     public function getAlliances(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/alliances', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/alliances', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
         return EsiResult::fromRaw($response, $data);
@@ -30,7 +30,7 @@ class AllianceResource extends AbstractResource
      */
     public function getAlliancesAllianceId(int $allianceId): AllianceDetail
     {
-        $response = $this->transport->invoke('get', '/alliances/{alliance_id}', ['alliance_id' => $allianceId], 'latest', []);
+        $response = $this->transport->invoke('get', '/alliances/{alliance_id}', ['alliance_id' => $allianceId], []);
         $dto = AllianceDetail::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -42,7 +42,7 @@ class AllianceResource extends AbstractResource
      */
     public function getAlliancesAllianceIdCorporations(int $allianceId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/alliances/{alliance_id}/corporations', ['alliance_id' => $allianceId], 'latest', []);
+        $response = $this->transport->invoke('get', '/alliances/{alliance_id}/corporations', ['alliance_id' => $allianceId], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
         return EsiResult::fromRaw($response, $data);
@@ -53,7 +53,7 @@ class AllianceResource extends AbstractResource
      */
     public function getAlliancesAllianceIdIcons(int $allianceId): AlliancesAllianceIdIconsGet
     {
-        $response = $this->transport->invoke('get', '/alliances/{alliance_id}/icons', ['alliance_id' => $allianceId], 'latest', []);
+        $response = $this->transport->invoke('get', '/alliances/{alliance_id}/icons', ['alliance_id' => $allianceId], []);
         $dto = AlliancesAllianceIdIconsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

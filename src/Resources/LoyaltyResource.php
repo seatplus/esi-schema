@@ -20,7 +20,7 @@ class LoyaltyResource extends AbstractResource
      */
     public function getCharactersCharacterIdLoyaltyPoints(int $characterId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/loyalty/points', ['character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/loyalty/points', ['character_id' => $characterId], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdLoyaltyPointsGetItem::from($item),
             (array) $response->data,
@@ -32,7 +32,7 @@ class LoyaltyResource extends AbstractResource
      */
     public function getLoyaltyStoresCorporationIdOffers(int $corporationId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/loyalty/stores/{corporation_id}/offers', ['corporation_id' => $corporationId], 'latest', []);
+        $response = $this->transport->invoke('get', '/loyalty/stores/{corporation_id}/offers', ['corporation_id' => $corporationId], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => LoyaltyStoresCorporationIdOffersGetItem::from($item),
             (array) $response->data,

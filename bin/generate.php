@@ -278,10 +278,10 @@ function buildInvoke(array $op): string
     $bodyStr  = $op['requestBody'] ? '(array) $requestBody' : '[]';
 
     if ($op['requestBody'] || $method !== 'get') {
-        return "\$this->transport->invoke('{$method}', '{$path}', {$uriStr}, 'latest', {$queryStr}, {$bodyStr})";
+        return "\$this->transport->invoke('{$method}', '{$path}', {$uriStr}, {$queryStr}, {$bodyStr})";
     }
 
-    return "\$this->transport->invoke('{$method}', '{$path}', {$uriStr}, 'latest', {$queryStr})";
+    return "\$this->transport->invoke('{$method}', '{$path}', {$uriStr}, {$queryStr})";
 }
 
 function buildReturn(array $op): string

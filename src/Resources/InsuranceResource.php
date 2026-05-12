@@ -18,7 +18,7 @@ class InsuranceResource extends AbstractResource
      */
     public function getInsurancePrices(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/insurance/prices', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/insurance/prices', [], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => InsurancePricesGetItem::from($item),
             (array) $response->data,

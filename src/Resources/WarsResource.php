@@ -19,7 +19,7 @@ class WarsResource extends AbstractResource
      */
     public function getWars(?int $maxWarId = null): EsiResult
     {
-        $response = $this->transport->invoke('get', '/wars', [], 'latest', ['max_war_id' => $maxWarId]);
+        $response = $this->transport->invoke('get', '/wars', [], ['max_war_id' => $maxWarId]);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
         return EsiResult::fromRaw($response, $data);
@@ -30,7 +30,7 @@ class WarsResource extends AbstractResource
      */
     public function getWarsWarId(int $warId): WarsWarIdGet
     {
-        $response = $this->transport->invoke('get', '/wars/{war_id}', ['war_id' => $warId], 'latest', []);
+        $response = $this->transport->invoke('get', '/wars/{war_id}', ['war_id' => $warId], []);
         $dto = WarsWarIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -43,7 +43,7 @@ class WarsResource extends AbstractResource
      */
     public function getWarsWarIdKillmails(int $warId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/wars/{war_id}/killmails', ['war_id' => $warId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/wars/{war_id}/killmails', ['war_id' => $warId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => WarsWarIdKillmailsGetItem::from($item),
             (array) $response->data,

@@ -22,7 +22,7 @@ class PlanetaryInteractionResource extends AbstractResource
      */
     public function getCharactersCharacterIdPlanets(int $characterId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/planets', ['character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/planets', ['character_id' => $characterId], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdPlanetsGetItem::from($item),
             (array) $response->data,
@@ -35,7 +35,7 @@ class PlanetaryInteractionResource extends AbstractResource
      */
     public function getCharactersCharacterIdPlanetsPlanetId(int $characterId, int $planetId): CharactersCharacterIdPlanetsPlanetIdGet
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/planets/{planet_id}', ['character_id' => $characterId, 'planet_id' => $planetId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/planets/{planet_id}', ['character_id' => $characterId, 'planet_id' => $planetId], []);
         $dto = CharactersCharacterIdPlanetsPlanetIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -49,7 +49,7 @@ class PlanetaryInteractionResource extends AbstractResource
      */
     public function getCorporationsCorporationIdCustomsOffices(int $corporationId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/customs_offices', ['corporation_id' => $corporationId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/customs_offices', ['corporation_id' => $corporationId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdCustomsOfficesGetItem::from($item),
             (array) $response->data,
@@ -61,7 +61,7 @@ class PlanetaryInteractionResource extends AbstractResource
      */
     public function getUniverseSchematicsSchematicId(int $schematicId): UniverseSchematicsSchematicIdGet
     {
-        $response = $this->transport->invoke('get', '/universe/schematics/{schematic_id}', ['schematic_id' => $schematicId], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/schematics/{schematic_id}', ['schematic_id' => $schematicId], []);
         $dto = UniverseSchematicsSchematicIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

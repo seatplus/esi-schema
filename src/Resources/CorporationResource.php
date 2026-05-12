@@ -36,7 +36,7 @@ class CorporationResource extends AbstractResource
      */
     public function getCorporationsNpccorps(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/npccorps', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/corporations/npccorps', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
         return EsiResult::fromRaw($response, $data);
@@ -47,7 +47,7 @@ class CorporationResource extends AbstractResource
      */
     public function getCorporationsCorporationId(int $corporationId): CorporationsDetail
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}', ['corporation_id' => $corporationId], 'latest', []);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}', ['corporation_id' => $corporationId], []);
         $dto = CorporationsDetail::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -59,7 +59,7 @@ class CorporationResource extends AbstractResource
      */
     public function getCorporationsCorporationIdAlliancehistory(int $corporationId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/alliancehistory', ['corporation_id' => $corporationId], 'latest', []);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/alliancehistory', ['corporation_id' => $corporationId], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdAlliancehistoryGetItem::from($item),
             (array) $response->data,
@@ -73,7 +73,7 @@ class CorporationResource extends AbstractResource
      */
     public function getCorporationsCorporationIdBlueprints(int $corporationId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/blueprints', ['corporation_id' => $corporationId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/blueprints', ['corporation_id' => $corporationId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdBlueprintsGetItem::from($item),
             (array) $response->data,
@@ -87,7 +87,7 @@ class CorporationResource extends AbstractResource
      */
     public function getCorporationsCorporationIdContainersLogs(int $corporationId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/containers/logs', ['corporation_id' => $corporationId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/containers/logs', ['corporation_id' => $corporationId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdContainersLogsGetItem::from($item),
             (array) $response->data,
@@ -100,7 +100,7 @@ class CorporationResource extends AbstractResource
      */
     public function getCorporationsCorporationIdDivisions(int $corporationId): CorporationsCorporationIdDivisionsGet
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/divisions', ['corporation_id' => $corporationId], 'latest', []);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/divisions', ['corporation_id' => $corporationId], []);
         $dto = CorporationsCorporationIdDivisionsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -113,7 +113,7 @@ class CorporationResource extends AbstractResource
      */
     public function getCorporationsCorporationIdFacilities(int $corporationId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/facilities', ['corporation_id' => $corporationId], 'latest', []);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/facilities', ['corporation_id' => $corporationId], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdFacilitiesGetItem::from($item),
             (array) $response->data,
@@ -125,7 +125,7 @@ class CorporationResource extends AbstractResource
      */
     public function getCorporationsCorporationIdIcons(int $corporationId): CorporationsCorporationIdIconsGet
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/icons', ['corporation_id' => $corporationId], 'latest', []);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/icons', ['corporation_id' => $corporationId], []);
         $dto = CorporationsCorporationIdIconsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -139,7 +139,7 @@ class CorporationResource extends AbstractResource
      */
     public function getCorporationsCorporationIdMedals(int $corporationId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/medals', ['corporation_id' => $corporationId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/medals', ['corporation_id' => $corporationId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdMedalsGetItem::from($item),
             (array) $response->data,
@@ -153,7 +153,7 @@ class CorporationResource extends AbstractResource
      */
     public function getCorporationsCorporationIdMedalsIssued(int $corporationId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/medals/issued', ['corporation_id' => $corporationId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/medals/issued', ['corporation_id' => $corporationId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdMedalsIssuedGetItem::from($item),
             (array) $response->data,
@@ -166,7 +166,7 @@ class CorporationResource extends AbstractResource
      */
     public function getCorporationsCorporationIdMembers(int $corporationId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/members', ['corporation_id' => $corporationId], 'latest', []);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/members', ['corporation_id' => $corporationId], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
         return EsiResult::fromRaw($response, $data);
@@ -178,7 +178,7 @@ class CorporationResource extends AbstractResource
      */
     public function getCorporationsCorporationIdMembersLimit(int $corporationId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/members/limit', ['corporation_id' => $corporationId], 'latest', []);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/members/limit', ['corporation_id' => $corporationId], []);
         /** @var int $scalar */
         $scalar = (int) $response->data;
         return EsiResult::fromRaw($response, $scalar);
@@ -190,7 +190,7 @@ class CorporationResource extends AbstractResource
      */
     public function getCorporationsCorporationIdMembersTitles(int $corporationId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/members/titles', ['corporation_id' => $corporationId], 'latest', []);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/members/titles', ['corporation_id' => $corporationId], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdMembersTitlesGetItem::from($item),
             (array) $response->data,
@@ -203,7 +203,7 @@ class CorporationResource extends AbstractResource
      */
     public function getCorporationsCorporationIdMembertracking(int $corporationId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/membertracking', ['corporation_id' => $corporationId], 'latest', []);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/membertracking', ['corporation_id' => $corporationId], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdMembertrackingGetItem::from($item),
             (array) $response->data,
@@ -216,7 +216,7 @@ class CorporationResource extends AbstractResource
      */
     public function getCorporationsCorporationIdRoles(int $corporationId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/roles', ['corporation_id' => $corporationId], 'latest', []);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/roles', ['corporation_id' => $corporationId], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdRolesGetItem::from($item),
             (array) $response->data,
@@ -230,7 +230,7 @@ class CorporationResource extends AbstractResource
      */
     public function getCorporationsCorporationIdRolesHistory(int $corporationId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/roles/history', ['corporation_id' => $corporationId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/roles/history', ['corporation_id' => $corporationId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdRolesHistoryGetItem::from($item),
             (array) $response->data,
@@ -244,7 +244,7 @@ class CorporationResource extends AbstractResource
      */
     public function getCorporationsCorporationIdShareholders(int $corporationId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/shareholders', ['corporation_id' => $corporationId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/shareholders', ['corporation_id' => $corporationId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdShareholdersGetItem::from($item),
             (array) $response->data,
@@ -258,7 +258,7 @@ class CorporationResource extends AbstractResource
      */
     public function getCorporationsCorporationIdStandings(int $corporationId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/standings', ['corporation_id' => $corporationId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/standings', ['corporation_id' => $corporationId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdStandingsGetItem::from($item),
             (array) $response->data,
@@ -272,7 +272,7 @@ class CorporationResource extends AbstractResource
      */
     public function getCorporationsCorporationIdStarbases(int $corporationId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/starbases', ['corporation_id' => $corporationId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/starbases', ['corporation_id' => $corporationId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdStarbasesGetItem::from($item),
             (array) $response->data,
@@ -285,7 +285,7 @@ class CorporationResource extends AbstractResource
      */
     public function getCorporationsCorporationIdStarbasesStarbaseId(int $corporationId, int $starbaseId, int $systemId): CorporationsCorporationIdStarbasesStarbaseIdGet
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/starbases/{starbase_id}', ['corporation_id' => $corporationId, 'starbase_id' => $starbaseId], 'latest', ['system_id' => $systemId]);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/starbases/{starbase_id}', ['corporation_id' => $corporationId, 'starbase_id' => $starbaseId], ['system_id' => $systemId]);
         $dto = CorporationsCorporationIdStarbasesStarbaseIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -299,7 +299,7 @@ class CorporationResource extends AbstractResource
      */
     public function getCorporationsCorporationIdStructures(int $corporationId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/structures', ['corporation_id' => $corporationId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/structures', ['corporation_id' => $corporationId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdStructuresGetItem::from($item),
             (array) $response->data,
@@ -312,7 +312,7 @@ class CorporationResource extends AbstractResource
      */
     public function getCorporationsCorporationIdTitles(int $corporationId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/titles', ['corporation_id' => $corporationId], 'latest', []);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/titles', ['corporation_id' => $corporationId], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdTitlesGetItem::from($item),
             (array) $response->data,

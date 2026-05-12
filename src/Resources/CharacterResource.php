@@ -30,7 +30,7 @@ class CharacterResource extends AbstractResource
      */
     public function postCharactersAffiliation(mixed $requestBody): EsiResult
     {
-        $response = $this->transport->invoke('post', '/characters/affiliation', [], 'latest', [], (array) $requestBody);
+        $response = $this->transport->invoke('post', '/characters/affiliation', [], [], (array) $requestBody);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersAffiliationPostItem::from($item),
             (array) $response->data,
@@ -42,7 +42,7 @@ class CharacterResource extends AbstractResource
      */
     public function getCharactersCharacterId(int $characterId): CharactersDetail
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}', ['character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}', ['character_id' => $characterId], []);
         $dto = CharactersDetail::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -55,7 +55,7 @@ class CharacterResource extends AbstractResource
      */
     public function getCharactersCharacterIdAgentsResearch(int $characterId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/agents_research', ['character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/agents_research', ['character_id' => $characterId], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdAgentsResearchGetItem::from($item),
             (array) $response->data,
@@ -69,7 +69,7 @@ class CharacterResource extends AbstractResource
      */
     public function getCharactersCharacterIdBlueprints(int $characterId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/blueprints', ['character_id' => $characterId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/blueprints', ['character_id' => $characterId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdBlueprintsGetItem::from($item),
             (array) $response->data,
@@ -81,7 +81,7 @@ class CharacterResource extends AbstractResource
      */
     public function getCharactersCharacterIdCorporationhistory(int $characterId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/corporationhistory', ['character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/corporationhistory', ['character_id' => $characterId], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdCorporationhistoryGetItem::from($item),
             (array) $response->data,
@@ -94,7 +94,7 @@ class CharacterResource extends AbstractResource
      */
     public function postCharactersCharacterIdCspa(mixed $requestBody, int $characterId): EsiResult
     {
-        $response = $this->transport->invoke('post', '/characters/{character_id}/cspa', ['character_id' => $characterId], 'latest', [], (array) $requestBody);
+        $response = $this->transport->invoke('post', '/characters/{character_id}/cspa', ['character_id' => $characterId], [], (array) $requestBody);
         return EsiResult::fromRaw($response, null);
     }
 
@@ -104,7 +104,7 @@ class CharacterResource extends AbstractResource
      */
     public function getCharactersCharacterIdFatigue(int $characterId): CharactersCharacterIdFatigueGet
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/fatigue', ['character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/fatigue', ['character_id' => $characterId], []);
         $dto = CharactersCharacterIdFatigueGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -117,7 +117,7 @@ class CharacterResource extends AbstractResource
      */
     public function getCharactersCharacterIdMedals(int $characterId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/medals', ['character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/medals', ['character_id' => $characterId], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdMedalsGetItem::from($item),
             (array) $response->data,
@@ -130,7 +130,7 @@ class CharacterResource extends AbstractResource
      */
     public function getCharactersCharacterIdNotifications(int $characterId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/notifications', ['character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/notifications', ['character_id' => $characterId], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdNotificationsGetItem::from($item),
             (array) $response->data,
@@ -143,7 +143,7 @@ class CharacterResource extends AbstractResource
      */
     public function getCharactersCharacterIdNotificationsContacts(int $characterId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/notifications/contacts', ['character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/notifications/contacts', ['character_id' => $characterId], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdNotificationsContactsGetItem::from($item),
             (array) $response->data,
@@ -155,7 +155,7 @@ class CharacterResource extends AbstractResource
      */
     public function getCharactersCharacterIdPortrait(int $characterId): CharactersCharacterIdPortraitGet
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/portrait', ['character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/portrait', ['character_id' => $characterId], []);
         $dto = CharactersCharacterIdPortraitGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -168,7 +168,7 @@ class CharacterResource extends AbstractResource
      */
     public function getCharactersCharacterIdRoles(int $characterId): CharactersCharacterIdRolesGet
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/roles', ['character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/roles', ['character_id' => $characterId], []);
         $dto = CharactersCharacterIdRolesGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -181,7 +181,7 @@ class CharacterResource extends AbstractResource
      */
     public function getCharactersCharacterIdStandings(int $characterId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/standings', ['character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/standings', ['character_id' => $characterId], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdStandingsGetItem::from($item),
             (array) $response->data,
@@ -194,7 +194,7 @@ class CharacterResource extends AbstractResource
      */
     public function getCharactersCharacterIdTitles(int $characterId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/titles', ['character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/titles', ['character_id' => $characterId], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdTitlesGetItem::from($item),
             (array) $response->data,

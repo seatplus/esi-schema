@@ -26,7 +26,6 @@ function mockTransport(mixed $data, bool $isCachedLoad = false, int $pages = 1):
             string $method,
             string $path,
             array $pathValues = [],
-            string $version = 'latest',
             array $queryParams = [],
             array $requestBody = [],
         ): EsiRawResponse {

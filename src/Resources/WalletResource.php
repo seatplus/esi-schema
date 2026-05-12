@@ -23,7 +23,7 @@ class WalletResource extends AbstractResource
      */
     public function getCharactersCharacterIdWallet(int $characterId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/wallet', ['character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/wallet', ['character_id' => $characterId], []);
         /** @var float $scalar */
         $scalar = (float) $response->data;
         return EsiResult::fromRaw($response, $scalar);
@@ -36,7 +36,7 @@ class WalletResource extends AbstractResource
      */
     public function getCharactersCharacterIdWalletJournal(int $characterId, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/wallet/journal', ['character_id' => $characterId], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/wallet/journal', ['character_id' => $characterId], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdWalletJournalGetItem::from($item),
             (array) $response->data,
@@ -49,7 +49,7 @@ class WalletResource extends AbstractResource
      */
     public function getCharactersCharacterIdWalletTransactions(int $characterId, ?int $fromId = null): EsiResult
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/wallet/transactions', ['character_id' => $characterId], 'latest', ['from_id' => $fromId]);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/wallet/transactions', ['character_id' => $characterId], ['from_id' => $fromId]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdWalletTransactionsGetItem::from($item),
             (array) $response->data,
@@ -62,7 +62,7 @@ class WalletResource extends AbstractResource
      */
     public function getCorporationsCorporationIdWallets(int $corporationId): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/wallets', ['corporation_id' => $corporationId], 'latest', []);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/wallets', ['corporation_id' => $corporationId], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdWalletsGetItem::from($item),
             (array) $response->data,
@@ -76,7 +76,7 @@ class WalletResource extends AbstractResource
      */
     public function getCorporationsCorporationIdWalletsDivisionJournal(int $corporationId, int $division, int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/wallets/{division}/journal', ['corporation_id' => $corporationId, 'division' => $division], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/wallets/{division}/journal', ['corporation_id' => $corporationId, 'division' => $division], ['page' => $page]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdWalletsDivisionJournalGetItem::from($item),
             (array) $response->data,
@@ -89,7 +89,7 @@ class WalletResource extends AbstractResource
      */
     public function getCorporationsCorporationIdWalletsDivisionTransactions(int $corporationId, int $division, ?int $fromId = null): EsiResult
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/wallets/{division}/transactions', ['corporation_id' => $corporationId, 'division' => $division], 'latest', ['from_id' => $fromId]);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/wallets/{division}/transactions', ['corporation_id' => $corporationId, 'division' => $division], ['from_id' => $fromId]);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdWalletsDivisionTransactionsGetItem::from($item),
             (array) $response->data,

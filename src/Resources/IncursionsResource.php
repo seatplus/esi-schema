@@ -18,7 +18,7 @@ class IncursionsResource extends AbstractResource
      */
     public function getIncursions(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/incursions', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/incursions', [], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => IncursionsGetItem::from($item),
             (array) $response->data,

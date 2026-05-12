@@ -17,7 +17,7 @@ class StatusResource extends AbstractResource
      */
     public function getStatus(): StatusGet
     {
-        $response = $this->transport->invoke('get', '/status', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/status', [], []);
         $dto = StatusGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

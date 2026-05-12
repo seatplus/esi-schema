@@ -39,7 +39,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseAncestries(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/universe/ancestries', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/ancestries', [], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => UniverseAncestriesGetItem::from($item),
             (array) $response->data,
@@ -51,7 +51,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseAsteroidBeltsAsteroidBeltId(int $asteroidBeltId): UniverseAsteroidBeltsAsteroidBeltIdGet
     {
-        $response = $this->transport->invoke('get', '/universe/asteroid_belts/{asteroid_belt_id}', ['asteroid_belt_id' => $asteroidBeltId], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/asteroid_belts/{asteroid_belt_id}', ['asteroid_belt_id' => $asteroidBeltId], []);
         $dto = UniverseAsteroidBeltsAsteroidBeltIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -63,7 +63,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseBloodlines(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/universe/bloodlines', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/bloodlines', [], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => UniverseBloodlinesGetItem::from($item),
             (array) $response->data,
@@ -75,7 +75,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseCategories(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/universe/categories', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/categories', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
         return EsiResult::fromRaw($response, $data);
@@ -86,7 +86,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseCategoriesCategoryId(int $categoryId): UniverseCategoriesCategoryIdGet
     {
-        $response = $this->transport->invoke('get', '/universe/categories/{category_id}', ['category_id' => $categoryId], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/categories/{category_id}', ['category_id' => $categoryId], []);
         $dto = UniverseCategoriesCategoryIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -98,7 +98,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseConstellations(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/universe/constellations', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/constellations', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
         return EsiResult::fromRaw($response, $data);
@@ -109,7 +109,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseConstellationsConstellationId(int $constellationId): UniverseConstellationsConstellationIdGet
     {
-        $response = $this->transport->invoke('get', '/universe/constellations/{constellation_id}', ['constellation_id' => $constellationId], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/constellations/{constellation_id}', ['constellation_id' => $constellationId], []);
         $dto = UniverseConstellationsConstellationIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -121,7 +121,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseFactions(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/universe/factions', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/factions', [], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => UniverseFactionsGetItem::from($item),
             (array) $response->data,
@@ -133,7 +133,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseGraphics(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/universe/graphics', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/graphics', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
         return EsiResult::fromRaw($response, $data);
@@ -144,7 +144,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseGraphicsGraphicId(int $graphicId): UniverseGraphicsGraphicIdGet
     {
-        $response = $this->transport->invoke('get', '/universe/graphics/{graphic_id}', ['graphic_id' => $graphicId], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/graphics/{graphic_id}', ['graphic_id' => $graphicId], []);
         $dto = UniverseGraphicsGraphicIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -157,7 +157,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseGroups(int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/universe/groups', [], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/universe/groups', [], ['page' => $page]);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
         return EsiResult::fromRaw($response, $data);
@@ -168,7 +168,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseGroupsGroupId(int $groupId): UniverseGroupsGroupIdGet
     {
-        $response = $this->transport->invoke('get', '/universe/groups/{group_id}', ['group_id' => $groupId], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/groups/{group_id}', ['group_id' => $groupId], []);
         $dto = UniverseGroupsGroupIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -180,7 +180,7 @@ class UniverseResource extends AbstractResource
      */
     public function postUniverseIds(mixed $requestBody): UniverseIdsPost
     {
-        $response = $this->transport->invoke('post', '/universe/ids', [], 'latest', [], (array) $requestBody);
+        $response = $this->transport->invoke('post', '/universe/ids', [], [], (array) $requestBody);
         $dto = UniverseIdsPost::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -192,7 +192,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseMoonsMoonId(int $moonId): UniverseMoonsMoonIdGet
     {
-        $response = $this->transport->invoke('get', '/universe/moons/{moon_id}', ['moon_id' => $moonId], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/moons/{moon_id}', ['moon_id' => $moonId], []);
         $dto = UniverseMoonsMoonIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -204,7 +204,7 @@ class UniverseResource extends AbstractResource
      */
     public function postUniverseNames(mixed $requestBody): EsiResult
     {
-        $response = $this->transport->invoke('post', '/universe/names', [], 'latest', [], (array) $requestBody);
+        $response = $this->transport->invoke('post', '/universe/names', [], [], (array) $requestBody);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => UniverseNamesPostItem::from($item),
             (array) $response->data,
@@ -216,7 +216,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniversePlanetsPlanetId(int $planetId): UniversePlanetsPlanetIdGet
     {
-        $response = $this->transport->invoke('get', '/universe/planets/{planet_id}', ['planet_id' => $planetId], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/planets/{planet_id}', ['planet_id' => $planetId], []);
         $dto = UniversePlanetsPlanetIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -228,7 +228,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseRaces(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/universe/races', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/races', [], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => UniverseRacesGetItem::from($item),
             (array) $response->data,
@@ -240,7 +240,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseRegions(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/universe/regions', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/regions', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
         return EsiResult::fromRaw($response, $data);
@@ -251,7 +251,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseRegionsRegionId(int $regionId): UniverseRegionsRegionIdGet
     {
-        $response = $this->transport->invoke('get', '/universe/regions/{region_id}', ['region_id' => $regionId], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/regions/{region_id}', ['region_id' => $regionId], []);
         $dto = UniverseRegionsRegionIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -263,7 +263,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseStargatesStargateId(int $stargateId): UniverseStargatesStargateIdGet
     {
-        $response = $this->transport->invoke('get', '/universe/stargates/{stargate_id}', ['stargate_id' => $stargateId], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/stargates/{stargate_id}', ['stargate_id' => $stargateId], []);
         $dto = UniverseStargatesStargateIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -275,7 +275,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseStarsStarId(int $starId): UniverseStarsStarIdGet
     {
-        $response = $this->transport->invoke('get', '/universe/stars/{star_id}', ['star_id' => $starId], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/stars/{star_id}', ['star_id' => $starId], []);
         $dto = UniverseStarsStarIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -287,7 +287,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseStationsStationId(int $stationId): UniverseStationsStationIdGet
     {
-        $response = $this->transport->invoke('get', '/universe/stations/{station_id}', ['station_id' => $stationId], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/stations/{station_id}', ['station_id' => $stationId], []);
         $dto = UniverseStationsStationIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -299,7 +299,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseStructures(?string $filter = null): EsiResult
     {
-        $response = $this->transport->invoke('get', '/universe/structures', [], 'latest', ['filter' => $filter]);
+        $response = $this->transport->invoke('get', '/universe/structures', [], ['filter' => $filter]);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
         return EsiResult::fromRaw($response, $data);
@@ -311,7 +311,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseStructuresStructureId(int $structureId): UniverseStructuresStructureIdGet
     {
-        $response = $this->transport->invoke('get', '/universe/structures/{structure_id}', ['structure_id' => $structureId], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/structures/{structure_id}', ['structure_id' => $structureId], []);
         $dto = UniverseStructuresStructureIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -323,7 +323,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseSystemJumps(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/universe/system_jumps', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/system_jumps', [], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => UniverseSystemJumpsGetItem::from($item),
             (array) $response->data,
@@ -335,7 +335,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseSystemKills(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/universe/system_kills', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/system_kills', [], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => UniverseSystemKillsGetItem::from($item),
             (array) $response->data,
@@ -347,7 +347,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseSystems(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/universe/systems', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/systems', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
         return EsiResult::fromRaw($response, $data);
@@ -358,7 +358,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseSystemsSystemId(int $systemId): UniverseSystemsSystemIdGet
     {
-        $response = $this->transport->invoke('get', '/universe/systems/{system_id}', ['system_id' => $systemId], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/systems/{system_id}', ['system_id' => $systemId], []);
         $dto = UniverseSystemsSystemIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -371,7 +371,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseTypes(int $page = 1): EsiResult
     {
-        $response = $this->transport->invoke('get', '/universe/types', [], 'latest', ['page' => $page]);
+        $response = $this->transport->invoke('get', '/universe/types', [], ['page' => $page]);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
         return EsiResult::fromRaw($response, $data);
@@ -382,7 +382,7 @@ class UniverseResource extends AbstractResource
      */
     public function getUniverseTypesTypeId(int $typeId): UniverseTypesTypeIdGet
     {
-        $response = $this->transport->invoke('get', '/universe/types/{type_id}', ['type_id' => $typeId], 'latest', []);
+        $response = $this->transport->invoke('get', '/universe/types/{type_id}', ['type_id' => $typeId], []);
         $dto = UniverseTypesTypeIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

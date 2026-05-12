@@ -26,7 +26,7 @@ class FactionWarfareResource extends AbstractResource
      */
     public function getCharactersCharacterIdFwStats(int $characterId): CharactersCharacterIdFwStatsGet
     {
-        $response = $this->transport->invoke('get', '/characters/{character_id}/fw/stats', ['character_id' => $characterId], 'latest', []);
+        $response = $this->transport->invoke('get', '/characters/{character_id}/fw/stats', ['character_id' => $characterId], []);
         $dto = CharactersCharacterIdFwStatsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -39,7 +39,7 @@ class FactionWarfareResource extends AbstractResource
      */
     public function getCorporationsCorporationIdFwStats(int $corporationId): CorporationsCorporationIdFwStatsGet
     {
-        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/fw/stats', ['corporation_id' => $corporationId], 'latest', []);
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/fw/stats', ['corporation_id' => $corporationId], []);
         $dto = CorporationsCorporationIdFwStatsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -51,7 +51,7 @@ class FactionWarfareResource extends AbstractResource
      */
     public function getFwLeaderboards(): FwLeaderboardsGet
     {
-        $response = $this->transport->invoke('get', '/fw/leaderboards', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/fw/leaderboards', [], []);
         $dto = FwLeaderboardsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -63,7 +63,7 @@ class FactionWarfareResource extends AbstractResource
      */
     public function getFwLeaderboardsCharacters(): FwLeaderboardsCharactersGet
     {
-        $response = $this->transport->invoke('get', '/fw/leaderboards/characters', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/fw/leaderboards/characters', [], []);
         $dto = FwLeaderboardsCharactersGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -75,7 +75,7 @@ class FactionWarfareResource extends AbstractResource
      */
     public function getFwLeaderboardsCorporations(): FwLeaderboardsCorporationsGet
     {
-        $response = $this->transport->invoke('get', '/fw/leaderboards/corporations', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/fw/leaderboards/corporations', [], []);
         $dto = FwLeaderboardsCorporationsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
@@ -87,7 +87,7 @@ class FactionWarfareResource extends AbstractResource
      */
     public function getFwStats(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/fw/stats', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/fw/stats', [], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => FwStatsGetItem::from($item),
             (array) $response->data,
@@ -99,7 +99,7 @@ class FactionWarfareResource extends AbstractResource
      */
     public function getFwSystems(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/fw/systems', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/fw/systems', [], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => FwSystemsGetItem::from($item),
             (array) $response->data,
@@ -111,7 +111,7 @@ class FactionWarfareResource extends AbstractResource
      */
     public function getFwWars(): EsiResult
     {
-        $response = $this->transport->invoke('get', '/fw/wars', [], 'latest', []);
+        $response = $this->transport->invoke('get', '/fw/wars', [], []);
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => FwWarsGetItem::from($item),
             (array) $response->data,
