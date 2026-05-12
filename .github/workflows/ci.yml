@@ -41,3 +41,6 @@ jobs:
 
       - name: Pest (unit tests)
         run: vendor/bin/pest --no-coverage
+
+      - name: Pest (type coverage)
+        run: vendor/bin/pest --type-coverage --min=100
