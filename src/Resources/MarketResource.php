@@ -1,0 +1,164 @@
+<?php
+
+namespace Seatplus\EsiSchema\Resources;
+
+use Seatplus\EsiSchema\EsiResult;
+use Seatplus\EsiSchema\Responses\CharactersCharacterIdOrdersGetItem;
+use Seatplus\EsiSchema\Responses\CharactersCharacterIdOrdersHistoryGetItem;
+use Seatplus\EsiSchema\Responses\CorporationsCorporationIdOrdersGetItem;
+use Seatplus\EsiSchema\Responses\CorporationsCorporationIdOrdersHistoryGetItem;
+use Seatplus\EsiSchema\Responses\MarketsGroupsMarketGroupIdGet;
+use Seatplus\EsiSchema\Responses\MarketsPricesGetItem;
+use Seatplus\EsiSchema\Responses\MarketsStructuresStructureIdGetItem;
+use Seatplus\EsiSchema\Responses\MarketsRegionIdHistoryGetItem;
+use Seatplus\EsiSchema\Responses\MarketsRegionIdOrdersGetItem;
+
+/**
+ * ESI tag: Market
+ *
+ * Generated from ESI OpenAPI spec (compatibility date: 2025-12-16).
+ * Do not edit manually — run bin/generate.php instead.
+ */
+class MarketResource extends AbstractResource
+{
+    /**
+     * @return EsiResult<array<CharactersCharacterIdOrdersGetItem>>
+     * @scope esi-markets.read_character_orders.v1
+     */
+    public function getCharactersCharacterIdOrders(int $characterId): EsiResult
+    {
+        $response = $this->transport->invoke('get', '/characters/{character_id}/orders', ['character_id' => $characterId], 'latest', []);
+        return EsiResult::fromRaw($response, array_map(
+            fn (object $item) => CharactersCharacterIdOrdersGetItem::from($item),
+            (array) $response->data,
+        ));
+    }
+
+    /**
+     * @return EsiResult<array<CharactersCharacterIdOrdersHistoryGetItem>>
+     * @scope esi-markets.read_character_orders.v1
+     * @paginated Use $page param to iterate pages.
+     */
+    public function getCharactersCharacterIdOrdersHistory(int $characterId, int $page = 1): EsiResult
+    {
+        $response = $this->transport->invoke('get', '/characters/{character_id}/orders/history', ['character_id' => $characterId], 'latest', ['page' => $page]);
+        return EsiResult::fromRaw($response, array_map(
+            fn (object $item) => CharactersCharacterIdOrdersHistoryGetItem::from($item),
+            (array) $response->data,
+        ));
+    }
+
+    /**
+     * @return EsiResult<array<CorporationsCorporationIdOrdersGetItem>>
+     * @scope esi-markets.read_corporation_orders.v1
+     * @paginated Use $page param to iterate pages.
+     */
+    public function getCorporationsCorporationIdOrders(int $corporationId, int $page = 1): EsiResult
+    {
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/orders', ['corporation_id' => $corporationId], 'latest', ['page' => $page]);
+        return EsiResult::fromRaw($response, array_map(
+            fn (object $item) => CorporationsCorporationIdOrdersGetItem::from($item),
+            (array) $response->data,
+        ));
+    }
+
+    /**
+     * @return EsiResult<array<CorporationsCorporationIdOrdersHistoryGetItem>>
+     * @scope esi-markets.read_corporation_orders.v1
+     * @paginated Use $page param to iterate pages.
+     */
+    public function getCorporationsCorporationIdOrdersHistory(int $corporationId, int $page = 1): EsiResult
+    {
+        $response = $this->transport->invoke('get', '/corporations/{corporation_id}/orders/history', ['corporation_id' => $corporationId], 'latest', ['page' => $page]);
+        return EsiResult::fromRaw($response, array_map(
+            fn (object $item) => CorporationsCorporationIdOrdersHistoryGetItem::from($item),
+            (array) $response->data,
+        ));
+    }
+
+    /**
+     * @return EsiResult<array<int>>
+     */
+    public function getMarketsGroups(): EsiResult
+    {
+        $response = $this->transport->invoke('get', '/markets/groups', [], 'latest', []);
+        /** @var array<int> $data */
+        $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
+        return EsiResult::fromRaw($response, $data);
+    }
+
+    /**
+     * @return MarketsGroupsMarketGroupIdGet
+     */
+    public function getMarketsGroupsMarketGroupId(int $marketGroupId): MarketsGroupsMarketGroupIdGet
+    {
+        $response = $this->transport->invoke('get', '/markets/groups/{market_group_id}', ['market_group_id' => $marketGroupId], 'latest', []);
+        $dto = MarketsGroupsMarketGroupIdGet::from((object) $response->data);
+        $dto->isCachedLoad = $response->isCachedLoad;
+        $dto->pages = $response->pages;
+        return $dto;
+    }
+
+    /**
+     * @return EsiResult<array<MarketsPricesGetItem>>
+     */
+    public function getMarketsPrices(): EsiResult
+    {
+        $response = $this->transport->invoke('get', '/markets/prices', [], 'latest', []);
+        return EsiResult::fromRaw($response, array_map(
+            fn (object $item) => MarketsPricesGetItem::from($item),
+            (array) $response->data,
+        ));
+    }
+
+    /**
+     * @return EsiResult<array<MarketsStructuresStructureIdGetItem>>
+     * @scope esi-markets.structure_markets.v1
+     * @paginated Use $page param to iterate pages.
+     */
+    public function getMarketsStructuresStructureId(int $structureId, int $page = 1): EsiResult
+    {
+        $response = $this->transport->invoke('get', '/markets/structures/{structure_id}', ['structure_id' => $structureId], 'latest', ['page' => $page]);
+        return EsiResult::fromRaw($response, array_map(
+            fn (object $item) => MarketsStructuresStructureIdGetItem::from($item),
+            (array) $response->data,
+        ));
+    }
+
+    /**
+     * @return EsiResult<array<MarketsRegionIdHistoryGetItem>>
+     */
+    public function getMarketsRegionIdHistory(int $regionId, int $typeId): EsiResult
+    {
+        $response = $this->transport->invoke('get', '/markets/{region_id}/history', ['region_id' => $regionId], 'latest', ['type_id' => $typeId]);
+        return EsiResult::fromRaw($response, array_map(
+            fn (object $item) => MarketsRegionIdHistoryGetItem::from($item),
+            (array) $response->data,
+        ));
+    }
+
+    /**
+     * @return EsiResult<array<MarketsRegionIdOrdersGetItem>>
+     * @paginated Use $page param to iterate pages.
+     */
+    public function getMarketsRegionIdOrders(string $orderType, int $regionId, int $page = 1, ?int $typeId = null): EsiResult
+    {
+        $response = $this->transport->invoke('get', '/markets/{region_id}/orders', ['region_id' => $regionId], 'latest', ['order_type' => $orderType, 'page' => $page, 'type_id' => $typeId]);
+        return EsiResult::fromRaw($response, array_map(
+            fn (object $item) => MarketsRegionIdOrdersGetItem::from($item),
+            (array) $response->data,
+        ));
+    }
+
+    /**
+     * @return EsiResult<array<int>>
+     * @paginated Use $page param to iterate pages.
+     */
+    public function getMarketsRegionIdTypes(int $regionId, int $page = 1): EsiResult
+    {
+        $response = $this->transport->invoke('get', '/markets/{region_id}/types', ['region_id' => $regionId], 'latest', ['page' => $page]);
+        /** @var array<int> $data */
+        $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
+        return EsiResult::fromRaw($response, $data);
+    }
+}

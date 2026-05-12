@@ -1,0 +1,120 @@
+<?php
+
+namespace Seatplus\EsiSchema\Resources;
+
+use Seatplus\EsiSchema\EsiResult;
+use Seatplus\EsiSchema\Responses\CharactersCharacterIdMailGetItem;
+use Seatplus\EsiSchema\Responses\CharactersCharacterIdMailLabelsGet;
+use Seatplus\EsiSchema\Responses\CharactersCharacterIdMailListsGetItem;
+use Seatplus\EsiSchema\Responses\CharactersCharacterIdMailMailIdGet;
+
+/**
+ * ESI tag: Mail
+ *
+ * Generated from ESI OpenAPI spec (compatibility date: 2025-12-16).
+ * Do not edit manually — run bin/generate.php instead.
+ */
+class MailResource extends AbstractResource
+{
+    /**
+     * @return EsiResult<array<CharactersCharacterIdMailGetItem>>
+     * @scope esi-mail.read_mail.v1
+     */
+    public function getCharactersCharacterIdMail(int $characterId, ?array $labels = null, ?int $lastMailId = null): EsiResult
+    {
+        $response = $this->transport->invoke('get', '/characters/{character_id}/mail', ['character_id' => $characterId], 'latest', ['labels' => $labels, 'last_mail_id' => $lastMailId]);
+        return EsiResult::fromRaw($response, array_map(
+            fn (object $item) => CharactersCharacterIdMailGetItem::from($item),
+            (array) $response->data,
+        ));
+    }
+
+    /**
+     * @return EsiResult<null>
+     * @scope esi-mail.send_mail.v1
+     */
+    public function postCharactersCharacterIdMail(mixed $requestBody, int $characterId): EsiResult
+    {
+        $response = $this->transport->invoke('post', '/characters/{character_id}/mail', ['character_id' => $characterId], 'latest', [], (array) $requestBody);
+        return EsiResult::fromRaw($response, null);
+    }
+
+    /**
+     * @return CharactersCharacterIdMailLabelsGet
+     * @scope esi-mail.read_mail.v1
+     */
+    public function getCharactersCharacterIdMailLabels(int $characterId): CharactersCharacterIdMailLabelsGet
+    {
+        $response = $this->transport->invoke('get', '/characters/{character_id}/mail/labels', ['character_id' => $characterId], 'latest', []);
+        $dto = CharactersCharacterIdMailLabelsGet::from((object) $response->data);
+        $dto->isCachedLoad = $response->isCachedLoad;
+        $dto->pages = $response->pages;
+        return $dto;
+    }
+
+    /**
+     * @return EsiResult<null>
+     * @scope esi-mail.organize_mail.v1
+     */
+    public function postCharactersCharacterIdMailLabels(mixed $requestBody, int $characterId): EsiResult
+    {
+        $response = $this->transport->invoke('post', '/characters/{character_id}/mail/labels', ['character_id' => $characterId], 'latest', [], (array) $requestBody);
+        return EsiResult::fromRaw($response, null);
+    }
+
+    /**
+     * @return EsiResult<null>
+     * @scope esi-mail.organize_mail.v1
+     */
+    public function deleteCharactersCharacterIdMailLabelsLabelId(int $characterId, int $labelId): EsiResult
+    {
+        $response = $this->transport->invoke('delete', '/characters/{character_id}/mail/labels/{label_id}', ['character_id' => $characterId, 'label_id' => $labelId], 'latest', [], []);
+        return EsiResult::fromRaw($response, null);
+    }
+
+    /**
+     * @return EsiResult<array<CharactersCharacterIdMailListsGetItem>>
+     * @scope esi-mail.read_mail.v1
+     */
+    public function getCharactersCharacterIdMailLists(int $characterId): EsiResult
+    {
+        $response = $this->transport->invoke('get', '/characters/{character_id}/mail/lists', ['character_id' => $characterId], 'latest', []);
+        return EsiResult::fromRaw($response, array_map(
+            fn (object $item) => CharactersCharacterIdMailListsGetItem::from($item),
+            (array) $response->data,
+        ));
+    }
+
+    /**
+     * @return EsiResult<null>
+     * @scope esi-mail.organize_mail.v1
+     */
+    public function deleteCharactersCharacterIdMailMailId(int $characterId, int $mailId): EsiResult
+    {
+        $response = $this->transport->invoke('delete', '/characters/{character_id}/mail/{mail_id}', ['character_id' => $characterId, 'mail_id' => $mailId], 'latest', [], []);
+        return EsiResult::fromRaw($response, null);
+    }
+
+    /**
+     * @return CharactersCharacterIdMailMailIdGet
+     * @scope esi-mail.read_mail.v1
+     */
+    public function getCharactersCharacterIdMailMailId(int $characterId, int $mailId): CharactersCharacterIdMailMailIdGet
+    {
+        $response = $this->transport->invoke('get', '/characters/{character_id}/mail/{mail_id}', ['character_id' => $characterId, 'mail_id' => $mailId], 'latest', []);
+        $dto = CharactersCharacterIdMailMailIdGet::from((object) $response->data);
+        $dto->isCachedLoad = $response->isCachedLoad;
+        $dto->pages = $response->pages;
+        return $dto;
+    }
+
+    /**
+     * @return EsiResult<null>
+     * @scope esi-mail.organize_mail.v1
+     */
+    public function putCharactersCharacterIdMailMailId(mixed $requestBody, int $characterId, int $mailId): EsiResult
+    {
+        $response = $this->transport->invoke('put', '/characters/{character_id}/mail/{mail_id}', ['character_id' => $characterId, 'mail_id' => $mailId], 'latest', [], (array) $requestBody);
+        return EsiResult::fromRaw($response, null);
+    }
+}

@@ -1,0 +1,41 @@
+<?php
+
+namespace Seatplus\EsiSchema\Resources;
+
+use Seatplus\EsiSchema\EsiResult;
+use Seatplus\EsiSchema\Responses\CharactersCharacterIdLoyaltyPointsGetItem;
+use Seatplus\EsiSchema\Responses\LoyaltyStoresCorporationIdOffersGetItem;
+
+/**
+ * ESI tag: Loyalty
+ *
+ * Generated from ESI OpenAPI spec (compatibility date: 2025-12-16).
+ * Do not edit manually — run bin/generate.php instead.
+ */
+class LoyaltyResource extends AbstractResource
+{
+    /**
+     * @return EsiResult<array<CharactersCharacterIdLoyaltyPointsGetItem>>
+     * @scope esi-characters.read_loyalty.v1
+     */
+    public function getCharactersCharacterIdLoyaltyPoints(int $characterId): EsiResult
+    {
+        $response = $this->transport->invoke('get', '/characters/{character_id}/loyalty/points', ['character_id' => $characterId], 'latest', []);
+        return EsiResult::fromRaw($response, array_map(
+            fn (object $item) => CharactersCharacterIdLoyaltyPointsGetItem::from($item),
+            (array) $response->data,
+        ));
+    }
+
+    /**
+     * @return EsiResult<array<LoyaltyStoresCorporationIdOffersGetItem>>
+     */
+    public function getLoyaltyStoresCorporationIdOffers(int $corporationId): EsiResult
+    {
+        $response = $this->transport->invoke('get', '/loyalty/stores/{corporation_id}/offers', ['corporation_id' => $corporationId], 'latest', []);
+        return EsiResult::fromRaw($response, array_map(
+            fn (object $item) => LoyaltyStoresCorporationIdOffersGetItem::from($item),
+            (array) $response->data,
+        ));
+    }
+}
