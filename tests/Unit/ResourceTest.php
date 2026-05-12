@@ -187,7 +187,8 @@ it('EsiResult carries rate-limit metadata from char assets call', function (): v
         ->and($result->rateLimitWindow())->toBe('15m')
         ->and($result->cacheAge())->toBe(3600)
         ->and($result->requiredRoles())->toBeEmpty()
-        ->and($result->usesCursor())->toBeFalse();
+        ->and($result->usesCursor())->toBeFalse()
+        ->and($result->requiredScope())->toBe('esi-assets.read_assets.v1');
 });
 
 it('EsiResult carries different rate-limit group for corp assets call', function (): void {
@@ -195,7 +196,8 @@ it('EsiResult carries different rate-limit group for corp assets call', function
     $result   = $resource->getCorporationsCorporationIdAssets(98000001);
 
     expect($result->rateLimitGroup())->toBe('corp-asset')
-        ->and($result->requiredRoles())->toBe(['Director']);
+        ->and($result->requiredRoles())->toBe(['Director'])
+        ->and($result->requiredScope())->toBe('esi-assets.read_corporation_assets.v1');
 });
 
 it('DTO carries metadata from object endpoint call', function (): void {
@@ -212,7 +214,8 @@ it('DTO carries metadata from object endpoint call', function (): void {
 
     expect($dto->rateLimitGroup())->toBeNull()  // alliance endpoint has no rate-limit in spec
         ->and($dto->cacheAge())->toBeGreaterThan(0)
-        ->and($dto->requiredRoles())->toBeEmpty();
+        ->and($dto->requiredRoles())->toBeEmpty()
+        ->and($dto->requiredScope())->toBeNull();  // public endpoint — no auth required
 });
 
 it('EsiResult meta accessors return null/false when no meta is set', function (): void {
@@ -224,5 +227,6 @@ it('EsiResult meta accessors return null/false when no meta is set', function ()
         ->and($result->rateLimitWindow())->toBeNull()
         ->and($result->cacheAge())->toBeNull()
         ->and($result->requiredRoles())->toBeEmpty()
-        ->and($result->usesCursor())->toBeFalse();
+        ->and($result->usesCursor())->toBeFalse()
+        ->and($result->requiredScope())->toBeNull();
 });

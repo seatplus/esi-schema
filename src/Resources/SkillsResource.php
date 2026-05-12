@@ -15,9 +15,9 @@ use Seatplus\EsiSchema\Responses\CharactersSkills;
 class SkillsResource extends AbstractResource
 {
     protected const array OPERATION_META = [
-        'getCharactersCharacterIdAttributes' => ['cacheAge' => 120, 'rateLimit' => ['group' => 'char-detail', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
-        'getCharactersCharacterIdSkillqueue' => ['cacheAge' => 60, 'rateLimit' => ['group' => 'char-detail', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
-        'getCharactersCharacterIdSkills' => ['cacheAge' => 60, 'rateLimit' => ['group' => 'char-detail', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdAttributes' => ['cacheAge' => 120, 'rateLimit' => ['group' => 'char-detail', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-skills.read_skills.v1'],
+        'getCharactersCharacterIdSkillqueue' => ['cacheAge' => 60, 'rateLimit' => ['group' => 'char-detail', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-skills.read_skillqueue.v1'],
+        'getCharactersCharacterIdSkills' => ['cacheAge' => 60, 'rateLimit' => ['group' => 'char-detail', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-skills.read_skills.v1'],
     ];
 
     /**

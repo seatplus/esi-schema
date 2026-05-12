@@ -404,6 +404,7 @@ function generateResourceFile(string $tag, array $ops): string
         $cacheAge      = $op['cacheAge'] !== null ? (string) $op['cacheAge'] : 'null';
         $requiredRoles = empty($op['requiredRoles']) ? '[]' : "['" . implode("', '", $op['requiredRoles']) . "']";
         $cursor        = $op['cursor'] ? 'true' : 'false';
+        $requiredScope = empty($op['scopes']) ? 'null' : "'" . $op['scopes'][0] . "'";
 
         if ($op['rateLimit'] !== null) {
             $rl = $op['rateLimit'];
@@ -418,12 +419,13 @@ function generateResourceFile(string $tag, array $ops): string
         }
 
         $metaEntries[$op['methodName']] = sprintf(
-            "        '%s' => ['cacheAge' => %s, 'rateLimit' => %s, 'requiredRoles' => %s, 'cursor' => %s]",
+            "        '%s' => ['cacheAge' => %s, 'rateLimit' => %s, 'requiredRoles' => %s, 'cursor' => %s, 'requiredScope' => %s]",
             $op['methodName'],
             $cacheAge,
             $rateLimitStr,
             $requiredRoles,
             $cursor,
+            $requiredScope,
         );
     }
 

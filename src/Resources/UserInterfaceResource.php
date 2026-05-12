@@ -13,11 +13,11 @@ use Seatplus\EsiSchema\EsiResult;
 class UserInterfaceResource extends AbstractResource
 {
     protected const array OPERATION_META = [
-        'postUiAutopilotWaypoint' => ['cacheAge' => null, 'rateLimit' => ['group' => 'ui', 'max-tokens' => 900, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
-        'postUiOpenwindowContract' => ['cacheAge' => null, 'rateLimit' => ['group' => 'ui', 'max-tokens' => 900, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
-        'postUiOpenwindowInformation' => ['cacheAge' => null, 'rateLimit' => ['group' => 'ui', 'max-tokens' => 900, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
-        'postUiOpenwindowMarketdetails' => ['cacheAge' => null, 'rateLimit' => ['group' => 'ui', 'max-tokens' => 900, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
-        'postUiOpenwindowNewmail' => ['cacheAge' => null, 'rateLimit' => ['group' => 'ui', 'max-tokens' => 900, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'postUiAutopilotWaypoint' => ['cacheAge' => null, 'rateLimit' => ['group' => 'ui', 'max-tokens' => 900, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-ui.write_waypoint.v1'],
+        'postUiOpenwindowContract' => ['cacheAge' => null, 'rateLimit' => ['group' => 'ui', 'max-tokens' => 900, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-ui.open_window.v1'],
+        'postUiOpenwindowInformation' => ['cacheAge' => null, 'rateLimit' => ['group' => 'ui', 'max-tokens' => 900, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-ui.open_window.v1'],
+        'postUiOpenwindowMarketdetails' => ['cacheAge' => null, 'rateLimit' => ['group' => 'ui', 'max-tokens' => 900, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-ui.open_window.v1'],
+        'postUiOpenwindowNewmail' => ['cacheAge' => null, 'rateLimit' => ['group' => 'ui', 'max-tokens' => 900, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-ui.open_window.v1'],
     ];
 
     /**

@@ -19,12 +19,12 @@ use Seatplus\EsiSchema\Responses\CorporationsCorporationIdAssetsNamesPostItem;
 class AssetsResource extends AbstractResource
 {
     protected const array OPERATION_META = [
-        'getCharactersCharacterIdAssets' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-asset', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
-        'postCharactersCharacterIdAssetsLocations' => ['cacheAge' => null, 'rateLimit' => ['group' => 'char-asset', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
-        'postCharactersCharacterIdAssetsNames' => ['cacheAge' => null, 'rateLimit' => ['group' => 'char-asset', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
-        'getCorporationsCorporationIdAssets' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-asset', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false],
-        'postCorporationsCorporationIdAssetsLocations' => ['cacheAge' => null, 'rateLimit' => ['group' => 'corp-asset', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false],
-        'postCorporationsCorporationIdAssetsNames' => ['cacheAge' => null, 'rateLimit' => ['group' => 'corp-asset', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false],
+        'getCharactersCharacterIdAssets' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-asset', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-assets.read_assets.v1'],
+        'postCharactersCharacterIdAssetsLocations' => ['cacheAge' => null, 'rateLimit' => ['group' => 'char-asset', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-assets.read_assets.v1'],
+        'postCharactersCharacterIdAssetsNames' => ['cacheAge' => null, 'rateLimit' => ['group' => 'char-asset', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-assets.read_assets.v1'],
+        'getCorporationsCorporationIdAssets' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-asset', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false, 'requiredScope' => 'esi-assets.read_corporation_assets.v1'],
+        'postCorporationsCorporationIdAssetsLocations' => ['cacheAge' => null, 'rateLimit' => ['group' => 'corp-asset', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false, 'requiredScope' => 'esi-assets.read_corporation_assets.v1'],
+        'postCorporationsCorporationIdAssetsNames' => ['cacheAge' => null, 'rateLimit' => ['group' => 'corp-asset', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false, 'requiredScope' => 'esi-assets.read_corporation_assets.v1'],
     ];
 
     /**

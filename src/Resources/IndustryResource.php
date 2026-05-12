@@ -21,14 +21,14 @@ use Seatplus\EsiSchema\Responses\IndustrySystemsGetItem;
 class IndustryResource extends AbstractResource
 {
     protected const array OPERATION_META = [
-        'getCharactersCharacterIdIndustryJobs' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'char-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
-        'getCharactersCharacterIdMining' => ['cacheAge' => 600, 'rateLimit' => ['group' => 'char-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
-        'getCorporationCorporationIdMiningExtractions' => ['cacheAge' => 1800, 'rateLimit' => ['group' => 'corp-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => ['Station_Manager'], 'cursor' => false],
-        'getCorporationCorporationIdMiningObservers' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => ['Accountant'], 'cursor' => false],
-        'getCorporationCorporationIdMiningObserversObserverId' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => ['Accountant'], 'cursor' => false],
-        'getCorporationsCorporationIdIndustryJobs' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'corp-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => ['Factory_Manager'], 'cursor' => false],
-        'getIndustryFacilities' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'industry', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
-        'getIndustrySystems' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'industry', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdIndustryJobs' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'char-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-industry.read_character_jobs.v1'],
+        'getCharactersCharacterIdMining' => ['cacheAge' => 600, 'rateLimit' => ['group' => 'char-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-industry.read_character_mining.v1'],
+        'getCorporationCorporationIdMiningExtractions' => ['cacheAge' => 1800, 'rateLimit' => ['group' => 'corp-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => ['Station_Manager'], 'cursor' => false, 'requiredScope' => 'esi-industry.read_corporation_mining.v1'],
+        'getCorporationCorporationIdMiningObservers' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => ['Accountant'], 'cursor' => false, 'requiredScope' => 'esi-industry.read_corporation_mining.v1'],
+        'getCorporationCorporationIdMiningObserversObserverId' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => ['Accountant'], 'cursor' => false, 'requiredScope' => 'esi-industry.read_corporation_mining.v1'],
+        'getCorporationsCorporationIdIndustryJobs' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'corp-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => ['Factory_Manager'], 'cursor' => false, 'requiredScope' => 'esi-industry.read_corporation_jobs.v1'],
+        'getIndustryFacilities' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'industry', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
+        'getIndustrySystems' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'industry', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
     ];
 
     /**

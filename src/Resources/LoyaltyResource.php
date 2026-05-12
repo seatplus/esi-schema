@@ -15,8 +15,8 @@ use Seatplus\EsiSchema\Responses\LoyaltyStoresCorporationIdOffersGetItem;
 class LoyaltyResource extends AbstractResource
 {
     protected const array OPERATION_META = [
-        'getCharactersCharacterIdLoyaltyPoints' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-wallet', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
-        'getLoyaltyStoresCorporationIdOffers' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdLoyaltyPoints' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-wallet', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-characters.read_loyalty.v1'],
+        'getLoyaltyStoresCorporationIdOffers' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
     ];
 
     /**

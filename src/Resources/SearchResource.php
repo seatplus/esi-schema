@@ -13,7 +13,7 @@ use Seatplus\EsiSchema\Responses\CharactersCharacterIdSearchGet;
 class SearchResource extends AbstractResource
 {
     protected const array OPERATION_META = [
-        'getCharactersCharacterIdSearch' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdSearch' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-search.search_structures.v1'],
     ];
 
     /**

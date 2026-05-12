@@ -16,10 +16,10 @@ use Seatplus\EsiSchema\Responses\CharactersCharacterIdCalendarEventIdAttendeesGe
 class CalendarResource extends AbstractResource
 {
     protected const array OPERATION_META = [
-        'getCharactersCharacterIdCalendar' => ['cacheAge' => 5, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
-        'getCharactersCharacterIdCalendarEventId' => ['cacheAge' => 5, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
-        'putCharactersCharacterIdCalendarEventId' => ['cacheAge' => 5, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
-        'getCharactersCharacterIdCalendarEventIdAttendees' => ['cacheAge' => 600, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdCalendar' => ['cacheAge' => 5, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-calendar.read_calendar_events.v1'],
+        'getCharactersCharacterIdCalendarEventId' => ['cacheAge' => 5, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-calendar.read_calendar_events.v1'],
+        'putCharactersCharacterIdCalendarEventId' => ['cacheAge' => 5, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-calendar.respond_calendar_events.v1'],
+        'getCharactersCharacterIdCalendarEventIdAttendees' => ['cacheAge' => 600, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-calendar.read_calendar_events.v1'],
     ];
 
     /**

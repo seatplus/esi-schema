@@ -13,7 +13,7 @@ use Seatplus\EsiSchema\Responses\StatusGet;
 class StatusResource extends AbstractResource
 {
     protected const array OPERATION_META = [
-        'getStatus' => ['cacheAge' => 30, 'rateLimit' => ['group' => 'status', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getStatus' => ['cacheAge' => 30, 'rateLimit' => ['group' => 'status', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
     ];
 
     /**

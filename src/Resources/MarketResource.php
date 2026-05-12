@@ -22,17 +22,17 @@ use Seatplus\EsiSchema\Responses\MarketsRegionIdOrdersGetItem;
 class MarketResource extends AbstractResource
 {
     protected const array OPERATION_META = [
-        'getCharactersCharacterIdOrders' => ['cacheAge' => 1200, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
-        'getCharactersCharacterIdOrdersHistory' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
-        'getCorporationsCorporationIdOrders' => ['cacheAge' => 1200, 'rateLimit' => null, 'requiredRoles' => ['Accountant', 'Trader'], 'cursor' => false],
-        'getCorporationsCorporationIdOrdersHistory' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => ['Accountant', 'Trader'], 'cursor' => false],
-        'getMarketsGroups' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
-        'getMarketsGroupsMarketGroupId' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
-        'getMarketsPrices' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
-        'getMarketsStructuresStructureId' => ['cacheAge' => 300, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
-        'getMarketsRegionIdHistory' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
-        'getMarketsRegionIdOrders' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'market-order', 'max-tokens' => 12000, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
-        'getMarketsRegionIdTypes' => ['cacheAge' => 600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdOrders' => ['cacheAge' => 1200, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-markets.read_character_orders.v1'],
+        'getCharactersCharacterIdOrdersHistory' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-markets.read_character_orders.v1'],
+        'getCorporationsCorporationIdOrders' => ['cacheAge' => 1200, 'rateLimit' => null, 'requiredRoles' => ['Accountant', 'Trader'], 'cursor' => false, 'requiredScope' => 'esi-markets.read_corporation_orders.v1'],
+        'getCorporationsCorporationIdOrdersHistory' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => ['Accountant', 'Trader'], 'cursor' => false, 'requiredScope' => 'esi-markets.read_corporation_orders.v1'],
+        'getMarketsGroups' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
+        'getMarketsGroupsMarketGroupId' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
+        'getMarketsPrices' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
+        'getMarketsStructuresStructureId' => ['cacheAge' => 300, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-markets.structure_markets.v1'],
+        'getMarketsRegionIdHistory' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
+        'getMarketsRegionIdOrders' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'market-order', 'max-tokens' => 12000, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
+        'getMarketsRegionIdTypes' => ['cacheAge' => 600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
     ];
 
     /**

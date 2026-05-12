@@ -16,9 +16,9 @@ use Seatplus\EsiSchema\Responses\KillmailsKillmailIdKillmailHashGet;
 class KillmailsResource extends AbstractResource
 {
     protected const array OPERATION_META = [
-        'getCharactersCharacterIdKillmailsRecent' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'char-killmail', 'max-tokens' => 30, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
-        'getCorporationsCorporationIdKillmailsRecent' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'corp-killmail', 'max-tokens' => 30, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false],
-        'getKillmailsKillmailIdKillmailHash' => ['cacheAge' => 2592000, 'rateLimit' => ['group' => 'killmail', 'max-tokens' => 3600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdKillmailsRecent' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'char-killmail', 'max-tokens' => 30, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-killmails.read_killmails.v1'],
+        'getCorporationsCorporationIdKillmailsRecent' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'corp-killmail', 'max-tokens' => 30, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false, 'requiredScope' => 'esi-killmails.read_corporation_killmails.v1'],
+        'getKillmailsKillmailIdKillmailHash' => ['cacheAge' => 2592000, 'rateLimit' => ['group' => 'killmail', 'max-tokens' => 3600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
     ];
 
     /**

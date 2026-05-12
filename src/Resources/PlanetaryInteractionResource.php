@@ -17,10 +17,10 @@ use Seatplus\EsiSchema\Responses\UniverseSchematicsSchematicIdGet;
 class PlanetaryInteractionResource extends AbstractResource
 {
     protected const array OPERATION_META = [
-        'getCharactersCharacterIdPlanets' => ['cacheAge' => 600, 'rateLimit' => ['group' => 'char-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
-        'getCharactersCharacterIdPlanetsPlanetId' => ['cacheAge' => 600, 'rateLimit' => ['group' => 'char-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
-        'getCorporationsCorporationIdCustomsOffices' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false],
-        'getUniverseSchematicsSchematicId' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdPlanets' => ['cacheAge' => 600, 'rateLimit' => ['group' => 'char-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-planets.manage_planets.v1'],
+        'getCharactersCharacterIdPlanetsPlanetId' => ['cacheAge' => 600, 'rateLimit' => ['group' => 'char-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-planets.manage_planets.v1'],
+        'getCorporationsCorporationIdCustomsOffices' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false, 'requiredScope' => 'esi-planets.read_customs_offices.v1'],
+        'getUniverseSchematicsSchematicId' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
     ];
 
     /**

@@ -14,9 +14,9 @@ use Seatplus\EsiSchema\Responses\CharactersCharacterIdFittingsGetItem;
 class FittingsResource extends AbstractResource
 {
     protected const array OPERATION_META = [
-        'getCharactersCharacterIdFittings' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'fitting', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
-        'postCharactersCharacterIdFittings' => ['cacheAge' => null, 'rateLimit' => ['group' => 'fitting', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
-        'deleteCharactersCharacterIdFittingsFittingId' => ['cacheAge' => null, 'rateLimit' => ['group' => 'fitting', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false],
+        'getCharactersCharacterIdFittings' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'fitting', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-fittings.read_fittings.v1'],
+        'postCharactersCharacterIdFittings' => ['cacheAge' => null, 'rateLimit' => ['group' => 'fitting', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-fittings.write_fittings.v1'],
+        'deleteCharactersCharacterIdFittingsFittingId' => ['cacheAge' => null, 'rateLimit' => ['group' => 'fitting', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-fittings.write_fittings.v1'],
     ];
 
     /**

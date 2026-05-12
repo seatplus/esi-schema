@@ -74,4 +74,13 @@ trait HasOperationMeta
     {
         return (bool) ($this->operationMeta['cursor'] ?? false);
     }
+
+    /**
+     * Required OAuth2 scope for this operation (e.g. 'esi-assets.read_assets.v1').
+     * Null for public endpoints that require no authentication.
+     */
+    public function requiredScope(): ?string
+    {
+        return $this->operationMeta['requiredScope'] ?? null;
+    }
 }
