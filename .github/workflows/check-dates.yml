@@ -73,9 +73,19 @@ jobs:
         id: branch
         run: |
           LATEST_MAJOR=$(git branch -r | grep -oP '(?<=origin/)\d+(?=\.x$)' | sort -n | tail -1)
-          NEXT_MAJOR=$((LATEST_MAJOR + 1))
-          echo "next_major=$NEXT_MAJOR" >> "$GITHUB_OUTPUT"
-          echo "branch_name=${NEXT_MAJOR}.x" >> "$GITHUB_OUTPUT"
+
+          if [ "${{ steps.detect.outputs.date_is_new }}" = "true" ]; then
+            # New compatibility date → bump major (e.g. 1.x → 2.x)
+            NEXT_MAJOR=$((LATEST_MAJOR + 1))
+            echo "branch_name=${NEXT_MAJOR}.x" >> "$GITHUB_OUTPUT"
+          else
+            # Spec-only change → bump minor within same major (e.g. 1.x → 1.1, then 1.2, …)
+            LATEST_MINOR=$(git branch -r \
+              | grep -oP "(?<=origin/${LATEST_MAJOR}\.)\d+$" \
+              | sort -n | tail -1)
+            NEXT_MINOR=$(( ${LATEST_MINOR:-0} + 1 ))
+            echo "branch_name=${LATEST_MAJOR}.${NEXT_MINOR}" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Create branch, regenerate DTOs+Resources, open PR
         if: steps.detect.outputs.is_new == 'true'
