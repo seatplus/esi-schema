@@ -62,4 +62,17 @@ final readonly class OperationMeta
 
         return $required === null || in_array($required, $scopes, strict: true);
     }
+
+    /**
+     * Return the raw underlying metadata array.
+     *
+     * Used internally by generated operation classes to pass metadata
+     * to EsiResult::fromRaw() and AbstractEsiDto.
+     *
+     * @return array<string,mixed>|null
+     */
+    public function raw(): ?array
+    {
+        return $this->operationMeta;
+    }
 }

@@ -5,8 +5,9 @@
  * ESI Schema Generator — OpenAPI 3.1.0 edition
  *
  * Fetches the ESI OpenAPI YAML spec and generates:
- *   - src/Responses/{SchemaName}.php   (item DTOs, one per object schema)
- *   - src/Resources/{Tag}Resource.php  (one resource per ESI tag group)
+ *   - src/Responses/{SchemaName}.php     (item DTOs, one per object schema)
+ *   - src/Resources/{Tag}Resource.php    (one resource per ESI tag group)
+ *   - src/Operations/{OperationId}.php   (one class per ESI route, with meta() + execute())
  *
  * All DTOs extend AbstractEsiDto which carries $isCachedLoad and $pages.
  * All Resources extend AbstractResource which holds EsiTransportInterface.
@@ -72,8 +73,9 @@ define('ESI_COMPATIBILITY_DATE', $compatDate);
 // Output directories
 // ---------------------------------------------------------------------------
 
-$responsesDir = __DIR__ . '/../src/Responses';
-$resourcesDir = __DIR__ . '/../src/Resources';
+$responsesDir   = __DIR__ . '/../src/Responses';
+$resourcesDir   = __DIR__ . '/../src/Resources';
+$operationsDir  = __DIR__ . '/../src/Operations';
 
 // ---------------------------------------------------------------------------
 // Helper: convert OAS3 type/format to PHP type
@@ -458,6 +460,91 @@ function generateResourceFile(string $tag, array $ops): string
 }
 
 // ---------------------------------------------------------------------------
+// Generator: per-route operation class
+// ---------------------------------------------------------------------------
+
+function generateOperationClass(array $op): string
+{
+    $compatDate  = ESI_COMPATIBILITY_DATE;
+    $className   = ucfirst($op['methodName']);  // PascalCase operationId
+    $sig         = buildMethodSig($op);
+    $body        = buildReturn($op);
+    $returnHint  = $op['responseType'] === 'object' ? ($op['dtoClass'] ?? 'mixed') : 'EsiResult';
+    $doc         = "     * @return {$op['phpDocReturn']}";
+    $auth        = $op['isAuth'] ? "\n     * @scope " . implode(', ', $op['scopes']) : '';
+    $paged       = $op['xPages'] ? "\n     * @paginated Use \$page param to iterate pages." : '';
+
+    // Meta array inline (same format as OPERATION_META entries, without the key)
+    $cacheAge      = $op['cacheAge'] !== null ? (string) $op['cacheAge'] : 'null';
+    $requiredRoles = empty($op['requiredRoles']) ? '[]' : "['" . implode("', '", $op['requiredRoles']) . "']";
+    $cursor        = $op['cursor'] ? 'true' : 'false';
+    $requiredScope = empty($op['scopes']) ? 'null' : "'" . $op['scopes'][0] . "'";
+
+    if ($op['rateLimit'] !== null) {
+        $rl = $op['rateLimit'];
+        $rateLimitStr = sprintf(
+            "['group' => '%s', 'max-tokens' => %d, 'window-size' => '%s']",
+            $rl['group'],
+            (int) $rl['max-tokens'],
+            $rl['window-size'],
+        );
+    } else {
+        $rateLimitStr = 'null';
+    }
+
+    $useStatements = ['use Seatplus\\EsiSchema\\Contracts\\EsiOperationInterface;'];
+    $useStatements[] = 'use Seatplus\\EsiSchema\\Contracts\\EsiTransportInterface;';
+    $useStatements[] = 'use Seatplus\\EsiSchema\\EsiResult;';
+    $useStatements[] = 'use Seatplus\\EsiSchema\\OperationMeta;';
+
+    if ($op['dtoClass'] && ! in_array($op['dtoClass'], ['int', 'float', 'bool', 'string'], true)) {
+        $useStatements[] = "use Seatplus\\EsiSchema\\Responses\\{$op['dtoClass']};";
+    }
+
+    // Replace $this->transport with $transport in the body (operation classes are static)
+    $staticBody = str_replace('$this->transport->invoke', '$transport->invoke', $body);
+    // Replace static::OPERATION_META[...] references with self::META
+    $staticBody = preg_replace("/static::OPERATION_META\['{$op['methodName']}'\] \?\? null/", 'self::META', $staticBody);
+
+    $useBlock = implode("\n", array_unique($useStatements));
+
+    return <<<PHP
+    <?php
+
+    declare(strict_types=1);
+
+    namespace Seatplus\\EsiSchema\\Operations;
+
+    {$useBlock}
+
+    /**
+     * ESI operation: {$op['methodName']}
+     *
+     * Generated from ESI OpenAPI spec (compatibility date: {$compatDate}).
+     * Do not edit manually — run bin/generate.php instead.
+     */
+    final class {$className} implements EsiOperationInterface
+    {
+        /** @var array<string,mixed> */
+        private const array META = ['cacheAge' => {$cacheAge}, 'rateLimit' => {$rateLimitStr}, 'requiredRoles' => {$requiredRoles}, 'cursor' => {$cursor}, 'requiredScope' => {$requiredScope}];
+
+        public static function meta(): OperationMeta
+        {
+            return OperationMeta::from(self::META);
+        }
+
+        /**
+    {$doc}{$auth}{$paged}
+         */
+        public static function execute(EsiTransportInterface \$transport, {$sig}): {$returnHint}
+        {
+    {$staticBody}
+        }
+    }
+    PHP;
+}
+
+// ---------------------------------------------------------------------------
 // Build tag → operations map
 // ---------------------------------------------------------------------------
 
@@ -562,6 +649,9 @@ foreach ($paths as $path => $pathItem) {
     }
 }
 
+/** @var array<array<mixed>> $allOps — flat list of all operations for operation-class generation */
+$allOps = array_merge(...array_values($tagOps));
+
 // ---------------------------------------------------------------------------
 // Collect DTOs
 // ---------------------------------------------------------------------------
@@ -593,8 +683,9 @@ foreach ($schemas as $name => $schema) {
 // Write files
 // ---------------------------------------------------------------------------
 
-$writtenDtos      = 0;
-$writtenResources = 0;
+$writtenDtos       = 0;
+$writtenResources  = 0;
+$writtenOperations = 0;
 
 if (! $dryRun) {
     // --- DTOs ---
@@ -618,6 +709,18 @@ if (! $dryRun) {
         echo "  [resource] src/Resources/{$class}.php\n";
         $writtenResources++;
     }
+
+    // --- Operations ---
+    if (! is_dir($operationsDir)) {
+        mkdir($operationsDir, 0755, true);
+    }
+    foreach ($allOps as $op) {
+        $source    = generateOperationClass($op);
+        $className = ucfirst($op['methodName']);
+        file_put_contents("{$operationsDir}/{$className}.php", $source);
+        echo "  [operation] src/Operations/{$className}.php\n";
+        $writtenOperations++;
+    }
 } else {
     foreach ($dtoFiles as $className => $_) {
         echo "  [dry-run][dto] src/Responses/{$className}.php\n";
@@ -627,8 +730,13 @@ if (! $dryRun) {
         echo "  [dry-run][resource] src/Resources/" . tagToResourceClass($tag) . ".php\n";
         $writtenResources++;
     }
+    foreach ($allOps as $op) {
+        echo "  [dry-run][operation] src/Operations/" . ucfirst($op['methodName']) . ".php\n";
+        $writtenOperations++;
+    }
 }
 
 echo "\nDone.\n";
-echo "  DTOs:      {$writtenDtos} files\n";
-echo "  Resources: {$writtenResources} files\n";
+echo "  DTOs:       {$writtenDtos} files\n";
+echo "  Resources:  {$writtenResources} files\n";
+echo "  Operations: {$writtenOperations} files\n";
