@@ -1,0 +1,309 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Seatplus\EsiSchema\Resources;
+
+use Seatplus\EsiSchema\Contracts\EsiTransportInterface;
+use Seatplus\EsiSchema\EsiResult;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseAncestries;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseAsteroidBeltsAsteroidBeltId;
+use Seatplus\EsiSchema\Responses\UniverseAsteroidBeltsAsteroidBeltIdGet;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseBloodlines;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseCategories;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseCategoriesCategoryId;
+use Seatplus\EsiSchema\Responses\UniverseCategoriesCategoryIdGet;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseConstellations;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseConstellationsConstellationId;
+use Seatplus\EsiSchema\Responses\UniverseConstellationsConstellationIdGet;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseFactions;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseGraphics;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseGraphicsGraphicId;
+use Seatplus\EsiSchema\Responses\UniverseGraphicsGraphicIdGet;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseGroups;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseGroupsGroupId;
+use Seatplus\EsiSchema\Responses\UniverseGroupsGroupIdGet;
+use Seatplus\EsiSchema\Resources\Universe\PostUniverseIds;
+use Seatplus\EsiSchema\Responses\UniverseIdsPost;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseMoonsMoonId;
+use Seatplus\EsiSchema\Responses\UniverseMoonsMoonIdGet;
+use Seatplus\EsiSchema\Resources\Universe\PostUniverseNames;
+use Seatplus\EsiSchema\Resources\Universe\GetUniversePlanetsPlanetId;
+use Seatplus\EsiSchema\Responses\UniversePlanetsPlanetIdGet;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseRaces;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseRegions;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseRegionsRegionId;
+use Seatplus\EsiSchema\Responses\UniverseRegionsRegionIdGet;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseStargatesStargateId;
+use Seatplus\EsiSchema\Responses\UniverseStargatesStargateIdGet;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseStarsStarId;
+use Seatplus\EsiSchema\Responses\UniverseStarsStarIdGet;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseStationsStationId;
+use Seatplus\EsiSchema\Responses\UniverseStationsStationIdGet;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseStructures;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseStructuresStructureId;
+use Seatplus\EsiSchema\Responses\UniverseStructuresStructureIdGet;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseSystemJumps;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseSystemKills;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseSystems;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseSystemsSystemId;
+use Seatplus\EsiSchema\Responses\UniverseSystemsSystemIdGet;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseTypes;
+use Seatplus\EsiSchema\Resources\Universe\GetUniverseTypesTypeId;
+use Seatplus\EsiSchema\Responses\UniverseTypesTypeIdGet;
+
+/**
+ * ESI Universe resource — fluent wrapper around per-route static classes.
+ *
+ * Generated from ESI OpenAPI spec (compatibility date: 2025-12-16).
+ * Do not edit manually — run bin/generate.php instead.
+ */
+final class UniverseResource
+{
+    public function __construct(private readonly EsiTransportInterface $transport)
+    {
+    }
+
+    /**
+     * @return EsiResult
+     */
+    public function getUniverseAncestries(): EsiResult
+    {
+        return GetUniverseAncestries::execute($this->transport);
+    }
+
+    /**
+     * @return UniverseAsteroidBeltsAsteroidBeltIdGet
+     */
+    public function getUniverseAsteroidBeltsAsteroidBeltId(int $asteroidBeltId): UniverseAsteroidBeltsAsteroidBeltIdGet
+    {
+        return GetUniverseAsteroidBeltsAsteroidBeltId::execute($this->transport, $asteroidBeltId);
+    }
+
+    /**
+     * @return EsiResult
+     */
+    public function getUniverseBloodlines(): EsiResult
+    {
+        return GetUniverseBloodlines::execute($this->transport);
+    }
+
+    /**
+     * @return EsiResult
+     */
+    public function getUniverseCategories(): EsiResult
+    {
+        return GetUniverseCategories::execute($this->transport);
+    }
+
+    /**
+     * @return UniverseCategoriesCategoryIdGet
+     */
+    public function getUniverseCategoriesCategoryId(int $categoryId): UniverseCategoriesCategoryIdGet
+    {
+        return GetUniverseCategoriesCategoryId::execute($this->transport, $categoryId);
+    }
+
+    /**
+     * @return EsiResult
+     */
+    public function getUniverseConstellations(): EsiResult
+    {
+        return GetUniverseConstellations::execute($this->transport);
+    }
+
+    /**
+     * @return UniverseConstellationsConstellationIdGet
+     */
+    public function getUniverseConstellationsConstellationId(int $constellationId): UniverseConstellationsConstellationIdGet
+    {
+        return GetUniverseConstellationsConstellationId::execute($this->transport, $constellationId);
+    }
+
+    /**
+     * @return EsiResult
+     */
+    public function getUniverseFactions(): EsiResult
+    {
+        return GetUniverseFactions::execute($this->transport);
+    }
+
+    /**
+     * @return EsiResult
+     */
+    public function getUniverseGraphics(): EsiResult
+    {
+        return GetUniverseGraphics::execute($this->transport);
+    }
+
+    /**
+     * @return UniverseGraphicsGraphicIdGet
+     */
+    public function getUniverseGraphicsGraphicId(int $graphicId): UniverseGraphicsGraphicIdGet
+    {
+        return GetUniverseGraphicsGraphicId::execute($this->transport, $graphicId);
+    }
+
+    /**
+     * @return EsiResult
+     * @paginated Use $page param to iterate pages.
+     */
+    public function getUniverseGroups(int $page = 1): EsiResult
+    {
+        return GetUniverseGroups::execute($this->transport, $page);
+    }
+
+    /**
+     * @return UniverseGroupsGroupIdGet
+     */
+    public function getUniverseGroupsGroupId(int $groupId): UniverseGroupsGroupIdGet
+    {
+        return GetUniverseGroupsGroupId::execute($this->transport, $groupId);
+    }
+
+    /**
+     * @return UniverseIdsPost
+     */
+    public function postUniverseIds(mixed $requestBody): UniverseIdsPost
+    {
+        return PostUniverseIds::execute($this->transport, $requestBody);
+    }
+
+    /**
+     * @return UniverseMoonsMoonIdGet
+     */
+    public function getUniverseMoonsMoonId(int $moonId): UniverseMoonsMoonIdGet
+    {
+        return GetUniverseMoonsMoonId::execute($this->transport, $moonId);
+    }
+
+    /**
+     * @return EsiResult
+     */
+    public function postUniverseNames(mixed $requestBody): EsiResult
+    {
+        return PostUniverseNames::execute($this->transport, $requestBody);
+    }
+
+    /**
+     * @return UniversePlanetsPlanetIdGet
+     */
+    public function getUniversePlanetsPlanetId(int $planetId): UniversePlanetsPlanetIdGet
+    {
+        return GetUniversePlanetsPlanetId::execute($this->transport, $planetId);
+    }
+
+    /**
+     * @return EsiResult
+     */
+    public function getUniverseRaces(): EsiResult
+    {
+        return GetUniverseRaces::execute($this->transport);
+    }
+
+    /**
+     * @return EsiResult
+     */
+    public function getUniverseRegions(): EsiResult
+    {
+        return GetUniverseRegions::execute($this->transport);
+    }
+
+    /**
+     * @return UniverseRegionsRegionIdGet
+     */
+    public function getUniverseRegionsRegionId(int $regionId): UniverseRegionsRegionIdGet
+    {
+        return GetUniverseRegionsRegionId::execute($this->transport, $regionId);
+    }
+
+    /**
+     * @return UniverseStargatesStargateIdGet
+     */
+    public function getUniverseStargatesStargateId(int $stargateId): UniverseStargatesStargateIdGet
+    {
+        return GetUniverseStargatesStargateId::execute($this->transport, $stargateId);
+    }
+
+    /**
+     * @return UniverseStarsStarIdGet
+     */
+    public function getUniverseStarsStarId(int $starId): UniverseStarsStarIdGet
+    {
+        return GetUniverseStarsStarId::execute($this->transport, $starId);
+    }
+
+    /**
+     * @return UniverseStationsStationIdGet
+     */
+    public function getUniverseStationsStationId(int $stationId): UniverseStationsStationIdGet
+    {
+        return GetUniverseStationsStationId::execute($this->transport, $stationId);
+    }
+
+    /**
+     * @return EsiResult
+     */
+    public function getUniverseStructures(?string $filter = null): EsiResult
+    {
+        return GetUniverseStructures::execute($this->transport, $filter);
+    }
+
+    /**
+     * @return UniverseStructuresStructureIdGet
+     * @scope esi-universe.read_structures.v1
+     */
+    public function getUniverseStructuresStructureId(int $structureId): UniverseStructuresStructureIdGet
+    {
+        return GetUniverseStructuresStructureId::execute($this->transport, $structureId);
+    }
+
+    /**
+     * @return EsiResult
+     */
+    public function getUniverseSystemJumps(): EsiResult
+    {
+        return GetUniverseSystemJumps::execute($this->transport);
+    }
+
+    /**
+     * @return EsiResult
+     */
+    public function getUniverseSystemKills(): EsiResult
+    {
+        return GetUniverseSystemKills::execute($this->transport);
+    }
+
+    /**
+     * @return EsiResult
+     */
+    public function getUniverseSystems(): EsiResult
+    {
+        return GetUniverseSystems::execute($this->transport);
+    }
+
+    /**
+     * @return UniverseSystemsSystemIdGet
+     */
+    public function getUniverseSystemsSystemId(int $systemId): UniverseSystemsSystemIdGet
+    {
+        return GetUniverseSystemsSystemId::execute($this->transport, $systemId);
+    }
+
+    /**
+     * @return EsiResult
+     * @paginated Use $page param to iterate pages.
+     */
+    public function getUniverseTypes(int $page = 1): EsiResult
+    {
+        return GetUniverseTypes::execute($this->transport, $page);
+    }
+
+    /**
+     * @return UniverseTypesTypeIdGet
+     */
+    public function getUniverseTypesTypeId(int $typeId): UniverseTypesTypeIdGet
+    {
+        return GetUniverseTypesTypeId::execute($this->transport, $typeId);
+    }
+}

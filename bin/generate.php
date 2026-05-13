@@ -7,6 +7,7 @@
  * Fetches the ESI OpenAPI YAML spec and generates:
  *   - src/Responses/{SchemaName}.php             (item DTOs, one per object schema)
  *   - src/Resources/{Tag}/{OperationId}.php       (one class per ESI route, grouped by tag)
+ *   - src/Resources/{Tag}Resource.php             (fluent tag-group wrappers, one per tag)
  *
  * All DTOs extend AbstractEsiDto which carries $isCachedLoad and $pages.
  *
@@ -371,6 +372,29 @@ function buildMethodSig(array $op): string
 }
 
 // ---------------------------------------------------------------------------
+// Helper: build positional call arguments for delegation to static execute()
+// ---------------------------------------------------------------------------
+
+function buildCallArgs(array $op): string
+{
+    $args   = [];
+    $params = $op['params'];
+
+    usort($params, fn ($a, $b) => ($b['required'] ?? false) <=> ($a['required'] ?? false));
+
+    if ($op['requestBody']) {
+        $args[] = '$requestBody';
+    }
+
+    foreach ($params as $param) {
+        $name   = lcfirst(str_replace('_', '', ucwords($param['name'], '_')));
+        $args[] = "\${$name}";
+    }
+
+    return implode(', ', $args);
+}
+
+// ---------------------------------------------------------------------------
 // Generator: per-route operation class
 // ---------------------------------------------------------------------------
 
@@ -478,6 +502,93 @@ function generateOperationClass(array $op): string
 
     PHP;
 }
+
+// ---------------------------------------------------------------------------
+// Generator: flat tag-group resource class (fluent API entry point)
+// ---------------------------------------------------------------------------
+
+/**
+ * @param string              $tagNs   Tag namespace, spaces already removed ('FactionWarfare')
+ * @param array<array<mixed>> $ops     All operations belonging to this tag
+ */
+function generateTagClass(string $tagNs, array $ops): string
+{
+    $compatDate = ESI_COMPATIBILITY_DATE;
+    $className  = "{$tagNs}Resource";
+
+    $methods       = [];
+    $usesEsiResult = false;
+    $useStatements = ['use Seatplus\\EsiSchema\\Contracts\\EsiTransportInterface;'];
+
+    foreach ($ops as $op) {
+        $opClass    = ucfirst($op['methodName']);
+        $methodName = $op['methodName'];
+        $sig        = buildMethodSig($op);
+        $callArgs   = buildCallArgs($op);
+        $returnHint = $op['responseType'] === 'object' ? ($op['dtoClass'] ?? 'mixed') : 'EsiResult';
+        // For EsiResult returns drop the generic type — item DTOs aren't imported in tag classes.
+        // The delegated per-route static already carries the full typed return annotation.
+        $doc        = $returnHint === 'EsiResult' ? '@return EsiResult' : "@return {$op['phpDocReturn']}";
+        $auth       = $op['isAuth'] ? "\n * @scope " . implode(', ', $op['scopes']) : '';
+        $paged      = $op['xPages'] ? "\n * @paginated Use \$page param to iterate pages." : '';
+
+        $useStatements[] = "use Seatplus\\EsiSchema\\Resources\\{$tagNs}\\{$opClass};";
+
+        if ($returnHint !== 'EsiResult' && $op['dtoClass'] && ! in_array($op['dtoClass'], ['int', 'float', 'bool', 'string'], true)) {
+            $useStatements[] = "use Seatplus\\EsiSchema\\Responses\\{$op['dtoClass']};";
+        }
+
+        if ($returnHint === 'EsiResult') {
+            $usesEsiResult = true;
+        }
+
+        $callExpr = $callArgs !== ''
+            ? "{$opClass}::execute(\$this->transport, {$callArgs})"
+            : "{$opClass}::execute(\$this->transport)";
+
+        $methods[] = <<<PHP
+        /**
+         * {$doc}{$auth}{$paged}
+         */
+        public function {$methodName}({$sig}): {$returnHint}
+        {
+            return {$callExpr};
+        }
+        PHP;
+    }
+
+    if ($usesEsiResult) {
+        array_splice($useStatements, 1, 0, ['use Seatplus\\EsiSchema\\EsiResult;']);
+    }
+
+    $useBlock   = implode("\n", array_unique($useStatements));
+    $methodsStr = implode("\n\n", $methods);
+
+    return <<<PHP
+    <?php
+
+    declare(strict_types=1);
+
+    namespace Seatplus\\EsiSchema\\Resources;
+
+    {$useBlock}
+
+    /**
+     * ESI {$tagNs} resource — fluent wrapper around per-route static classes.
+     *
+     * Generated from ESI OpenAPI spec (compatibility date: {$compatDate}).
+     * Do not edit manually — run bin/generate.php instead.
+     */
+    final class {$className}
+    {
+        public function __construct(private readonly EsiTransportInterface \$transport) {}
+
+    {$methodsStr}
+    }
+
+    PHP;
+}
+
 // ---------------------------------------------------------------------------
 // Build tag → operations map
 // ---------------------------------------------------------------------------
@@ -619,7 +730,8 @@ foreach ($schemas as $name => $schema) {
 // ---------------------------------------------------------------------------
 
 $writtenDtos       = 0;
-$writtenResources = 0;
+$writtenResources  = 0;
+$writtenTags       = 0;
 
 if (! $dryRun) {
     // --- DTOs ---
@@ -648,6 +760,14 @@ if (! $dryRun) {
         echo "  [resource] src/Resources/{$subNs}/{$className}.php\n";
         $writtenResources++;
     }
+
+    // --- Tag classes ---
+    foreach ($tagOps as $tagNs => $ops) {
+        $source = generateTagClass($tagNs, $ops);
+        file_put_contents("{$resourcesDir}/{$tagNs}Resource.php", $source);
+        echo "  [tag] src/Resources/{$tagNs}Resource.php\n";
+        $writtenTags++;
+    }
 } else {
     foreach ($dtoFiles as $className => $_) {
         echo "  [dry-run][dto] src/Responses/{$className}.php\n";
@@ -658,8 +778,13 @@ if (! $dryRun) {
         echo "  [dry-run][resource] src/Resources/{$subNs}/" . ucfirst($op['methodName']) . ".php\n";
         $writtenResources++;
     }
+    foreach ($tagOps as $tagNs => $_) {
+        echo "  [dry-run][tag] src/Resources/{$tagNs}Resource.php\n";
+        $writtenTags++;
+    }
 }
 
 echo "\nDone.\n";
 echo "  DTOs:       {$writtenDtos} files\n";
 echo "  Resources:  {$writtenResources} files\n";
+echo "  Tag classes:{$writtenTags} files\n";
