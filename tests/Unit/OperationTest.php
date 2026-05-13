@@ -5,9 +5,9 @@ use Seatplus\EsiSchema\Contracts\EsiRawResponse;
 use Seatplus\EsiSchema\Contracts\EsiTransportInterface;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\OperationMeta;
-use Seatplus\EsiSchema\Operations\GetCharactersCharacterIdAssets;
-use Seatplus\EsiSchema\Operations\GetCorporationsCorporationIdAssets;
-use Seatplus\EsiSchema\Operations\GetMarketsPrices;
+use Seatplus\EsiSchema\Operations\Assets\GetCharactersCharacterIdAssets;
+use Seatplus\EsiSchema\Operations\Assets\GetCorporationsCorporationIdAssets;
+use Seatplus\EsiSchema\Operations\Market\GetMarketsPrices;
 
 // ---------------------------------------------------------------------------
 // EsiOperationInterface contract

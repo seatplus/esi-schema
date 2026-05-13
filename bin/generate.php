@@ -7,7 +7,7 @@
  * Fetches the ESI OpenAPI YAML spec and generates:
  *   - src/Responses/{SchemaName}.php     (item DTOs, one per object schema)
  *   - src/Resources/{Tag}Resource.php    (one resource per ESI tag group)
- *   - src/Operations/{OperationId}.php   (one class per ESI route, with meta() + execute())
+ *   - src/Operations/{Tag}/{OperationId}.php  (one class per ESI route, grouped by tag)
  *
  * All DTOs extend AbstractEsiDto which carries $isCachedLoad and $pages.
  * All Resources extend AbstractResource which holds EsiTransportInterface.
@@ -167,9 +167,6 @@ function generateDtoClass(
 
     foreach ($requiredProps as $propName => $prop) {
         $phpType = propToPhpType($prop, $commonModelTypes, $schemas);
-        if (! in_array($phpType, ['int', 'float', 'bool', 'string', 'array', 'mixed'], true)) {
-            $useStatements[] = "use Seatplus\\EsiSchema\\Responses\\{$phpType};";
-        }
         $constructorLines[] = "        public readonly {$phpType} \${$propName},";
 
         if ($phpType === 'array') {
@@ -177,8 +174,7 @@ function generateDtoClass(
             if (isset($items['$ref'])) {
                 $itemClass = resolveRef($items['$ref'], $commonModelTypes);
                 if (! in_array($itemClass, ['int', 'float', 'bool', 'string'], true)) {
-                    $useStatements[] = "use Seatplus\\EsiSchema\\Responses\\{$itemClass};";
-                    $fromLines[] = "            {$propName}: array_map(fn(object \$i) => {$itemClass}::from(\$i), (array) (\$data->{$propName} ?? [])),";
+                    $fromLines[] = "            {$propName}: array_map(fn (object \$i) => {$itemClass}::from(\$i), (array) (\$data->{$propName} ?? [])),";
                 } else {
                     $fromLines[] = "            {$propName}: (array) (\$data->{$propName} ?? []),";
                 }
@@ -196,9 +192,6 @@ function generateDtoClass(
 
     foreach ($optionalProps as $propName => $prop) {
         $phpType = propToPhpType($prop, $commonModelTypes, $schemas);
-        if (! in_array($phpType, ['int', 'float', 'bool', 'string', 'array', 'mixed'], true)) {
-            $useStatements[] = "use Seatplus\\EsiSchema\\Responses\\{$phpType};";
-        }
         if ($phpType === 'array') {
             $constructorLines[] = "        public readonly ?array \${$propName} = null,";
             $fromLines[] = "            {$propName}: isset(\$data->{$propName}) ? (array) \$data->{$propName} : null,";
@@ -216,9 +209,8 @@ function generateDtoClass(
 
     $constructorBlock = implode("\n", $constructorLines);
     $fromBlock        = implode("\n", $fromLines);
-    $useBlock         = empty($useStatements)
-        ? ''
-        : "\n" . implode("\n", array_unique($useStatements)) . "\n";
+    array_unshift($useStatements, 'use Seatplus\\EsiSchema\\AbstractEsiDto;');
+    $useBlock         = implode("\n", array_unique($useStatements));
 
     $fullName   = $className . $suffix;
     $compatDate = ESI_COMPATIBILITY_DATE;
@@ -228,8 +220,8 @@ function generateDtoClass(
 
     namespace Seatplus\\EsiSchema\\Responses;
 
-    use Seatplus\\EsiSchema\\AbstractEsiDto;
     {$useBlock}
+
     /**
      * Generated from ESI OpenAPI spec (compatibility date: {$compatDate}).
      * Do not edit manually — run bin/generate.php instead.
@@ -238,7 +230,8 @@ function generateDtoClass(
     {
         public function __construct(
     {$constructorBlock}
-        ) {}
+        ) {
+        }
 
         public static function from(object \$data): static
         {
@@ -247,6 +240,7 @@ function generateDtoClass(
             );
         }
     }
+
     PHP;
 }
 
@@ -307,7 +301,7 @@ function buildReturn(array $op): string
         'array_item', 'array_ref' => <<<PHP
                 \$response = {$invoke};
                 return EsiResult::fromRaw(\$response, array_map(
-                    fn(object \$item) => {$dto}::from(\$item),
+                    fn (object \$item) => {$dto}::from(\$item),
                     (array) \$response->data,
                 ), static::OPERATION_META['{$methodName}'] ?? null);
         PHP,
@@ -315,7 +309,7 @@ function buildReturn(array $op): string
         'array_primitive' => <<<PHP
                 \$response = {$invoke};
                 /** @var array<{$primT}> \$data */
-                \$data = array_map(fn(mixed \$i) => ({$primT}) \$i, (array) \$response->data);
+                \$data = array_map(fn (mixed \$i) => ({$primT}) \$i, (array) \$response->data);
                 return EsiResult::fromRaw(\$response, \$data, static::OPERATION_META['{$methodName}'] ?? null);
         PHP,
 
@@ -376,6 +370,7 @@ function generateResourceFile(string $tag, array $ops): string
     $useStatements = [];
     $methods       = [];
     $metaEntries   = [];
+    $usesEsiResult = false;
 
     foreach ($ops as $op) {
         $sig  = buildMethodSig($op);
@@ -392,6 +387,9 @@ function generateResourceFile(string $tag, array $ops): string
             ? ($op['dtoClass'] ?? 'mixed')
             : 'EsiResult';
 
+        if ($returnHint === 'EsiResult') {
+            $usesEsiResult = true;
+        }
         $methods[] = <<<PHP
             /**
         {$doc}{$auth}{$paged}
@@ -431,6 +429,9 @@ function generateResourceFile(string $tag, array $ops): string
         );
     }
 
+    if ($usesEsiResult) {
+        array_unshift($useStatements, 'use Seatplus\\EsiSchema\\EsiResult;');
+    }
     $useBlock     = empty($useStatements) ? '' : implode("\n", array_unique($useStatements)) . "\n";
     $methodsBlock = implode("\n\n", $methods);
     $metaBlock    = implode(",\n", array_values($metaEntries));
@@ -440,7 +441,6 @@ function generateResourceFile(string $tag, array $ops): string
 
     namespace Seatplus\\EsiSchema\\Resources;
 
-    use Seatplus\\EsiSchema\\EsiResult;
     {$useBlock}
     /**
      * ESI tag: {$tag}
@@ -456,6 +456,7 @@ function generateResourceFile(string $tag, array $ops): string
 
     {$methodsBlock}
     }
+
     PHP;
 }
 
@@ -467,7 +468,9 @@ function generateOperationClass(array $op): string
 {
     $compatDate  = ESI_COMPATIBILITY_DATE;
     $className   = ucfirst($op['methodName']);  // PascalCase operationId
+    $subNs       = str_replace(' ', '', $op['tag']); // 'Faction Warfare' → 'FactionWarfare'
     $sig         = buildMethodSig($op);
+    $execSig     = $sig !== '' ? "EsiTransportInterface \$transport, {$sig}" : "EsiTransportInterface \$transport";
     $body        = buildReturn($op);
     $returnHint  = $op['responseType'] === 'object' ? ($op['dtoClass'] ?? 'mixed') : 'EsiResult';
     $doc         = "     * @return {$op['phpDocReturn']}";
@@ -494,7 +497,9 @@ function generateOperationClass(array $op): string
 
     $useStatements = ['use Seatplus\\EsiSchema\\Contracts\\EsiOperationInterface;'];
     $useStatements[] = 'use Seatplus\\EsiSchema\\Contracts\\EsiTransportInterface;';
-    $useStatements[] = 'use Seatplus\\EsiSchema\\EsiResult;';
+    if ($returnHint === 'EsiResult') {
+        $useStatements[] = 'use Seatplus\\EsiSchema\\EsiResult;';
+    }
     $useStatements[] = 'use Seatplus\\EsiSchema\\OperationMeta;';
 
     if ($op['dtoClass'] && ! in_array($op['dtoClass'], ['int', 'float', 'bool', 'string'], true)) {
@@ -513,7 +518,7 @@ function generateOperationClass(array $op): string
 
     declare(strict_types=1);
 
-    namespace Seatplus\\EsiSchema\\Operations;
+    namespace Seatplus\\EsiSchema\\Operations\\{$subNs};
 
     {$useBlock}
 
@@ -536,11 +541,12 @@ function generateOperationClass(array $op): string
         /**
     {$doc}{$auth}{$paged}
          */
-        public static function execute(EsiTransportInterface \$transport, {$sig}): {$returnHint}
+        public static function execute({$execSig}): {$returnHint}
         {
     {$staticBody}
         }
     }
+
     PHP;
 }
 
@@ -629,6 +635,7 @@ foreach ($paths as $path => $pathItem) {
             'path'              => $path,
             'httpMethod'        => $httpMethod,
             'methodName'        => $methodName,
+            'tag'               => $tag,
             'params'            => $params,
             'requestBody'       => $requestBody,
             'isAuth'            => $isAuth,
@@ -715,10 +722,15 @@ if (! $dryRun) {
         mkdir($operationsDir, 0755, true);
     }
     foreach ($allOps as $op) {
+        $subNs     = str_replace(' ', '', $op['tag']);
+        $subDir    = "{$operationsDir}/{$subNs}";
+        if (! is_dir($subDir)) {
+            mkdir($subDir, 0755, true);
+        }
         $source    = generateOperationClass($op);
         $className = ucfirst($op['methodName']);
-        file_put_contents("{$operationsDir}/{$className}.php", $source);
-        echo "  [operation] src/Operations/{$className}.php\n";
+        file_put_contents("{$subDir}/{$className}.php", $source);
+        echo "  [operation] src/Operations/{$subNs}/{$className}.php\n";
         $writtenOperations++;
     }
 } else {
@@ -731,7 +743,8 @@ if (! $dryRun) {
         $writtenResources++;
     }
     foreach ($allOps as $op) {
-        echo "  [dry-run][operation] src/Operations/" . ucfirst($op['methodName']) . ".php\n";
+        $subNs = str_replace(' ', '', $op['tag']);
+        echo "  [dry-run][operation] src/Operations/{$subNs}/" . ucfirst($op['methodName']) . ".php\n";
         $writtenOperations++;
     }
 }
