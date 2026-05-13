@@ -9,7 +9,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    name: PHP 8.5 — Tests + Static Analysis
+    name: PHP 8.3 — Tests + Static Analysis
 
     steps:
       - name: Checkout
@@ -18,7 +18,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.5"
+          php-version: "8.3"
           extensions: json
           coverage: none
           tools: composer:v2
@@ -31,7 +31,7 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies
-        run: COMPOSER_IGNORE_PLATFORM_REQS=1 composer install --no-interaction --prefer-dist
+        run: composer install --no-interaction --prefer-dist
 
       - name: Pint (style)
         run: vendor/bin/pint --test
