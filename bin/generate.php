@@ -74,7 +74,6 @@ define('ESI_COMPATIBILITY_DATE', $compatDate);
 // ---------------------------------------------------------------------------
 
 $responsesDir   = __DIR__ . '/../src/Responses';
-$resourcesDir   = __DIR__ . '/../src/Resources';
 $operationsDir  = __DIR__ . '/../src/Operations';
 
 // ---------------------------------------------------------------------------
@@ -245,13 +244,9 @@ function generateDtoClass(
 }
 
 // ---------------------------------------------------------------------------
-// Resource generator helpers
 // ---------------------------------------------------------------------------
-
-function tagToResourceClass(string $tag): string
-{
-    return str_replace(' ', '', ucwords($tag)) . 'Resource';
-}
+// Generator: per-route operation class
+// ---------------------------------------------------------------------------
 
 function buildInvoke(array $op): string
 {
@@ -377,106 +372,6 @@ function buildMethodSig(array $op): string
     return implode(', ', $args);
 }
 
-function generateResourceFile(string $tag, array $ops): string
-{
-    $resourceClass = tagToResourceClass($tag);
-    $compatDate    = ESI_COMPATIBILITY_DATE;
-    $subNs         = str_replace(' ', '', $tag); // 'Faction Warfare' → 'FactionWarfare'
-
-    $useStatements  = [];
-    $methods        = [];
-    $metaForCases   = [];  // 'operationId' => OperationClass::meta()
-    $companionMetas = [];  // static getXxxMeta() methods
-    $usesEsiResult  = false;
-
-    foreach ($ops as $op) {
-        $sig        = buildMethodSig($op);
-        $body       = buildReturn($op);
-        $doc        = "     * @return {$op['phpDocReturn']}";
-        $auth       = $op['isAuth'] ? "\n     * @scope " . implode(', ', $op['scopes']) : '';
-        $paged      = $op['xPages'] ? "\n     * @paginated Use \$page param to iterate pages." : '';
-        $className  = ucfirst($op['methodName']);
-
-        if ($op['dtoClass'] && ! in_array($op['dtoClass'], ['int', 'float', 'bool', 'string'], true)) {
-            $useStatements[] = "use Seatplus\\EsiSchema\\Responses\\{$op['dtoClass']};";
-        }
-
-        // Import the corresponding Operation class for meta delegation
-        $useStatements[] = "use Seatplus\\EsiSchema\\Operations\\{$subNs}\\{$className};";
-
-        $returnHint = $op['responseType'] === 'object'
-            ? ($op['dtoClass'] ?? 'mixed')
-            : 'EsiResult';
-
-        if ($returnHint === 'EsiResult') {
-            $usesEsiResult = true;
-        }
-
-        // No __OPERATION_META__ placeholder needed — meta is not injected into results
-        $resolvedBody = $body;
-
-        $methods[] = <<<PHP
-            /**
-        {$doc}{$auth}{$paged}
-             */
-            public function {$op['methodName']}({$sig}): {$returnHint}
-            {
-        {$resolvedBody}
-            }
-        PHP;
-
-        // metaFor() match arm
-        $metaForCases[] = "            '{$op['methodName']}' => {$className}::meta()";
-
-        // Companion static meta method
-        $companionMetas[] = <<<PHP
-            /** Pre-call metadata for {$op['methodName']}. Equivalent to {$className}::meta(). */
-            public static function {$op['methodName']}Meta(): OperationMeta
-            {
-                return {$className}::meta();
-            }
-        PHP;
-    }
-
-    if ($usesEsiResult) {
-        array_unshift($useStatements, 'use Seatplus\\EsiSchema\\EsiResult;');
-    }
-    array_unshift($useStatements, 'use Seatplus\\EsiSchema\\OperationMeta;');
-
-    $useBlock       = empty($useStatements) ? '' : implode("\n", array_unique($useStatements)) . "\n";
-    $methodsBlock   = implode("\n\n", $methods);
-    $companionBlock = implode("\n\n", $companionMetas);
-    $matchBlock     = implode(",\n", $metaForCases);
-
-    return <<<PHP
-    <?php
-
-    namespace Seatplus\\EsiSchema\\Resources;
-
-    {$useBlock}
-    /**
-     * ESI tag: {$tag}
-     *
-     * Generated from ESI OpenAPI spec (compatibility date: {$compatDate}).
-     * Do not edit manually — run bin/generate.php instead.
-     */
-    class {$resourceClass} extends AbstractResource
-    {
-        public static function metaFor(string \$operationId): OperationMeta
-        {
-            return match (\$operationId) {
-    {$matchBlock},
-                default => new OperationMeta(),
-            };
-        }
-
-    {$companionBlock}
-
-    {$methodsBlock}
-    }
-
-    PHP;
-}
 // ---------------------------------------------------------------------------
 // Generator: per-route operation class
 // ---------------------------------------------------------------------------
@@ -726,7 +621,6 @@ foreach ($schemas as $name => $schema) {
 // ---------------------------------------------------------------------------
 
 $writtenDtos       = 0;
-$writtenResources  = 0;
 $writtenOperations = 0;
 
 if (! $dryRun) {
@@ -738,18 +632,6 @@ if (! $dryRun) {
         file_put_contents("{$responsesDir}/{$className}.php", $source);
         echo "  [dto] src/Responses/{$className}.php\n";
         $writtenDtos++;
-    }
-
-    // --- Resources ---
-    if (! is_dir($resourcesDir)) {
-        mkdir($resourcesDir, 0755, true);
-    }
-    foreach ($tagOps as $tag => $ops) {
-        $source = generateResourceFile($tag, $ops);
-        $class  = tagToResourceClass($tag);
-        file_put_contents("{$resourcesDir}/{$class}.php", $source);
-        echo "  [resource] src/Resources/{$class}.php\n";
-        $writtenResources++;
     }
 
     // --- Operations ---
@@ -773,10 +655,6 @@ if (! $dryRun) {
         echo "  [dry-run][dto] src/Responses/{$className}.php\n";
         $writtenDtos++;
     }
-    foreach ($tagOps as $tag => $_) {
-        echo "  [dry-run][resource] src/Resources/" . tagToResourceClass($tag) . ".php\n";
-        $writtenResources++;
-    }
     foreach ($allOps as $op) {
         $subNs = str_replace(' ', '', $op['tag']);
         echo "  [dry-run][operation] src/Operations/{$subNs}/" . ucfirst($op['methodName']) . ".php\n";
@@ -786,5 +664,4 @@ if (! $dryRun) {
 
 echo "\nDone.\n";
 echo "  DTOs:       {$writtenDtos} files\n";
-echo "  Resources:  {$writtenResources} files\n";
 echo "  Operations: {$writtenOperations} files\n";

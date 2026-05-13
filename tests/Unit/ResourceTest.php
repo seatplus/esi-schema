@@ -3,13 +3,15 @@
 use Seatplus\EsiSchema\Contracts\EsiRawResponse;
 use Seatplus\EsiSchema\Contracts\EsiTransportInterface;
 use Seatplus\EsiSchema\EsiResult;
-use Seatplus\EsiSchema\Resources\AllianceResource;
-use Seatplus\EsiSchema\Resources\AssetsResource;
+use Seatplus\EsiSchema\Operations\Alliance\GetAlliancesAllianceId;
+use Seatplus\EsiSchema\Operations\Assets\GetCharactersCharacterIdAssets;
+use Seatplus\EsiSchema\Operations\Assets\GetCorporationsCorporationIdAssets;
+use Seatplus\EsiSchema\Operations\FreelanceJobs\GetFreelanceJobsListing;
 use Seatplus\EsiSchema\Responses\AllianceDetail;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdAssetsGetItem;
 
 // ---------------------------------------------------------------------------
-// Helpers
+// Helper
 // ---------------------------------------------------------------------------
 
 function mockTransport(mixed $data, bool $isCachedLoad = false, int $pages = 1): EsiTransportInterface
@@ -54,20 +56,19 @@ it('EsiRawResponse carries data, isCachedLoad, pages', function (): void {
 // Object endpoint — returns DTO directly
 // ---------------------------------------------------------------------------
 
-it('AllianceResource::getAlliancesAllianceId returns typed DTO', function (): void {
+it('GetAlliancesAllianceId::execute returns typed DTO', function (): void {
     $payload = (object) [
-        'name'            => 'Goonswarm Federation',
-        'ticker'          => 'CONDI',
-        'creator_id'      => 1,
+        'name'                   => 'Goonswarm Federation',
+        'ticker'                 => 'CONDI',
+        'creator_id'             => 1,
         'creator_corporation_id' => 2,
-        'date_founded'    => '2006-12-26T00:00:00Z',
+        'date_founded'           => '2006-12-26T00:00:00Z',
         'executor_corporation_id' => 3,
-        'faction_id'      => null,
-        'member_count'    => 42000,
+        'faction_id'             => null,
+        'member_count'           => 42000,
     ];
 
-    $resource = new AllianceResource(mockTransport($payload));
-    $dto = $resource->getAlliancesAllianceId(99000006);
+    $dto = GetAlliancesAllianceId::execute(mockTransport($payload), 99000006);
 
     expect($dto)->toBeInstanceOf(AllianceDetail::class)
         ->and($dto->name)->toBe('Goonswarm Federation')
@@ -78,15 +79,14 @@ it('AllianceResource::getAlliancesAllianceId returns typed DTO', function (): vo
 
 it('DTO isCachedLoad is propagated from transport response', function (): void {
     $payload = (object) [
-        'name'            => 'Test Alliance',
-        'ticker'          => 'TEST',
-        'creator_id'      => 1,
+        'name'                   => 'Test Alliance',
+        'ticker'                 => 'TEST',
+        'creator_id'             => 1,
         'creator_corporation_id' => 2,
-        'date_founded'    => '2010-01-01T00:00:00Z',
+        'date_founded'           => '2010-01-01T00:00:00Z',
     ];
 
-    $resource = new AllianceResource(mockTransport($payload, isCachedLoad: true, pages: 2));
-    $dto = $resource->getAlliancesAllianceId(12345);
+    $dto = GetAlliancesAllianceId::execute(mockTransport($payload, isCachedLoad: true, pages: 2), 12345);
 
     expect($dto->isCachedLoad)->toBeTrue()
         ->and($dto->pages)->toBe(2);
@@ -96,7 +96,7 @@ it('DTO isCachedLoad is propagated from transport response', function (): void {
 // Array endpoint — returns EsiResult
 // ---------------------------------------------------------------------------
 
-it('AssetsResource::getCharactersCharacterIdAssets returns EsiResult with typed array', function (): void {
+it('GetCharactersCharacterIdAssets::execute returns EsiResult with typed array', function (): void {
     $payload = [
         (object) [
             'item_id'       => 1001,
@@ -109,8 +109,7 @@ it('AssetsResource::getCharactersCharacterIdAssets returns EsiResult with typed 
         ],
     ];
 
-    $resource = new AssetsResource(mockTransport($payload, pages: 3));
-    $result = $resource->getCharactersCharacterIdAssets(12345);
+    $result = GetCharactersCharacterIdAssets::execute(mockTransport($payload, pages: 3), 12345);
 
     expect($result)->toBeInstanceOf(EsiResult::class)
         ->and($result->pages)->toBe(3)
@@ -128,40 +127,24 @@ it('EsiResult::fromRaw carries isCachedLoad', function (): void {
 });
 
 // ---------------------------------------------------------------------------
-// OPERATION_META / metaFor()
+// Meta — typed constants on Operation classes
 // ---------------------------------------------------------------------------
 
-it('AssetsResource::metaFor returns correct metadata for char endpoint', function (): void {
-    $meta = AssetsResource::metaFor('getCharactersCharacterIdAssets');
-
-    expect($meta->cacheAge)->toBe(3600)
-        ->and($meta->requiredRoles)->toBeEmpty()
-        ->and($meta->usesCursor)->toBeFalse()
-        ->and($meta->rateLimitGroup)->toBe('char-asset')
-        ->and($meta->rateLimitMaxTokens)->toBe(1800)
-        ->and($meta->requiredScope)->toBe('esi-assets.read_assets.v1');
+it('GetCharactersCharacterIdAssets meta constants are correct', function (): void {
+    expect(GetCharactersCharacterIdAssets::CACHE_AGE)->toBe(3600)
+        ->and(GetCharactersCharacterIdAssets::REQUIRED_ROLES)->toBeEmpty()
+        ->and(GetCharactersCharacterIdAssets::USES_CURSOR)->toBeFalse()
+        ->and(GetCharactersCharacterIdAssets::RATE_LIMIT_GROUP)->toBe('char-asset')
+        ->and(GetCharactersCharacterIdAssets::RATE_LIMIT_MAX_TOKENS)->toBe(1800)
+        ->and(GetCharactersCharacterIdAssets::REQUIRED_SCOPE)->toBe('esi-assets.read_assets.v1');
 });
 
-it('AssetsResource::metaFor returns corp rate-limit group and required Director role', function (): void {
-    $meta = AssetsResource::metaFor('getCorporationsCorporationIdAssets');
-
-    expect($meta->rateLimitGroup)->toBe('corp-asset')
-        ->and($meta->requiredRoles)->toBe(['Director'])
-        ->and($meta->requiredScope)->toBe('esi-assets.read_corporation_assets.v1');
+it('GetCorporationsCorporationIdAssets meta includes Director role', function (): void {
+    expect(GetCorporationsCorporationIdAssets::RATE_LIMIT_GROUP)->toBe('corp-asset')
+        ->and(GetCorporationsCorporationIdAssets::REQUIRED_ROLES)->toBe(['Director'])
+        ->and(GetCorporationsCorporationIdAssets::REQUIRED_SCOPE)->toBe('esi-assets.read_corporation_assets.v1');
 });
 
-it('metaFor returns safe defaults for unknown operationId', function (): void {
-    $meta = AssetsResource::metaFor('doesNotExist');
-
-    expect($meta->cacheAge)->toBeNull()
-        ->and($meta->rateLimitGroup)->toBeNull()
-        ->and($meta->requiredRoles)->toBeEmpty()
-        ->and($meta->usesCursor)->toBeFalse()
-        ->and($meta->requiredScope)->toBeNull();
-});
-
-it('FreelanceJobsResource::metaFor marks cursor endpoints correctly', function (): void {
-    $meta = \Seatplus\EsiSchema\Resources\FreelanceJobsResource::metaFor('getFreelanceJobsListing');
-
-    expect($meta->usesCursor)->toBeTrue();
+it('GetFreelanceJobsListing marks cursor-paginated endpoint', function (): void {
+    expect(GetFreelanceJobsListing::USES_CURSOR)->toBeTrue();
 });
