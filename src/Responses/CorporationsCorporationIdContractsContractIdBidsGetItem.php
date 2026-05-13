@@ -1,0 +1,30 @@
+<?php
+
+namespace Seatplus\EsiSchema\Responses;
+
+use Seatplus\EsiSchema\AbstractEsiDto;
+
+/**
+ * Generated from ESI OpenAPI spec (compatibility date: 2025-12-16).
+ * Do not edit manually — run bin/generate.php instead.
+ */
+final class CorporationsCorporationIdContractsContractIdBidsGetItem extends AbstractEsiDto
+{
+    public function __construct(
+        public readonly float $amount,
+        public readonly int $bid_id,
+        public readonly int $bidder_id,
+        public readonly string $date_bid,
+    ) {
+    }
+
+    public static function from(object $data): static
+    {
+        return new static(
+            amount: (float) ($data->amount ?? 0.0),
+            bid_id: (int) ($data->bid_id ?? 0),
+            bidder_id: (int) ($data->bidder_id ?? 0),
+            date_bid: (string) ($data->date_bid ?? ''),
+        );
+    }
+}

@@ -1,0 +1,64 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Seatplus\EsiSchema\Resources;
+
+use Seatplus\EsiSchema\Contracts\EsiTransportInterface;
+use Seatplus\EsiSchema\Resources\CorporationProjects\GetCorporationsProjectsListing;
+use Seatplus\EsiSchema\Responses\CorporationsProjectsListing;
+use Seatplus\EsiSchema\Resources\CorporationProjects\GetCorporationsProjectsDetail;
+use Seatplus\EsiSchema\Responses\CorporationsProjectsDetail;
+use Seatplus\EsiSchema\Resources\CorporationProjects\GetCorporationsProjectsContribution;
+use Seatplus\EsiSchema\Responses\CorporationsProjectsContribution;
+use Seatplus\EsiSchema\Resources\CorporationProjects\GetCorporationsProjectsContributors;
+use Seatplus\EsiSchema\Responses\CorporationsProjectsContributors;
+
+/**
+ * ESI CorporationProjects resource — fluent wrapper around per-route static classes.
+ *
+ * Generated from ESI OpenAPI spec (compatibility date: 2025-12-16).
+ * Do not edit manually — run bin/generate.php instead.
+ */
+final class CorporationProjectsResource
+{
+    public function __construct(private readonly EsiTransportInterface $transport)
+    {
+    }
+
+    /**
+     * @return CorporationsProjectsListing
+     * @scope esi-corporations.read_projects.v1
+     */
+    public function getCorporationsProjectsListing(int $corporationId, ?string $after = null, ?string $before = null, ?int $limit = null, ?string $state = null): CorporationsProjectsListing
+    {
+        return GetCorporationsProjectsListing::execute($this->transport, $corporationId, $after, $before, $limit, $state);
+    }
+
+    /**
+     * @return CorporationsProjectsDetail
+     * @scope esi-corporations.read_projects.v1
+     */
+    public function getCorporationsProjectsDetail(int $corporationId, string $projectId): CorporationsProjectsDetail
+    {
+        return GetCorporationsProjectsDetail::execute($this->transport, $corporationId, $projectId);
+    }
+
+    /**
+     * @return CorporationsProjectsContribution
+     * @scope esi-corporations.read_projects.v1
+     */
+    public function getCorporationsProjectsContribution(int $corporationId, string $projectId, int $characterId): CorporationsProjectsContribution
+    {
+        return GetCorporationsProjectsContribution::execute($this->transport, $corporationId, $projectId, $characterId);
+    }
+
+    /**
+     * @return CorporationsProjectsContributors
+     * @scope esi-corporations.read_projects.v1
+     */
+    public function getCorporationsProjectsContributors(int $corporationId, string $projectId, ?string $after = null, ?string $before = null, ?int $limit = null): CorporationsProjectsContributors
+    {
+        return GetCorporationsProjectsContributors::execute($this->transport, $corporationId, $projectId, $after, $before, $limit);
+    }
+}

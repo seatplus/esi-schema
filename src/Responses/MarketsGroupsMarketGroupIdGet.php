@@ -1,0 +1,32 @@
+<?php
+
+namespace Seatplus\EsiSchema\Responses;
+
+use Seatplus\EsiSchema\AbstractEsiDto;
+
+/**
+ * Generated from ESI OpenAPI spec (compatibility date: 2025-12-16).
+ * Do not edit manually — run bin/generate.php instead.
+ */
+final class MarketsGroupsMarketGroupIdGet extends AbstractEsiDto
+{
+    public function __construct(
+        public readonly string $description,
+        public readonly int $market_group_id,
+        public readonly string $name,
+        public readonly array $types,
+        public readonly ?int $parent_group_id = null,
+    ) {
+    }
+
+    public static function from(object $data): static
+    {
+        return new static(
+            description: (string) ($data->description ?? ''),
+            market_group_id: (int) ($data->market_group_id ?? 0),
+            name: (string) ($data->name ?? ''),
+            types: (array) ($data->types ?? []),
+            parent_group_id: $data->parent_group_id ?? null,
+        );
+    }
+}

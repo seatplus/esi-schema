@@ -1,0 +1,250 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Seatplus\EsiSchema\Resources;
+
+use Seatplus\EsiSchema\Contracts\EsiTransportInterface;
+use Seatplus\EsiSchema\EsiResult;
+use Seatplus\EsiSchema\Resources\Corporation\GetCorporationsNpccorps;
+use Seatplus\EsiSchema\Resources\Corporation\GetCorporationsCorporationId;
+use Seatplus\EsiSchema\Responses\CorporationsDetail;
+use Seatplus\EsiSchema\Resources\Corporation\GetCorporationsCorporationIdAlliancehistory;
+use Seatplus\EsiSchema\Resources\Corporation\GetCorporationsCorporationIdBlueprints;
+use Seatplus\EsiSchema\Resources\Corporation\GetCorporationsCorporationIdContainersLogs;
+use Seatplus\EsiSchema\Resources\Corporation\GetCorporationsCorporationIdDivisions;
+use Seatplus\EsiSchema\Responses\CorporationsCorporationIdDivisionsGet;
+use Seatplus\EsiSchema\Resources\Corporation\GetCorporationsCorporationIdFacilities;
+use Seatplus\EsiSchema\Resources\Corporation\GetCorporationsCorporationIdIcons;
+use Seatplus\EsiSchema\Responses\CorporationsCorporationIdIconsGet;
+use Seatplus\EsiSchema\Resources\Corporation\GetCorporationsCorporationIdMedals;
+use Seatplus\EsiSchema\Resources\Corporation\GetCorporationsCorporationIdMedalsIssued;
+use Seatplus\EsiSchema\Resources\Corporation\GetCorporationsCorporationIdMembers;
+use Seatplus\EsiSchema\Resources\Corporation\GetCorporationsCorporationIdMembersLimit;
+use Seatplus\EsiSchema\Resources\Corporation\GetCorporationsCorporationIdMembersTitles;
+use Seatplus\EsiSchema\Resources\Corporation\GetCorporationsCorporationIdMembertracking;
+use Seatplus\EsiSchema\Resources\Corporation\GetCorporationsCorporationIdRoles;
+use Seatplus\EsiSchema\Resources\Corporation\GetCorporationsCorporationIdRolesHistory;
+use Seatplus\EsiSchema\Resources\Corporation\GetCorporationsCorporationIdShareholders;
+use Seatplus\EsiSchema\Resources\Corporation\GetCorporationsCorporationIdStandings;
+use Seatplus\EsiSchema\Resources\Corporation\GetCorporationsCorporationIdStarbases;
+use Seatplus\EsiSchema\Resources\Corporation\GetCorporationsCorporationIdStarbasesStarbaseId;
+use Seatplus\EsiSchema\Responses\CorporationsCorporationIdStarbasesStarbaseIdGet;
+use Seatplus\EsiSchema\Resources\Corporation\GetCorporationsCorporationIdStructures;
+use Seatplus\EsiSchema\Resources\Corporation\GetCorporationsCorporationIdTitles;
+
+/**
+ * ESI Corporation resource — fluent wrapper around per-route static classes.
+ *
+ * Generated from ESI OpenAPI spec (compatibility date: 2025-12-16).
+ * Do not edit manually — run bin/generate.php instead.
+ */
+final class CorporationResource
+{
+    public function __construct(private readonly EsiTransportInterface $transport)
+    {
+    }
+
+    /**
+     * @return EsiResult
+     */
+    public function getCorporationsNpccorps(): EsiResult
+    {
+        return GetCorporationsNpccorps::execute($this->transport);
+    }
+
+    /**
+     * @return CorporationsDetail
+     */
+    public function getCorporationsCorporationId(int $corporationId): CorporationsDetail
+    {
+        return GetCorporationsCorporationId::execute($this->transport, $corporationId);
+    }
+
+    /**
+     * @return EsiResult
+     */
+    public function getCorporationsCorporationIdAlliancehistory(int $corporationId): EsiResult
+    {
+        return GetCorporationsCorporationIdAlliancehistory::execute($this->transport, $corporationId);
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-corporations.read_blueprints.v1
+     * @paginated Use $page param to iterate pages.
+     */
+    public function getCorporationsCorporationIdBlueprints(int $corporationId, int $page = 1): EsiResult
+    {
+        return GetCorporationsCorporationIdBlueprints::execute($this->transport, $corporationId, $page);
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-corporations.read_container_logs.v1
+     * @paginated Use $page param to iterate pages.
+     */
+    public function getCorporationsCorporationIdContainersLogs(int $corporationId, int $page = 1): EsiResult
+    {
+        return GetCorporationsCorporationIdContainersLogs::execute($this->transport, $corporationId, $page);
+    }
+
+    /**
+     * @return CorporationsCorporationIdDivisionsGet
+     * @scope esi-corporations.read_divisions.v1
+     */
+    public function getCorporationsCorporationIdDivisions(int $corporationId): CorporationsCorporationIdDivisionsGet
+    {
+        return GetCorporationsCorporationIdDivisions::execute($this->transport, $corporationId);
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-corporations.read_facilities.v1
+     */
+    public function getCorporationsCorporationIdFacilities(int $corporationId): EsiResult
+    {
+        return GetCorporationsCorporationIdFacilities::execute($this->transport, $corporationId);
+    }
+
+    /**
+     * @return CorporationsCorporationIdIconsGet
+     */
+    public function getCorporationsCorporationIdIcons(int $corporationId): CorporationsCorporationIdIconsGet
+    {
+        return GetCorporationsCorporationIdIcons::execute($this->transport, $corporationId);
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-corporations.read_medals.v1
+     * @paginated Use $page param to iterate pages.
+     */
+    public function getCorporationsCorporationIdMedals(int $corporationId, int $page = 1): EsiResult
+    {
+        return GetCorporationsCorporationIdMedals::execute($this->transport, $corporationId, $page);
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-corporations.read_medals.v1
+     * @paginated Use $page param to iterate pages.
+     */
+    public function getCorporationsCorporationIdMedalsIssued(int $corporationId, int $page = 1): EsiResult
+    {
+        return GetCorporationsCorporationIdMedalsIssued::execute($this->transport, $corporationId, $page);
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-corporations.read_corporation_membership.v1
+     */
+    public function getCorporationsCorporationIdMembers(int $corporationId): EsiResult
+    {
+        return GetCorporationsCorporationIdMembers::execute($this->transport, $corporationId);
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-corporations.track_members.v1
+     */
+    public function getCorporationsCorporationIdMembersLimit(int $corporationId): EsiResult
+    {
+        return GetCorporationsCorporationIdMembersLimit::execute($this->transport, $corporationId);
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-corporations.read_titles.v1
+     */
+    public function getCorporationsCorporationIdMembersTitles(int $corporationId): EsiResult
+    {
+        return GetCorporationsCorporationIdMembersTitles::execute($this->transport, $corporationId);
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-corporations.track_members.v1
+     */
+    public function getCorporationsCorporationIdMembertracking(int $corporationId): EsiResult
+    {
+        return GetCorporationsCorporationIdMembertracking::execute($this->transport, $corporationId);
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-corporations.read_corporation_membership.v1
+     */
+    public function getCorporationsCorporationIdRoles(int $corporationId): EsiResult
+    {
+        return GetCorporationsCorporationIdRoles::execute($this->transport, $corporationId);
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-corporations.read_corporation_membership.v1
+     * @paginated Use $page param to iterate pages.
+     */
+    public function getCorporationsCorporationIdRolesHistory(int $corporationId, int $page = 1): EsiResult
+    {
+        return GetCorporationsCorporationIdRolesHistory::execute($this->transport, $corporationId, $page);
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-wallet.read_corporation_wallets.v1
+     * @paginated Use $page param to iterate pages.
+     */
+    public function getCorporationsCorporationIdShareholders(int $corporationId, int $page = 1): EsiResult
+    {
+        return GetCorporationsCorporationIdShareholders::execute($this->transport, $corporationId, $page);
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-corporations.read_standings.v1
+     * @paginated Use $page param to iterate pages.
+     */
+    public function getCorporationsCorporationIdStandings(int $corporationId, int $page = 1): EsiResult
+    {
+        return GetCorporationsCorporationIdStandings::execute($this->transport, $corporationId, $page);
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-corporations.read_starbases.v1
+     * @paginated Use $page param to iterate pages.
+     */
+    public function getCorporationsCorporationIdStarbases(int $corporationId, int $page = 1): EsiResult
+    {
+        return GetCorporationsCorporationIdStarbases::execute($this->transport, $corporationId, $page);
+    }
+
+    /**
+     * @return CorporationsCorporationIdStarbasesStarbaseIdGet
+     * @scope esi-corporations.read_starbases.v1
+     */
+    public function getCorporationsCorporationIdStarbasesStarbaseId(int $corporationId, int $starbaseId, int $systemId): CorporationsCorporationIdStarbasesStarbaseIdGet
+    {
+        return GetCorporationsCorporationIdStarbasesStarbaseId::execute($this->transport, $corporationId, $starbaseId, $systemId);
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-corporations.read_structures.v1
+     * @paginated Use $page param to iterate pages.
+     */
+    public function getCorporationsCorporationIdStructures(int $corporationId, int $page = 1): EsiResult
+    {
+        return GetCorporationsCorporationIdStructures::execute($this->transport, $corporationId, $page);
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-corporations.read_titles.v1
+     */
+    public function getCorporationsCorporationIdTitles(int $corporationId): EsiResult
+    {
+        return GetCorporationsCorporationIdTitles::execute($this->transport, $corporationId);
+    }
+}

@@ -1,0 +1,114 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Seatplus\EsiSchema\Resources;
+
+use Seatplus\EsiSchema\Contracts\EsiTransportInterface;
+use Seatplus\EsiSchema\EsiResult;
+use Seatplus\EsiSchema\Resources\Contacts\GetAlliancesAllianceIdContacts;
+use Seatplus\EsiSchema\Resources\Contacts\GetAlliancesAllianceIdContactsLabels;
+use Seatplus\EsiSchema\Resources\Contacts\DeleteCharactersCharacterIdContacts;
+use Seatplus\EsiSchema\Resources\Contacts\GetCharactersCharacterIdContacts;
+use Seatplus\EsiSchema\Resources\Contacts\PostCharactersCharacterIdContacts;
+use Seatplus\EsiSchema\Resources\Contacts\PutCharactersCharacterIdContacts;
+use Seatplus\EsiSchema\Resources\Contacts\GetCharactersCharacterIdContactsLabels;
+use Seatplus\EsiSchema\Resources\Contacts\GetCorporationsCorporationIdContacts;
+use Seatplus\EsiSchema\Resources\Contacts\GetCorporationsCorporationIdContactsLabels;
+
+/**
+ * ESI Contacts resource — fluent wrapper around per-route static classes.
+ *
+ * Generated from ESI OpenAPI spec (compatibility date: 2025-12-16).
+ * Do not edit manually — run bin/generate.php instead.
+ */
+final class ContactsResource
+{
+    public function __construct(private readonly EsiTransportInterface $transport)
+    {
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-alliances.read_contacts.v1
+     * @paginated Use $page param to iterate pages.
+     */
+    public function getAlliancesAllianceIdContacts(int $allianceId, int $page = 1): EsiResult
+    {
+        return GetAlliancesAllianceIdContacts::execute($this->transport, $allianceId, $page);
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-alliances.read_contacts.v1
+     */
+    public function getAlliancesAllianceIdContactsLabels(int $allianceId): EsiResult
+    {
+        return GetAlliancesAllianceIdContactsLabels::execute($this->transport, $allianceId);
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-characters.write_contacts.v1
+     */
+    public function deleteCharactersCharacterIdContacts(int $characterId, array $contactIds): EsiResult
+    {
+        return DeleteCharactersCharacterIdContacts::execute($this->transport, $characterId, $contactIds);
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-characters.read_contacts.v1
+     * @paginated Use $page param to iterate pages.
+     */
+    public function getCharactersCharacterIdContacts(int $characterId, int $page = 1): EsiResult
+    {
+        return GetCharactersCharacterIdContacts::execute($this->transport, $characterId, $page);
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-characters.write_contacts.v1
+     */
+    public function postCharactersCharacterIdContacts(mixed $requestBody, int $characterId, float $standing, ?array $labelIds = null, ?bool $watched = null): EsiResult
+    {
+        return PostCharactersCharacterIdContacts::execute($this->transport, $requestBody, $characterId, $standing, $labelIds, $watched);
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-characters.write_contacts.v1
+     */
+    public function putCharactersCharacterIdContacts(mixed $requestBody, int $characterId, float $standing, ?array $labelIds = null, ?bool $watched = null): EsiResult
+    {
+        return PutCharactersCharacterIdContacts::execute($this->transport, $requestBody, $characterId, $standing, $labelIds, $watched);
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-characters.read_contacts.v1
+     */
+    public function getCharactersCharacterIdContactsLabels(int $characterId): EsiResult
+    {
+        return GetCharactersCharacterIdContactsLabels::execute($this->transport, $characterId);
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-corporations.read_contacts.v1
+     * @paginated Use $page param to iterate pages.
+     */
+    public function getCorporationsCorporationIdContacts(int $corporationId, int $page = 1): EsiResult
+    {
+        return GetCorporationsCorporationIdContacts::execute($this->transport, $corporationId, $page);
+    }
+
+    /**
+     * @return EsiResult
+     * @scope esi-corporations.read_contacts.v1
+     */
+    public function getCorporationsCorporationIdContactsLabels(int $corporationId): EsiResult
+    {
+        return GetCorporationsCorporationIdContactsLabels::execute($this->transport, $corporationId);
+    }
+}
