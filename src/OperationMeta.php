@@ -18,7 +18,8 @@ namespace Seatplus\EsiSchema;
  *   $meta = GetCharactersCharacterIdAssets::meta();
  *   $meta->requiredScope;              // 'esi-assets.read_assets.v1'
  *   $meta->rateLimitGroup;             // 'char-asset'
- *   $meta->tokenSatisfies($scopes);    // true/false
+ *   $meta->rateLimitMaxTokens;         // 1800
+ *   $meta->rateLimitWindow;            // '15m'
  */
 final readonly class OperationMeta
 {
