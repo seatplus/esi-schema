@@ -78,7 +78,7 @@ it('public operation meta tokenSatisfies always returns true', function (): void
 // ---------------------------------------------------------------------------
 
 it('GetCharactersCharacterIdAssets::execute returns EsiResult with typed items', function (): void {
-    $transport = new class implements EsiTransportInterface {
+    $transport = new class () implements EsiTransportInterface {
         public function invoke(string $method, string $path, array $pathValues = [], array $queryParams = [], array $requestBody = []): EsiRawResponse
         {
             expect($method)->toBe('get')
@@ -104,7 +104,7 @@ it('GetCharactersCharacterIdAssets::execute returns EsiResult with typed items',
 });
 
 it('GetCharactersCharacterIdAssets::execute passes page parameter', function (): void {
-    $transport = new class implements EsiTransportInterface {
+    $transport = new class () implements EsiTransportInterface {
         public function invoke(string $method, string $path, array $pathValues = [], array $queryParams = [], array $requestBody = []): EsiRawResponse
         {
             expect($queryParams['page'])->toBe(3);
