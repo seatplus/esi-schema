@@ -4,12 +4,9 @@
 
 `seatplus/esi-schema` is a **code-generated PHP library** that wraps the EVE Online ESI (Swagger/OpenAPI) API. It provides:
 
-- **208 Operation classes** (`src/Resources/{Tag}/`) — one static class per ESI endpoint, with typed `meta()` and `execute()` methods.
-- **33 Resource classes** (`src/Resources/`) — legacy tag-grouped instance API (backwards-compatible).
+- **208 Resource classes** (`src/Resources/{Tag}/`) — one static class per ESI endpoint, with typed constants, `meta()`, and `execute()`.
 - **~218 DTO classes** (`src/Responses/`) — typed value objects for every ESI response schema.
 - **Zero runtime dependencies** — pure PHP 8.3, no Guzzle, no HTTP client, no framework.
-
-All files under `src/Responses/`, `src/Resources/`, and `src/Resources/` are **generated**. Do not edit them directly.
 
 ---
 
@@ -19,8 +16,7 @@ The following directories contain **only generated code**:
 
 ```
 src/Responses/        ← ~218 DTO classes, one per ESI schema object
-src/Resources/        ← 33 tag Resource classes
-src/Resources/       ← 208 operation classes in 33 tag subfolders
+src/Resources/        ← 208 resource classes in 33 tag subfolders
 ```
 
 If you need to change generated output, **edit `bin/generate.php`**, then re-run:
@@ -38,23 +34,21 @@ Hand-editing a generated file will be overwritten the next time the generator ru
 
 ```
 bin/
-  generate.php              # The generator — reads ESI OpenAPI spec, emits all 459 files
+  generate.php              # The generator — reads ESI OpenAPI spec, emits all ~426 files
 
 src/
   Contracts/
-    EsiOperationInterface.php  # Interface for Operation classes: static meta(): OperationMeta
+    EsiOperationInterface.php  # Interface for Resource classes: static meta(): OperationMeta
     EsiTransportInterface.php  # Interface for HTTP transport: invoke() → EsiRawResponse
     EsiRawResponse.php         # Value object: raw HTTP response data
     EsiCursor.php              # Cursor pagination tokens (before/after)
-  Concerns/
-    HasOperationMeta.php       # Trait: 7 metadata accessors (rateLimitGroup, cacheAge, …)
-  AbstractEsiDto.php           # Base class for all single-object DTO responses
+  Concerns/                    # (empty — HasOperationMeta trait was removed)
+  AbstractEsiDto.php           # Base class for single-object DTO responses ($isCachedLoad, $pages)
   EsiResult.php                # Generic typed wrapper for array/paginated responses
-  OperationMeta.php            # Pre-call metadata DTO (from Operation::meta())
+  OperationMeta.php            # Pre-call metadata DTO (from Resource::meta())
 
   Responses/                   # GENERATED — ~218 typed DTO classes
-  Resources/                   # GENERATED — 33 tag-based resource classes
-  Resources/                  # GENERATED — 208 operation classes in 33 subfolders
+  Resources/                   # GENERATED — 208 resource classes in 33 tag subfolders
     Assets/
       GetCharactersCharacterIdAssets.php
       GetCorporationsCorporationIdAssets.php
@@ -66,7 +60,8 @@ src/
 
 tests/
   Unit/
-    OperationTest.php          # Tests for Operation classes (meta + execute)
+    ResourceTest.php           # Tests for Resource classes (execute + typed results)
+    OperationTest.php          # Tests for meta(), typed constants, EsiOperationInterface
     …
 
 phpunit.xml
@@ -80,11 +75,11 @@ composer.json
 ## Key contracts
 
 ### `EsiOperationInterface`
-Every Operation class implements this. It has one method:
+Every Resource class implements this. It has one method:
 ```php
 public static function meta(): OperationMeta;
 ```
-Operation classes also expose a typed `static execute(EsiTransportInterface $transport, ...): EsiResult|AbstractEsiDto` but that method's signature varies per endpoint (different path/query params), so it is not part of the interface.
+Resource classes also expose a typed `static execute(EsiTransportInterface $transport, ...): EsiResult|AbstractEsiDto` — signature varies per endpoint, so not on the interface.
 
 ### `EsiTransportInterface`
 The single injection boundary. Implementations handle HTTP, OAuth, caching. This library does not import any HTTP client.
@@ -93,21 +88,57 @@ public function invoke(string $method, string $path, array $pathValues, array $q
 ```
 
 ### `OperationMeta`
-Pre-call DTO. Built from the `OPERATION_META` constant baked into each Operation class at generation time.
-Accessors: `requiredScope()`, `rateLimitGroup()`, `rateLimitMaxTokens()`, `rateLimitWindow()`, `cacheAge()`, `requiredRoles()`, `usesCursor()`, `tokenSatisfies(array $scopes)`.
+Pre-call DTO. A `final readonly class` — **access properties directly**, no accessor methods:
+```php
+$meta = GetCharactersCharacterIdAssets::meta();
+$meta->requiredScope;       // ?string — 'esi-assets.read_assets.v1' or null
+$meta->rateLimitGroup;      // ?string
+$meta->rateLimitMaxTokens;  // ?int
+$meta->rateLimitWindow;     // ?string
+$meta->cacheAge;            // ?int
+$meta->requiredRoles;       // array (e.g. ['Director'])
+$meta->usesCursor;          // bool
+```
 
-### `HasOperationMeta` (trait)
-Mixed into `EsiResult<T>`, `AbstractEsiDto`, and `OperationMeta`. Provides the same 7 accessors on both pre-call and post-call objects.
+### `EsiResult<T>`
+Returned by array/paginated endpoints. Carries **transport data only** — no operation metadata:
+```php
+$result->data;         // typed array of DTOs (or mixed)
+$result->pages;        // int — total pages from X-Pages header
+$result->isCachedLoad; // bool — true when served from RFC 7234 cache
+```
+For metadata, call the static constants or `meta()` on the class you just called.
+
+### `AbstractEsiDto`
+Base for single-object endpoint responses. Carries `$isCachedLoad` and `$pages` only — no operation metadata.
 
 ---
 
-## Operation class namespace pattern
+## Typed constants on Resource classes
+
+Each generated Resource class exposes 7 typed `public const` declarations. Access them **without** instantiation or method call:
+
+```php
+GetCharactersCharacterIdAssets::REQUIRED_SCOPE;        // 'esi-assets.read_assets.v1'
+GetCharactersCharacterIdAssets::RATE_LIMIT_GROUP;      // 'char-asset'
+GetCharactersCharacterIdAssets::RATE_LIMIT_MAX_TOKENS; // 1800
+GetCharactersCharacterIdAssets::RATE_LIMIT_WINDOW;     // '15m'
+GetCharactersCharacterIdAssets::CACHE_AGE;             // 3600
+GetCharactersCharacterIdAssets::REQUIRED_ROLES;        // []
+GetCharactersCharacterIdAssets::USES_CURSOR;           // false
+```
+
+`meta()` simply wraps these into `new OperationMeta(...)`. Prefer constants when you only need one value.
+
+---
+
+## Resource class namespace pattern
 
 ```
 Seatplus\EsiSchema\Resources\{Tag}\{PascalCaseOperationId}
 ```
 
-Tag names map from ESI tags with spaces stripped in PascalCase:
+Tags with spaces become PascalCase:
 - `Assets` → `Resources\Assets\`
 - `Faction Warfare` → `Resources\FactionWarfare\`
 - `Corporation` → `Resources\Corporation\`
@@ -117,9 +148,9 @@ Usage example:
 use Seatplus\EsiSchema\Resources\Assets\GetCharactersCharacterIdAssets;
 
 // Pre-call check (no transport needed)
-$meta = GetCharactersCharacterIdAssets::meta();
-if (!$meta->tokenSatisfies($token->scopes)) {
-    throw new MissingScopeException($meta->requiredScope());
+$requiredScope = GetCharactersCharacterIdAssets::REQUIRED_SCOPE;
+if ($requiredScope !== null && !in_array($requiredScope, $token->scopes, true)) {
+    throw new MissingScopeException($requiredScope);
 }
 
 // Call
@@ -128,23 +159,6 @@ foreach ($result->data as $item) {
     echo $item->type_id;   // typed int
 }
 ```
-
----
-
-## OPERATION_META — how metadata is stored
-
-Each generated Operation class contains a private constant:
-```php
-private const array OPERATION_META = [
-    'requiredScope' => 'esi-assets.read_assets.v1',   // null for public endpoints
-    'rateLimit'     => ['group' => 'char-asset', 'max-tokens' => 1800, 'window-size' => '15m'],
-    'cacheAge'      => 3600,
-    'requiredRoles' => [],        // ['Director'] for corp endpoints
-    'cursor'        => false,     // true for cursor-paginated endpoints
-];
-```
-
-This constant is populated by `bin/generate.php` from the ESI OpenAPI spec's `x-esi-*` extension fields. There is no runtime spec fetch — metadata is always available at zero cost.
 
 ---
 
@@ -185,11 +199,12 @@ php bin/generate.php --compatibility-date=YYYY-MM-DD
 
 | ✅ Do | ❌ Don't |
 |---|---|
-| Edit `bin/generate.php` to change generated output | Edit files in `src/Responses/`, `src/Resources/`, `src/Resources/` directly |
-| Edit handwritten files in `src/Contracts/`, `src/Concerns/`, `src/AbstractEsiDto.php`, `src/EsiResult.php`, `src/OperationMeta.php` | Add runtime dependencies to `composer.json` `require` |
+| Edit `bin/generate.php` to change generated output | Edit files in `src/Responses/` or `src/Resources/` directly |
+| Edit handwritten files: `src/Contracts/`, `src/AbstractEsiDto.php`, `src/EsiResult.php`, `src/OperationMeta.php` | Add runtime dependencies to `composer.json` `require` |
+| Access metadata via typed constants (`::REQUIRED_SCOPE`) or `::meta()` | Expect `$result->requiredScope()` — results carry no metadata (use the class) |
+| Access `OperationMeta` properties directly (`$meta->requiredScope`) | Call `$meta->requiredScope()` — there are no accessor methods on `OperationMeta` |
 | Write tests in `tests/` | Introduce framework-specific code (no Laravel, no Symfony) |
 | Run `vendor/bin/pint` after regenerating | Skip the `composer test` check before committing |
-| Keep `HasOperationMeta` as a trait | Introduce an abstract base class that tries to share metadata logic |
 
 ---
 
