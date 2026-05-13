@@ -64,9 +64,14 @@ final class GetAlliancesAllianceIdContacts implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $allianceId, int $page = 1): EsiResult
     {
         $response = $transport->invoke('get', '/alliances/{alliance_id}/contacts', ['alliance_id' => $allianceId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => AlliancesAllianceIdContactsGetItem::from($item),
-            (array) $response->data,
-        ), self::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => AlliancesAllianceIdContactsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

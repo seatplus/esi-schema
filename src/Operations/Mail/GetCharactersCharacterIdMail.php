@@ -63,9 +63,14 @@ final class GetCharactersCharacterIdMail implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $characterId, ?array $labels = null, ?int $lastMailId = null): EsiResult
     {
         $response = $transport->invoke('get', '/characters/{character_id}/mail', ['character_id' => $characterId], ['labels' => $labels, 'last_mail_id' => $lastMailId]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdMailGetItem::from($item),
-            (array) $response->data,
-        ), self::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdMailGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

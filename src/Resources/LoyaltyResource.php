@@ -45,10 +45,15 @@ class LoyaltyResource extends AbstractResource
     public function getCharactersCharacterIdLoyaltyPoints(int $characterId): EsiResult
     {
         $response = $this->transport->invoke('get', '/characters/{character_id}/loyalty/points', ['character_id' => $characterId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdLoyaltyPointsGetItem::from($item),
-            (array) $response->data,
-        ), GetCharactersCharacterIdLoyaltyPoints::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdLoyaltyPointsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCharactersCharacterIdLoyaltyPoints::meta(),
+        );
     }
 
     /**
@@ -57,9 +62,14 @@ class LoyaltyResource extends AbstractResource
     public function getLoyaltyStoresCorporationIdOffers(int $corporationId): EsiResult
     {
         $response = $this->transport->invoke('get', '/loyalty/stores/{corporation_id}/offers', ['corporation_id' => $corporationId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => LoyaltyStoresCorporationIdOffersGetItem::from($item),
-            (array) $response->data,
-        ), GetLoyaltyStoresCorporationIdOffers::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => LoyaltyStoresCorporationIdOffersGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetLoyaltyStoresCorporationIdOffers::meta(),
+        );
     }
 }

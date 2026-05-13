@@ -62,6 +62,11 @@ final class PutCharactersCharacterIdCalendarEventId implements EsiOperationInter
     public static function execute(EsiTransportInterface $transport, mixed $requestBody, int $characterId, int $eventId): EsiResult
     {
         $response = $transport->invoke('put', '/characters/{character_id}/calendar/{event_id}', ['character_id' => $characterId, 'event_id' => $eventId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, self::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

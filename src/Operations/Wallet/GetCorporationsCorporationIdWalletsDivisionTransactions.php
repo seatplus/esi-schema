@@ -63,9 +63,14 @@ final class GetCorporationsCorporationIdWalletsDivisionTransactions implements E
     public static function execute(EsiTransportInterface $transport, int $corporationId, int $division, ?int $fromId = null): EsiResult
     {
         $response = $transport->invoke('get', '/corporations/{corporation_id}/wallets/{division}/transactions', ['corporation_id' => $corporationId, 'division' => $division], ['from_id' => $fromId]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdWalletsDivisionTransactionsGetItem::from($item),
-            (array) $response->data,
-        ), self::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdWalletsDivisionTransactionsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

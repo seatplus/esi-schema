@@ -223,7 +223,12 @@ class CorporationResource extends AbstractResource
         $response = $this->transport->invoke('get', '/corporations/npccorps', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, GetCorporationsNpccorps::meta());
+        return new EsiResult(
+            data: $data,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsNpccorps::meta(),
+        );
     }
 
     /**
@@ -245,10 +250,15 @@ class CorporationResource extends AbstractResource
     public function getCorporationsCorporationIdAlliancehistory(int $corporationId): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/alliancehistory', ['corporation_id' => $corporationId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdAlliancehistoryGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationsCorporationIdAlliancehistory::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdAlliancehistoryGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsCorporationIdAlliancehistory::meta(),
+        );
     }
 
     /**
@@ -259,10 +269,15 @@ class CorporationResource extends AbstractResource
     public function getCorporationsCorporationIdBlueprints(int $corporationId, int $page = 1): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/blueprints', ['corporation_id' => $corporationId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdBlueprintsGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationsCorporationIdBlueprints::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdBlueprintsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsCorporationIdBlueprints::meta(),
+        );
     }
 
     /**
@@ -273,10 +288,15 @@ class CorporationResource extends AbstractResource
     public function getCorporationsCorporationIdContainersLogs(int $corporationId, int $page = 1): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/containers/logs', ['corporation_id' => $corporationId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdContainersLogsGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationsCorporationIdContainersLogs::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdContainersLogsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsCorporationIdContainersLogs::meta(),
+        );
     }
 
     /**
@@ -300,10 +320,15 @@ class CorporationResource extends AbstractResource
     public function getCorporationsCorporationIdFacilities(int $corporationId): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/facilities', ['corporation_id' => $corporationId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdFacilitiesGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationsCorporationIdFacilities::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdFacilitiesGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsCorporationIdFacilities::meta(),
+        );
     }
 
     /**
@@ -327,10 +352,15 @@ class CorporationResource extends AbstractResource
     public function getCorporationsCorporationIdMedals(int $corporationId, int $page = 1): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/medals', ['corporation_id' => $corporationId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdMedalsGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationsCorporationIdMedals::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdMedalsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsCorporationIdMedals::meta(),
+        );
     }
 
     /**
@@ -341,10 +371,15 @@ class CorporationResource extends AbstractResource
     public function getCorporationsCorporationIdMedalsIssued(int $corporationId, int $page = 1): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/medals/issued', ['corporation_id' => $corporationId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdMedalsIssuedGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationsCorporationIdMedalsIssued::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdMedalsIssuedGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsCorporationIdMedalsIssued::meta(),
+        );
     }
 
     /**
@@ -356,7 +391,12 @@ class CorporationResource extends AbstractResource
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/members', ['corporation_id' => $corporationId], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, GetCorporationsCorporationIdMembers::meta());
+        return new EsiResult(
+            data: $data,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsCorporationIdMembers::meta(),
+        );
     }
 
     /**
@@ -368,7 +408,12 @@ class CorporationResource extends AbstractResource
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/members/limit', ['corporation_id' => $corporationId], []);
         /** @var int $scalar */
         $scalar = (int) $response->data;
-        return EsiResult::fromRaw($response, $scalar, GetCorporationsCorporationIdMembersLimit::meta());
+        return new EsiResult(
+            data: $scalar,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsCorporationIdMembersLimit::meta(),
+        );
     }
 
     /**
@@ -378,10 +423,15 @@ class CorporationResource extends AbstractResource
     public function getCorporationsCorporationIdMembersTitles(int $corporationId): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/members/titles', ['corporation_id' => $corporationId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdMembersTitlesGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationsCorporationIdMembersTitles::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdMembersTitlesGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsCorporationIdMembersTitles::meta(),
+        );
     }
 
     /**
@@ -391,10 +441,15 @@ class CorporationResource extends AbstractResource
     public function getCorporationsCorporationIdMembertracking(int $corporationId): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/membertracking', ['corporation_id' => $corporationId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdMembertrackingGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationsCorporationIdMembertracking::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdMembertrackingGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsCorporationIdMembertracking::meta(),
+        );
     }
 
     /**
@@ -404,10 +459,15 @@ class CorporationResource extends AbstractResource
     public function getCorporationsCorporationIdRoles(int $corporationId): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/roles', ['corporation_id' => $corporationId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdRolesGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationsCorporationIdRoles::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdRolesGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsCorporationIdRoles::meta(),
+        );
     }
 
     /**
@@ -418,10 +478,15 @@ class CorporationResource extends AbstractResource
     public function getCorporationsCorporationIdRolesHistory(int $corporationId, int $page = 1): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/roles/history', ['corporation_id' => $corporationId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdRolesHistoryGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationsCorporationIdRolesHistory::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdRolesHistoryGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsCorporationIdRolesHistory::meta(),
+        );
     }
 
     /**
@@ -432,10 +497,15 @@ class CorporationResource extends AbstractResource
     public function getCorporationsCorporationIdShareholders(int $corporationId, int $page = 1): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/shareholders', ['corporation_id' => $corporationId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdShareholdersGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationsCorporationIdShareholders::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdShareholdersGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsCorporationIdShareholders::meta(),
+        );
     }
 
     /**
@@ -446,10 +516,15 @@ class CorporationResource extends AbstractResource
     public function getCorporationsCorporationIdStandings(int $corporationId, int $page = 1): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/standings', ['corporation_id' => $corporationId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdStandingsGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationsCorporationIdStandings::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdStandingsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsCorporationIdStandings::meta(),
+        );
     }
 
     /**
@@ -460,10 +535,15 @@ class CorporationResource extends AbstractResource
     public function getCorporationsCorporationIdStarbases(int $corporationId, int $page = 1): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/starbases', ['corporation_id' => $corporationId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdStarbasesGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationsCorporationIdStarbases::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdStarbasesGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsCorporationIdStarbases::meta(),
+        );
     }
 
     /**
@@ -488,10 +568,15 @@ class CorporationResource extends AbstractResource
     public function getCorporationsCorporationIdStructures(int $corporationId, int $page = 1): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/structures', ['corporation_id' => $corporationId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdStructuresGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationsCorporationIdStructures::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdStructuresGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsCorporationIdStructures::meta(),
+        );
     }
 
     /**
@@ -501,9 +586,14 @@ class CorporationResource extends AbstractResource
     public function getCorporationsCorporationIdTitles(int $corporationId): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/titles', ['corporation_id' => $corporationId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdTitlesGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationsCorporationIdTitles::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdTitlesGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsCorporationIdTitles::meta(),
+        );
     }
 }

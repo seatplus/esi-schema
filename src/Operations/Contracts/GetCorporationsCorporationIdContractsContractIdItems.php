@@ -63,9 +63,14 @@ final class GetCorporationsCorporationIdContractsContractIdItems implements EsiO
     public static function execute(EsiTransportInterface $transport, int $contractId, int $corporationId): EsiResult
     {
         $response = $transport->invoke('get', '/corporations/{corporation_id}/contracts/{contract_id}/items', ['contract_id' => $contractId, 'corporation_id' => $corporationId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdContractsContractIdItemsGetItem::from($item),
-            (array) $response->data,
-        ), self::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdContractsContractIdItemsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

@@ -63,9 +63,14 @@ final class GetMarketsRegionIdOrders implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, string $orderType, int $regionId, int $page = 1, ?int $typeId = null): EsiResult
     {
         $response = $transport->invoke('get', '/markets/{region_id}/orders', ['region_id' => $regionId], ['order_type' => $orderType, 'page' => $page, 'type_id' => $typeId]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => MarketsRegionIdOrdersGetItem::from($item),
-            (array) $response->data,
-        ), self::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => MarketsRegionIdOrdersGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

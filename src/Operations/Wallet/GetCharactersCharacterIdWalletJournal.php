@@ -64,9 +64,14 @@ final class GetCharactersCharacterIdWalletJournal implements EsiOperationInterfa
     public static function execute(EsiTransportInterface $transport, int $characterId, int $page = 1): EsiResult
     {
         $response = $transport->invoke('get', '/characters/{character_id}/wallet/journal', ['character_id' => $characterId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdWalletJournalGetItem::from($item),
-            (array) $response->data,
-        ), self::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdWalletJournalGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

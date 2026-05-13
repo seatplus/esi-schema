@@ -62,6 +62,11 @@ final class PostUiOpenwindowMarketdetails implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $typeId): EsiResult
     {
         $response = $transport->invoke('post', '/ui/openwindow/marketdetails', [], ['type_id' => $typeId], []);
-        return EsiResult::fromRaw($response, null, self::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

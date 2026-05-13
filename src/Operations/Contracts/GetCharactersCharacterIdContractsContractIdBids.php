@@ -63,9 +63,14 @@ final class GetCharactersCharacterIdContractsContractIdBids implements EsiOperat
     public static function execute(EsiTransportInterface $transport, int $characterId, int $contractId): EsiResult
     {
         $response = $transport->invoke('get', '/characters/{character_id}/contracts/{contract_id}/bids', ['character_id' => $characterId, 'contract_id' => $contractId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdContractsContractIdBidsGetItem::from($item),
-            (array) $response->data,
-        ), self::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdContractsContractIdBidsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

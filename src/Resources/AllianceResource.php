@@ -62,7 +62,12 @@ class AllianceResource extends AbstractResource
         $response = $this->transport->invoke('get', '/alliances', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, GetAlliances::meta());
+        return new EsiResult(
+            data: $data,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetAlliances::meta(),
+        );
     }
 
     /**
@@ -86,7 +91,12 @@ class AllianceResource extends AbstractResource
         $response = $this->transport->invoke('get', '/alliances/{alliance_id}/corporations', ['alliance_id' => $allianceId], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, GetAlliancesAllianceIdCorporations::meta());
+        return new EsiResult(
+            data: $data,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetAlliancesAllianceIdCorporations::meta(),
+        );
     }
 
     /**

@@ -63,9 +63,14 @@ final class GetCharactersCharacterIdCalendar implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $characterId, ?int $fromEvent = null): EsiResult
     {
         $response = $transport->invoke('get', '/characters/{character_id}/calendar', ['character_id' => $characterId], ['from_event' => $fromEvent]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdCalendarGetItem::from($item),
-            (array) $response->data,
-        ), self::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdCalendarGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

@@ -62,6 +62,11 @@ final class PutCharactersCharacterIdContacts implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, mixed $requestBody, int $characterId, float $standing, ?array $labelIds = null, ?bool $watched = null): EsiResult
     {
         $response = $transport->invoke('put', '/characters/{character_id}/contacts', ['character_id' => $characterId], ['label_ids' => $labelIds, 'standing' => $standing, 'watched' => $watched], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, self::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

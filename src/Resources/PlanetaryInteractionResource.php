@@ -63,10 +63,15 @@ class PlanetaryInteractionResource extends AbstractResource
     public function getCharactersCharacterIdPlanets(int $characterId): EsiResult
     {
         $response = $this->transport->invoke('get', '/characters/{character_id}/planets', ['character_id' => $characterId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdPlanetsGetItem::from($item),
-            (array) $response->data,
-        ), GetCharactersCharacterIdPlanets::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdPlanetsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCharactersCharacterIdPlanets::meta(),
+        );
     }
 
     /**
@@ -91,10 +96,15 @@ class PlanetaryInteractionResource extends AbstractResource
     public function getCorporationsCorporationIdCustomsOffices(int $corporationId, int $page = 1): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/customs_offices', ['corporation_id' => $corporationId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdCustomsOfficesGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationsCorporationIdCustomsOffices::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdCustomsOfficesGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsCorporationIdCustomsOffices::meta(),
+        );
     }
 
     /**

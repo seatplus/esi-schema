@@ -64,9 +64,14 @@ final class GetMarketsStructuresStructureId implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $structureId, int $page = 1): EsiResult
     {
         $response = $transport->invoke('get', '/markets/structures/{structure_id}', ['structure_id' => $structureId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => MarketsStructuresStructureIdGetItem::from($item),
-            (array) $response->data,
-        ), self::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => MarketsStructuresStructureIdGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

@@ -63,9 +63,14 @@ final class GetCorporationsCorporationIdTitles implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $corporationId): EsiResult
     {
         $response = $transport->invoke('get', '/corporations/{corporation_id}/titles', ['corporation_id' => $corporationId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdTitlesGetItem::from($item),
-            (array) $response->data,
-        ), self::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdTitlesGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

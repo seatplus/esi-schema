@@ -64,9 +64,14 @@ final class GetCorporationsCorporationIdIndustryJobs implements EsiOperationInte
     public static function execute(EsiTransportInterface $transport, int $corporationId, ?bool $includeCompleted = null, int $page = 1): EsiResult
     {
         $response = $transport->invoke('get', '/corporations/{corporation_id}/industry/jobs', ['corporation_id' => $corporationId], ['include_completed' => $includeCompleted, 'page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdIndustryJobsGetItem::from($item),
-            (array) $response->data,
-        ), self::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdIndustryJobsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

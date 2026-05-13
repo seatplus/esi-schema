@@ -62,6 +62,11 @@ final class DeleteCharactersCharacterIdContacts implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $characterId, array $contactIds): EsiResult
     {
         $response = $transport->invoke('delete', '/characters/{character_id}/contacts', ['character_id' => $characterId], ['contact_ids' => $contactIds], []);
-        return EsiResult::fromRaw($response, null, self::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

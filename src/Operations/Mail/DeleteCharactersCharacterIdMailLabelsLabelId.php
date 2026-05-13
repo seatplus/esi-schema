@@ -62,6 +62,11 @@ final class DeleteCharactersCharacterIdMailLabelsLabelId implements EsiOperation
     public static function execute(EsiTransportInterface $transport, int $characterId, int $labelId): EsiResult
     {
         $response = $transport->invoke('delete', '/characters/{character_id}/mail/labels/{label_id}', ['character_id' => $characterId, 'label_id' => $labelId], [], []);
-        return EsiResult::fromRaw($response, null, self::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

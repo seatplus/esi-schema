@@ -165,10 +165,15 @@ class FactionWarfareResource extends AbstractResource
     public function getFwStats(): EsiResult
     {
         $response = $this->transport->invoke('get', '/fw/stats', [], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => FwStatsGetItem::from($item),
-            (array) $response->data,
-        ), GetFwStats::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => FwStatsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetFwStats::meta(),
+        );
     }
 
     /**
@@ -177,10 +182,15 @@ class FactionWarfareResource extends AbstractResource
     public function getFwSystems(): EsiResult
     {
         $response = $this->transport->invoke('get', '/fw/systems', [], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => FwSystemsGetItem::from($item),
-            (array) $response->data,
-        ), GetFwSystems::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => FwSystemsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetFwSystems::meta(),
+        );
     }
 
     /**
@@ -189,9 +199,14 @@ class FactionWarfareResource extends AbstractResource
     public function getFwWars(): EsiResult
     {
         $response = $this->transport->invoke('get', '/fw/wars', [], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => FwWarsGetItem::from($item),
-            (array) $response->data,
-        ), GetFwWars::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => FwWarsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetFwWars::meta(),
+        );
     }
 }

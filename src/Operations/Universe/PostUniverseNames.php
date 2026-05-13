@@ -62,9 +62,14 @@ final class PostUniverseNames implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, mixed $requestBody): EsiResult
     {
         $response = $transport->invoke('post', '/universe/names', [], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => UniverseNamesPostItem::from($item),
-            (array) $response->data,
-        ), self::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => UniverseNamesPostItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

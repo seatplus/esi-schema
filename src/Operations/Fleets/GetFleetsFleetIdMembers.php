@@ -63,9 +63,14 @@ final class GetFleetsFleetIdMembers implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $fleetId): EsiResult
     {
         $response = $transport->invoke('get', '/fleets/{fleet_id}/members', ['fleet_id' => $fleetId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => FleetsFleetIdMembersGetItem::from($item),
-            (array) $response->data,
-        ), self::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => FleetsFleetIdMembersGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

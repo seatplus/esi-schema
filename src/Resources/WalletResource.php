@@ -82,7 +82,12 @@ class WalletResource extends AbstractResource
         $response = $this->transport->invoke('get', '/characters/{character_id}/wallet', ['character_id' => $characterId], []);
         /** @var float $scalar */
         $scalar = (float) $response->data;
-        return EsiResult::fromRaw($response, $scalar, GetCharactersCharacterIdWallet::meta());
+        return new EsiResult(
+            data: $scalar,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCharactersCharacterIdWallet::meta(),
+        );
     }
 
     /**
@@ -93,10 +98,15 @@ class WalletResource extends AbstractResource
     public function getCharactersCharacterIdWalletJournal(int $characterId, int $page = 1): EsiResult
     {
         $response = $this->transport->invoke('get', '/characters/{character_id}/wallet/journal', ['character_id' => $characterId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdWalletJournalGetItem::from($item),
-            (array) $response->data,
-        ), GetCharactersCharacterIdWalletJournal::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdWalletJournalGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCharactersCharacterIdWalletJournal::meta(),
+        );
     }
 
     /**
@@ -106,10 +116,15 @@ class WalletResource extends AbstractResource
     public function getCharactersCharacterIdWalletTransactions(int $characterId, ?int $fromId = null): EsiResult
     {
         $response = $this->transport->invoke('get', '/characters/{character_id}/wallet/transactions', ['character_id' => $characterId], ['from_id' => $fromId]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdWalletTransactionsGetItem::from($item),
-            (array) $response->data,
-        ), GetCharactersCharacterIdWalletTransactions::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdWalletTransactionsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCharactersCharacterIdWalletTransactions::meta(),
+        );
     }
 
     /**
@@ -119,10 +134,15 @@ class WalletResource extends AbstractResource
     public function getCorporationsCorporationIdWallets(int $corporationId): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/wallets', ['corporation_id' => $corporationId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdWalletsGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationsCorporationIdWallets::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdWalletsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsCorporationIdWallets::meta(),
+        );
     }
 
     /**
@@ -133,10 +153,15 @@ class WalletResource extends AbstractResource
     public function getCorporationsCorporationIdWalletsDivisionJournal(int $corporationId, int $division, int $page = 1): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/wallets/{division}/journal', ['corporation_id' => $corporationId, 'division' => $division], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdWalletsDivisionJournalGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationsCorporationIdWalletsDivisionJournal::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdWalletsDivisionJournalGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsCorporationIdWalletsDivisionJournal::meta(),
+        );
     }
 
     /**
@@ -146,9 +171,14 @@ class WalletResource extends AbstractResource
     public function getCorporationsCorporationIdWalletsDivisionTransactions(int $corporationId, int $division, ?int $fromId = null): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/wallets/{division}/transactions', ['corporation_id' => $corporationId, 'division' => $division], ['from_id' => $fromId]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdWalletsDivisionTransactionsGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationsCorporationIdWalletsDivisionTransactions::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdWalletsDivisionTransactionsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsCorporationIdWalletsDivisionTransactions::meta(),
+        );
     }
 }

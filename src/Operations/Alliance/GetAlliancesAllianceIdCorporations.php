@@ -63,6 +63,11 @@ final class GetAlliancesAllianceIdCorporations implements EsiOperationInterface
         $response = $transport->invoke('get', '/alliances/{alliance_id}/corporations', ['alliance_id' => $allianceId], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, self::meta());
+        return new EsiResult(
+            data: $data,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

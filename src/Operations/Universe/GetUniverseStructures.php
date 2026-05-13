@@ -63,6 +63,11 @@ final class GetUniverseStructures implements EsiOperationInterface
         $response = $transport->invoke('get', '/universe/structures', [], ['filter' => $filter]);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, self::meta());
+        return new EsiResult(
+            data: $data,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

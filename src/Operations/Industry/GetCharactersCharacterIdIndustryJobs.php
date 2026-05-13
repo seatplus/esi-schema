@@ -63,9 +63,14 @@ final class GetCharactersCharacterIdIndustryJobs implements EsiOperationInterfac
     public static function execute(EsiTransportInterface $transport, int $characterId, ?bool $includeCompleted = null): EsiResult
     {
         $response = $transport->invoke('get', '/characters/{character_id}/industry/jobs', ['character_id' => $characterId], ['include_completed' => $includeCompleted]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdIndustryJobsGetItem::from($item),
-            (array) $response->data,
-        ), self::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdIndustryJobsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

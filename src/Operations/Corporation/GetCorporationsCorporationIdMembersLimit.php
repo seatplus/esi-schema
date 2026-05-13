@@ -64,6 +64,11 @@ final class GetCorporationsCorporationIdMembersLimit implements EsiOperationInte
         $response = $transport->invoke('get', '/corporations/{corporation_id}/members/limit', ['corporation_id' => $corporationId], []);
         /** @var int $scalar */
         $scalar = (int) $response->data;
-        return EsiResult::fromRaw($response, $scalar, self::meta());
+        return new EsiResult(
+            data: $scalar,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

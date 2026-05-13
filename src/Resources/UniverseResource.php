@@ -288,10 +288,15 @@ class UniverseResource extends AbstractResource
     public function getUniverseAncestries(): EsiResult
     {
         $response = $this->transport->invoke('get', '/universe/ancestries', [], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => UniverseAncestriesGetItem::from($item),
-            (array) $response->data,
-        ), GetUniverseAncestries::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => UniverseAncestriesGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetUniverseAncestries::meta(),
+        );
     }
 
     /**
@@ -313,10 +318,15 @@ class UniverseResource extends AbstractResource
     public function getUniverseBloodlines(): EsiResult
     {
         $response = $this->transport->invoke('get', '/universe/bloodlines', [], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => UniverseBloodlinesGetItem::from($item),
-            (array) $response->data,
-        ), GetUniverseBloodlines::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => UniverseBloodlinesGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetUniverseBloodlines::meta(),
+        );
     }
 
     /**
@@ -327,7 +337,12 @@ class UniverseResource extends AbstractResource
         $response = $this->transport->invoke('get', '/universe/categories', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, GetUniverseCategories::meta());
+        return new EsiResult(
+            data: $data,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetUniverseCategories::meta(),
+        );
     }
 
     /**
@@ -351,7 +366,12 @@ class UniverseResource extends AbstractResource
         $response = $this->transport->invoke('get', '/universe/constellations', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, GetUniverseConstellations::meta());
+        return new EsiResult(
+            data: $data,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetUniverseConstellations::meta(),
+        );
     }
 
     /**
@@ -373,10 +393,15 @@ class UniverseResource extends AbstractResource
     public function getUniverseFactions(): EsiResult
     {
         $response = $this->transport->invoke('get', '/universe/factions', [], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => UniverseFactionsGetItem::from($item),
-            (array) $response->data,
-        ), GetUniverseFactions::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => UniverseFactionsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetUniverseFactions::meta(),
+        );
     }
 
     /**
@@ -387,7 +412,12 @@ class UniverseResource extends AbstractResource
         $response = $this->transport->invoke('get', '/universe/graphics', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, GetUniverseGraphics::meta());
+        return new EsiResult(
+            data: $data,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetUniverseGraphics::meta(),
+        );
     }
 
     /**
@@ -412,7 +442,12 @@ class UniverseResource extends AbstractResource
         $response = $this->transport->invoke('get', '/universe/groups', [], ['page' => $page]);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, GetUniverseGroups::meta());
+        return new EsiResult(
+            data: $data,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetUniverseGroups::meta(),
+        );
     }
 
     /**
@@ -460,10 +495,15 @@ class UniverseResource extends AbstractResource
     public function postUniverseNames(mixed $requestBody): EsiResult
     {
         $response = $this->transport->invoke('post', '/universe/names', [], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => UniverseNamesPostItem::from($item),
-            (array) $response->data,
-        ), PostUniverseNames::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => UniverseNamesPostItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: PostUniverseNames::meta(),
+        );
     }
 
     /**
@@ -485,10 +525,15 @@ class UniverseResource extends AbstractResource
     public function getUniverseRaces(): EsiResult
     {
         $response = $this->transport->invoke('get', '/universe/races', [], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => UniverseRacesGetItem::from($item),
-            (array) $response->data,
-        ), GetUniverseRaces::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => UniverseRacesGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetUniverseRaces::meta(),
+        );
     }
 
     /**
@@ -499,7 +544,12 @@ class UniverseResource extends AbstractResource
         $response = $this->transport->invoke('get', '/universe/regions', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, GetUniverseRegions::meta());
+        return new EsiResult(
+            data: $data,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetUniverseRegions::meta(),
+        );
     }
 
     /**
@@ -562,7 +612,12 @@ class UniverseResource extends AbstractResource
         $response = $this->transport->invoke('get', '/universe/structures', [], ['filter' => $filter]);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, GetUniverseStructures::meta());
+        return new EsiResult(
+            data: $data,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetUniverseStructures::meta(),
+        );
     }
 
     /**
@@ -585,10 +640,15 @@ class UniverseResource extends AbstractResource
     public function getUniverseSystemJumps(): EsiResult
     {
         $response = $this->transport->invoke('get', '/universe/system_jumps', [], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => UniverseSystemJumpsGetItem::from($item),
-            (array) $response->data,
-        ), GetUniverseSystemJumps::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => UniverseSystemJumpsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetUniverseSystemJumps::meta(),
+        );
     }
 
     /**
@@ -597,10 +657,15 @@ class UniverseResource extends AbstractResource
     public function getUniverseSystemKills(): EsiResult
     {
         $response = $this->transport->invoke('get', '/universe/system_kills', [], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => UniverseSystemKillsGetItem::from($item),
-            (array) $response->data,
-        ), GetUniverseSystemKills::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => UniverseSystemKillsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetUniverseSystemKills::meta(),
+        );
     }
 
     /**
@@ -611,7 +676,12 @@ class UniverseResource extends AbstractResource
         $response = $this->transport->invoke('get', '/universe/systems', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, GetUniverseSystems::meta());
+        return new EsiResult(
+            data: $data,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetUniverseSystems::meta(),
+        );
     }
 
     /**
@@ -636,7 +706,12 @@ class UniverseResource extends AbstractResource
         $response = $this->transport->invoke('get', '/universe/types', [], ['page' => $page]);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, GetUniverseTypes::meta());
+        return new EsiResult(
+            data: $data,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetUniverseTypes::meta(),
+        );
     }
 
     /**

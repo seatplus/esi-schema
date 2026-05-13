@@ -62,6 +62,11 @@ final class DeleteCharactersCharacterIdFittingsFittingId implements EsiOperation
     public static function execute(EsiTransportInterface $transport, int $characterId, int $fittingId): EsiResult
     {
         $response = $transport->invoke('delete', '/characters/{character_id}/fittings/{fitting_id}', ['character_id' => $characterId, 'fitting_id' => $fittingId], [], []);
-        return EsiResult::fromRaw($response, null, self::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

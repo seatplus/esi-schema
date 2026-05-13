@@ -64,9 +64,14 @@ final class GetCorporationsCorporationIdWalletsDivisionJournal implements EsiOpe
     public static function execute(EsiTransportInterface $transport, int $corporationId, int $division, int $page = 1): EsiResult
     {
         $response = $transport->invoke('get', '/corporations/{corporation_id}/wallets/{division}/journal', ['corporation_id' => $corporationId, 'division' => $division], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdWalletsDivisionJournalGetItem::from($item),
-            (array) $response->data,
-        ), self::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdWalletsDivisionJournalGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

@@ -67,7 +67,12 @@ class UserInterfaceResource extends AbstractResource
     public function postUiAutopilotWaypoint(bool $addToBeginning, bool $clearOtherWaypoints, int $destinationId): EsiResult
     {
         $response = $this->transport->invoke('post', '/ui/autopilot/waypoint', [], ['add_to_beginning' => $addToBeginning, 'clear_other_waypoints' => $clearOtherWaypoints, 'destination_id' => $destinationId], []);
-        return EsiResult::fromRaw($response, null, PostUiAutopilotWaypoint::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: PostUiAutopilotWaypoint::meta(),
+        );
     }
 
     /**
@@ -77,7 +82,12 @@ class UserInterfaceResource extends AbstractResource
     public function postUiOpenwindowContract(int $contractId): EsiResult
     {
         $response = $this->transport->invoke('post', '/ui/openwindow/contract', [], ['contract_id' => $contractId], []);
-        return EsiResult::fromRaw($response, null, PostUiOpenwindowContract::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: PostUiOpenwindowContract::meta(),
+        );
     }
 
     /**
@@ -87,7 +97,12 @@ class UserInterfaceResource extends AbstractResource
     public function postUiOpenwindowInformation(int $targetId): EsiResult
     {
         $response = $this->transport->invoke('post', '/ui/openwindow/information', [], ['target_id' => $targetId], []);
-        return EsiResult::fromRaw($response, null, PostUiOpenwindowInformation::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: PostUiOpenwindowInformation::meta(),
+        );
     }
 
     /**
@@ -97,7 +112,12 @@ class UserInterfaceResource extends AbstractResource
     public function postUiOpenwindowMarketdetails(int $typeId): EsiResult
     {
         $response = $this->transport->invoke('post', '/ui/openwindow/marketdetails', [], ['type_id' => $typeId], []);
-        return EsiResult::fromRaw($response, null, PostUiOpenwindowMarketdetails::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: PostUiOpenwindowMarketdetails::meta(),
+        );
     }
 
     /**
@@ -107,6 +127,11 @@ class UserInterfaceResource extends AbstractResource
     public function postUiOpenwindowNewmail(mixed $requestBody): EsiResult
     {
         $response = $this->transport->invoke('post', '/ui/openwindow/newmail', [], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, PostUiOpenwindowNewmail::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: PostUiOpenwindowNewmail::meta(),
+        );
     }
 }

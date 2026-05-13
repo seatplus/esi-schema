@@ -71,7 +71,12 @@ class DogmaResource extends AbstractResource
         $response = $this->transport->invoke('get', '/dogma/attributes', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, GetDogmaAttributes::meta());
+        return new EsiResult(
+            data: $data,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetDogmaAttributes::meta(),
+        );
     }
 
     /**
@@ -108,7 +113,12 @@ class DogmaResource extends AbstractResource
         $response = $this->transport->invoke('get', '/dogma/effects', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, GetDogmaEffects::meta());
+        return new EsiResult(
+            data: $data,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetDogmaEffects::meta(),
+        );
     }
 
     /**

@@ -62,6 +62,11 @@ final class PostCharactersCharacterIdCspa implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, mixed $requestBody, int $characterId): EsiResult
     {
         $response = $transport->invoke('post', '/characters/{character_id}/cspa', ['character_id' => $characterId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, self::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

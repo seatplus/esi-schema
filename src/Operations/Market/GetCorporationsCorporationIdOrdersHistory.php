@@ -64,9 +64,14 @@ final class GetCorporationsCorporationIdOrdersHistory implements EsiOperationInt
     public static function execute(EsiTransportInterface $transport, int $corporationId, int $page = 1): EsiResult
     {
         $response = $transport->invoke('get', '/corporations/{corporation_id}/orders/history', ['corporation_id' => $corporationId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdOrdersHistoryGetItem::from($item),
-            (array) $response->data,
-        ), self::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdOrdersHistoryGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

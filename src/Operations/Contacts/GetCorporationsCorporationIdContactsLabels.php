@@ -63,9 +63,14 @@ final class GetCorporationsCorporationIdContactsLabels implements EsiOperationIn
     public static function execute(EsiTransportInterface $transport, int $corporationId): EsiResult
     {
         $response = $transport->invoke('get', '/corporations/{corporation_id}/contacts/labels', ['corporation_id' => $corporationId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdContactsLabelsGetItem::from($item),
-            (array) $response->data,
-        ), self::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdContactsLabelsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

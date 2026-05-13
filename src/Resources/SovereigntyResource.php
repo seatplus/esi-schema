@@ -53,10 +53,15 @@ class SovereigntyResource extends AbstractResource
     public function getSovereigntyCampaigns(): EsiResult
     {
         $response = $this->transport->invoke('get', '/sovereignty/campaigns', [], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => SovereigntyCampaignsGetItem::from($item),
-            (array) $response->data,
-        ), GetSovereigntyCampaigns::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => SovereigntyCampaignsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetSovereigntyCampaigns::meta(),
+        );
     }
 
     /**
@@ -65,10 +70,15 @@ class SovereigntyResource extends AbstractResource
     public function getSovereigntyMap(): EsiResult
     {
         $response = $this->transport->invoke('get', '/sovereignty/map', [], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => SovereigntyMapGetItem::from($item),
-            (array) $response->data,
-        ), GetSovereigntyMap::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => SovereigntyMapGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetSovereigntyMap::meta(),
+        );
     }
 
     /**
@@ -77,9 +87,14 @@ class SovereigntyResource extends AbstractResource
     public function getSovereigntyStructures(): EsiResult
     {
         $response = $this->transport->invoke('get', '/sovereignty/structures', [], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => SovereigntyStructuresGetItem::from($item),
-            (array) $response->data,
-        ), GetSovereigntyStructures::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => SovereigntyStructuresGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetSovereigntyStructures::meta(),
+        );
     }
 }

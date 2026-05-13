@@ -62,6 +62,11 @@ final class GetCharactersCharacterIdSkillqueue implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $characterId): EsiResult
     {
         $response = $transport->invoke('get', '/characters/{character_id}/skillqueue', ['character_id' => $characterId], []);
-        return EsiResult::fromRaw($response, null, self::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

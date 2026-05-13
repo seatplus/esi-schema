@@ -67,7 +67,12 @@ class SkillsResource extends AbstractResource
     public function getCharactersCharacterIdSkillqueue(int $characterId): EsiResult
     {
         $response = $this->transport->invoke('get', '/characters/{character_id}/skillqueue', ['character_id' => $characterId], []);
-        return EsiResult::fromRaw($response, null, GetCharactersCharacterIdSkillqueue::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCharactersCharacterIdSkillqueue::meta(),
+        );
     }
 
     /**

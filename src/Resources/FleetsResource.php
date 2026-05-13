@@ -171,7 +171,12 @@ class FleetsResource extends AbstractResource
     public function putFleetsFleetId(mixed $requestBody, int $fleetId): EsiResult
     {
         $response = $this->transport->invoke('put', '/fleets/{fleet_id}', ['fleet_id' => $fleetId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, PutFleetsFleetId::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: PutFleetsFleetId::meta(),
+        );
     }
 
     /**
@@ -181,10 +186,15 @@ class FleetsResource extends AbstractResource
     public function getFleetsFleetIdMembers(int $fleetId): EsiResult
     {
         $response = $this->transport->invoke('get', '/fleets/{fleet_id}/members', ['fleet_id' => $fleetId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => FleetsFleetIdMembersGetItem::from($item),
-            (array) $response->data,
-        ), GetFleetsFleetIdMembers::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => FleetsFleetIdMembersGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetFleetsFleetIdMembers::meta(),
+        );
     }
 
     /**
@@ -194,7 +204,12 @@ class FleetsResource extends AbstractResource
     public function postFleetsFleetIdMembers(mixed $requestBody, int $fleetId): EsiResult
     {
         $response = $this->transport->invoke('post', '/fleets/{fleet_id}/members', ['fleet_id' => $fleetId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, PostFleetsFleetIdMembers::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: PostFleetsFleetIdMembers::meta(),
+        );
     }
 
     /**
@@ -204,7 +219,12 @@ class FleetsResource extends AbstractResource
     public function deleteFleetsFleetIdMembersMemberId(int $fleetId, int $memberId): EsiResult
     {
         $response = $this->transport->invoke('delete', '/fleets/{fleet_id}/members/{member_id}', ['fleet_id' => $fleetId, 'member_id' => $memberId], [], []);
-        return EsiResult::fromRaw($response, null, DeleteFleetsFleetIdMembersMemberId::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: DeleteFleetsFleetIdMembersMemberId::meta(),
+        );
     }
 
     /**
@@ -214,7 +234,12 @@ class FleetsResource extends AbstractResource
     public function putFleetsFleetIdMembersMemberId(mixed $requestBody, int $fleetId, int $memberId): EsiResult
     {
         $response = $this->transport->invoke('put', '/fleets/{fleet_id}/members/{member_id}', ['fleet_id' => $fleetId, 'member_id' => $memberId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, PutFleetsFleetIdMembersMemberId::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: PutFleetsFleetIdMembersMemberId::meta(),
+        );
     }
 
     /**
@@ -224,7 +249,12 @@ class FleetsResource extends AbstractResource
     public function deleteFleetsFleetIdSquadsSquadId(int $fleetId, int $squadId): EsiResult
     {
         $response = $this->transport->invoke('delete', '/fleets/{fleet_id}/squads/{squad_id}', ['fleet_id' => $fleetId, 'squad_id' => $squadId], [], []);
-        return EsiResult::fromRaw($response, null, DeleteFleetsFleetIdSquadsSquadId::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: DeleteFleetsFleetIdSquadsSquadId::meta(),
+        );
     }
 
     /**
@@ -234,7 +264,12 @@ class FleetsResource extends AbstractResource
     public function putFleetsFleetIdSquadsSquadId(mixed $requestBody, int $fleetId, int $squadId): EsiResult
     {
         $response = $this->transport->invoke('put', '/fleets/{fleet_id}/squads/{squad_id}', ['fleet_id' => $fleetId, 'squad_id' => $squadId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, PutFleetsFleetIdSquadsSquadId::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: PutFleetsFleetIdSquadsSquadId::meta(),
+        );
     }
 
     /**
@@ -244,10 +279,15 @@ class FleetsResource extends AbstractResource
     public function getFleetsFleetIdWings(int $fleetId): EsiResult
     {
         $response = $this->transport->invoke('get', '/fleets/{fleet_id}/wings', ['fleet_id' => $fleetId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => FleetsFleetIdWingsGetItem::from($item),
-            (array) $response->data,
-        ), GetFleetsFleetIdWings::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => FleetsFleetIdWingsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetFleetsFleetIdWings::meta(),
+        );
     }
 
     /**
@@ -257,7 +297,12 @@ class FleetsResource extends AbstractResource
     public function postFleetsFleetIdWings(int $fleetId): EsiResult
     {
         $response = $this->transport->invoke('post', '/fleets/{fleet_id}/wings', ['fleet_id' => $fleetId], [], []);
-        return EsiResult::fromRaw($response, null, PostFleetsFleetIdWings::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: PostFleetsFleetIdWings::meta(),
+        );
     }
 
     /**
@@ -267,7 +312,12 @@ class FleetsResource extends AbstractResource
     public function deleteFleetsFleetIdWingsWingId(int $fleetId, int $wingId): EsiResult
     {
         $response = $this->transport->invoke('delete', '/fleets/{fleet_id}/wings/{wing_id}', ['fleet_id' => $fleetId, 'wing_id' => $wingId], [], []);
-        return EsiResult::fromRaw($response, null, DeleteFleetsFleetIdWingsWingId::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: DeleteFleetsFleetIdWingsWingId::meta(),
+        );
     }
 
     /**
@@ -277,7 +327,12 @@ class FleetsResource extends AbstractResource
     public function putFleetsFleetIdWingsWingId(mixed $requestBody, int $fleetId, int $wingId): EsiResult
     {
         $response = $this->transport->invoke('put', '/fleets/{fleet_id}/wings/{wing_id}', ['fleet_id' => $fleetId, 'wing_id' => $wingId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, PutFleetsFleetIdWingsWingId::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: PutFleetsFleetIdWingsWingId::meta(),
+        );
     }
 
     /**
@@ -287,6 +342,11 @@ class FleetsResource extends AbstractResource
     public function postFleetsFleetIdWingsWingIdSquads(int $fleetId, int $wingId): EsiResult
     {
         $response = $this->transport->invoke('post', '/fleets/{fleet_id}/wings/{wing_id}/squads', ['fleet_id' => $fleetId, 'wing_id' => $wingId], [], []);
-        return EsiResult::fromRaw($response, null, PostFleetsFleetIdWingsWingIdSquads::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: PostFleetsFleetIdWingsWingIdSquads::meta(),
+        );
     }
 }

@@ -63,9 +63,14 @@ final class GetContractsPublicRegionId implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $regionId, int $page = 1): EsiResult
     {
         $response = $transport->invoke('get', '/contracts/public/{region_id}', ['region_id' => $regionId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => ContractsPublicRegionIdGetItem::from($item),
-            (array) $response->data,
-        ), self::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => ContractsPublicRegionIdGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

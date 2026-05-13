@@ -62,6 +62,11 @@ final class DeleteFleetsFleetIdMembersMemberId implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $fleetId, int $memberId): EsiResult
     {
         $response = $transport->invoke('delete', '/fleets/{fleet_id}/members/{member_id}', ['fleet_id' => $fleetId, 'member_id' => $memberId], [], []);
-        return EsiResult::fromRaw($response, null, self::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

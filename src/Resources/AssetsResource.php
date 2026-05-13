@@ -82,10 +82,15 @@ class AssetsResource extends AbstractResource
     public function getCharactersCharacterIdAssets(int $characterId, int $page = 1): EsiResult
     {
         $response = $this->transport->invoke('get', '/characters/{character_id}/assets', ['character_id' => $characterId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdAssetsGetItem::from($item),
-            (array) $response->data,
-        ), GetCharactersCharacterIdAssets::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdAssetsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCharactersCharacterIdAssets::meta(),
+        );
     }
 
     /**
@@ -95,10 +100,15 @@ class AssetsResource extends AbstractResource
     public function postCharactersCharacterIdAssetsLocations(mixed $requestBody, int $characterId): EsiResult
     {
         $response = $this->transport->invoke('post', '/characters/{character_id}/assets/locations', ['character_id' => $characterId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdAssetsLocationsPostItem::from($item),
-            (array) $response->data,
-        ), PostCharactersCharacterIdAssetsLocations::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdAssetsLocationsPostItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: PostCharactersCharacterIdAssetsLocations::meta(),
+        );
     }
 
     /**
@@ -108,10 +118,15 @@ class AssetsResource extends AbstractResource
     public function postCharactersCharacterIdAssetsNames(mixed $requestBody, int $characterId): EsiResult
     {
         $response = $this->transport->invoke('post', '/characters/{character_id}/assets/names', ['character_id' => $characterId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdAssetsNamesPostItem::from($item),
-            (array) $response->data,
-        ), PostCharactersCharacterIdAssetsNames::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdAssetsNamesPostItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: PostCharactersCharacterIdAssetsNames::meta(),
+        );
     }
 
     /**
@@ -122,10 +137,15 @@ class AssetsResource extends AbstractResource
     public function getCorporationsCorporationIdAssets(int $corporationId, int $page = 1): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/assets', ['corporation_id' => $corporationId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdAssetsGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationsCorporationIdAssets::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdAssetsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsCorporationIdAssets::meta(),
+        );
     }
 
     /**
@@ -135,10 +155,15 @@ class AssetsResource extends AbstractResource
     public function postCorporationsCorporationIdAssetsLocations(mixed $requestBody, int $corporationId): EsiResult
     {
         $response = $this->transport->invoke('post', '/corporations/{corporation_id}/assets/locations', ['corporation_id' => $corporationId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdAssetsLocationsPostItem::from($item),
-            (array) $response->data,
-        ), PostCorporationsCorporationIdAssetsLocations::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdAssetsLocationsPostItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: PostCorporationsCorporationIdAssetsLocations::meta(),
+        );
     }
 
     /**
@@ -148,9 +173,14 @@ class AssetsResource extends AbstractResource
     public function postCorporationsCorporationIdAssetsNames(mixed $requestBody, int $corporationId): EsiResult
     {
         $response = $this->transport->invoke('post', '/corporations/{corporation_id}/assets/names', ['corporation_id' => $corporationId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdAssetsNamesPostItem::from($item),
-            (array) $response->data,
-        ), PostCorporationsCorporationIdAssetsNames::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdAssetsNamesPostItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: PostCorporationsCorporationIdAssetsNames::meta(),
+        );
     }
 }

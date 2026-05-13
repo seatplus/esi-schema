@@ -63,9 +63,14 @@ final class GetWarsWarIdKillmails implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $warId, int $page = 1): EsiResult
     {
         $response = $transport->invoke('get', '/wars/{war_id}/killmails', ['war_id' => $warId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => WarsWarIdKillmailsGetItem::from($item),
-            (array) $response->data,
-        ), self::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => WarsWarIdKillmailsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

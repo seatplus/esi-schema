@@ -103,10 +103,15 @@ class MailResource extends AbstractResource
     public function getCharactersCharacterIdMail(int $characterId, ?array $labels = null, ?int $lastMailId = null): EsiResult
     {
         $response = $this->transport->invoke('get', '/characters/{character_id}/mail', ['character_id' => $characterId], ['labels' => $labels, 'last_mail_id' => $lastMailId]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdMailGetItem::from($item),
-            (array) $response->data,
-        ), GetCharactersCharacterIdMail::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdMailGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCharactersCharacterIdMail::meta(),
+        );
     }
 
     /**
@@ -116,7 +121,12 @@ class MailResource extends AbstractResource
     public function postCharactersCharacterIdMail(mixed $requestBody, int $characterId): EsiResult
     {
         $response = $this->transport->invoke('post', '/characters/{character_id}/mail', ['character_id' => $characterId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, PostCharactersCharacterIdMail::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: PostCharactersCharacterIdMail::meta(),
+        );
     }
 
     /**
@@ -140,7 +150,12 @@ class MailResource extends AbstractResource
     public function postCharactersCharacterIdMailLabels(mixed $requestBody, int $characterId): EsiResult
     {
         $response = $this->transport->invoke('post', '/characters/{character_id}/mail/labels', ['character_id' => $characterId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, PostCharactersCharacterIdMailLabels::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: PostCharactersCharacterIdMailLabels::meta(),
+        );
     }
 
     /**
@@ -150,7 +165,12 @@ class MailResource extends AbstractResource
     public function deleteCharactersCharacterIdMailLabelsLabelId(int $characterId, int $labelId): EsiResult
     {
         $response = $this->transport->invoke('delete', '/characters/{character_id}/mail/labels/{label_id}', ['character_id' => $characterId, 'label_id' => $labelId], [], []);
-        return EsiResult::fromRaw($response, null, DeleteCharactersCharacterIdMailLabelsLabelId::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: DeleteCharactersCharacterIdMailLabelsLabelId::meta(),
+        );
     }
 
     /**
@@ -160,10 +180,15 @@ class MailResource extends AbstractResource
     public function getCharactersCharacterIdMailLists(int $characterId): EsiResult
     {
         $response = $this->transport->invoke('get', '/characters/{character_id}/mail/lists', ['character_id' => $characterId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdMailListsGetItem::from($item),
-            (array) $response->data,
-        ), GetCharactersCharacterIdMailLists::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdMailListsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCharactersCharacterIdMailLists::meta(),
+        );
     }
 
     /**
@@ -173,7 +198,12 @@ class MailResource extends AbstractResource
     public function deleteCharactersCharacterIdMailMailId(int $characterId, int $mailId): EsiResult
     {
         $response = $this->transport->invoke('delete', '/characters/{character_id}/mail/{mail_id}', ['character_id' => $characterId, 'mail_id' => $mailId], [], []);
-        return EsiResult::fromRaw($response, null, DeleteCharactersCharacterIdMailMailId::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: DeleteCharactersCharacterIdMailMailId::meta(),
+        );
     }
 
     /**
@@ -197,6 +227,11 @@ class MailResource extends AbstractResource
     public function putCharactersCharacterIdMailMailId(mixed $requestBody, int $characterId, int $mailId): EsiResult
     {
         $response = $this->transport->invoke('put', '/characters/{character_id}/mail/{mail_id}', ['character_id' => $characterId, 'mail_id' => $mailId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, PutCharactersCharacterIdMailMailId::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: PutCharactersCharacterIdMailMailId::meta(),
+        );
     }
 }

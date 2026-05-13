@@ -64,6 +64,11 @@ final class GetCharactersCharacterIdWallet implements EsiOperationInterface
         $response = $transport->invoke('get', '/characters/{character_id}/wallet', ['character_id' => $characterId], []);
         /** @var float $scalar */
         $scalar = (float) $response->data;
-        return EsiResult::fromRaw($response, $scalar, self::meta());
+        return new EsiResult(
+            data: $scalar,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

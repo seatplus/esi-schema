@@ -63,9 +63,14 @@ final class PostCharactersCharacterIdAssetsNames implements EsiOperationInterfac
     public static function execute(EsiTransportInterface $transport, mixed $requestBody, int $characterId): EsiResult
     {
         $response = $transport->invoke('post', '/characters/{character_id}/assets/names', ['character_id' => $characterId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdAssetsNamesPostItem::from($item),
-            (array) $response->data,
-        ), self::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdAssetsNamesPostItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

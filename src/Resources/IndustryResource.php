@@ -99,10 +99,15 @@ class IndustryResource extends AbstractResource
     public function getCharactersCharacterIdIndustryJobs(int $characterId, ?bool $includeCompleted = null): EsiResult
     {
         $response = $this->transport->invoke('get', '/characters/{character_id}/industry/jobs', ['character_id' => $characterId], ['include_completed' => $includeCompleted]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdIndustryJobsGetItem::from($item),
-            (array) $response->data,
-        ), GetCharactersCharacterIdIndustryJobs::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdIndustryJobsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCharactersCharacterIdIndustryJobs::meta(),
+        );
     }
 
     /**
@@ -113,10 +118,15 @@ class IndustryResource extends AbstractResource
     public function getCharactersCharacterIdMining(int $characterId, int $page = 1): EsiResult
     {
         $response = $this->transport->invoke('get', '/characters/{character_id}/mining', ['character_id' => $characterId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdMiningGetItem::from($item),
-            (array) $response->data,
-        ), GetCharactersCharacterIdMining::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdMiningGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCharactersCharacterIdMining::meta(),
+        );
     }
 
     /**
@@ -127,10 +137,15 @@ class IndustryResource extends AbstractResource
     public function getCorporationCorporationIdMiningExtractions(int $corporationId, int $page = 1): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporation/{corporation_id}/mining/extractions', ['corporation_id' => $corporationId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationCorporationIdMiningExtractionsGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationCorporationIdMiningExtractions::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationCorporationIdMiningExtractionsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationCorporationIdMiningExtractions::meta(),
+        );
     }
 
     /**
@@ -141,10 +156,15 @@ class IndustryResource extends AbstractResource
     public function getCorporationCorporationIdMiningObservers(int $corporationId, int $page = 1): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporation/{corporation_id}/mining/observers', ['corporation_id' => $corporationId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationCorporationIdMiningObserversGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationCorporationIdMiningObservers::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationCorporationIdMiningObserversGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationCorporationIdMiningObservers::meta(),
+        );
     }
 
     /**
@@ -155,10 +175,15 @@ class IndustryResource extends AbstractResource
     public function getCorporationCorporationIdMiningObserversObserverId(int $corporationId, int $observerId, int $page = 1): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporation/{corporation_id}/mining/observers/{observer_id}', ['corporation_id' => $corporationId, 'observer_id' => $observerId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationCorporationIdMiningObserversObserverIdGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationCorporationIdMiningObserversObserverId::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationCorporationIdMiningObserversObserverIdGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationCorporationIdMiningObserversObserverId::meta(),
+        );
     }
 
     /**
@@ -169,10 +194,15 @@ class IndustryResource extends AbstractResource
     public function getCorporationsCorporationIdIndustryJobs(int $corporationId, ?bool $includeCompleted = null, int $page = 1): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/industry/jobs', ['corporation_id' => $corporationId], ['include_completed' => $includeCompleted, 'page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdIndustryJobsGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationsCorporationIdIndustryJobs::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdIndustryJobsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsCorporationIdIndustryJobs::meta(),
+        );
     }
 
     /**
@@ -181,10 +211,15 @@ class IndustryResource extends AbstractResource
     public function getIndustryFacilities(): EsiResult
     {
         $response = $this->transport->invoke('get', '/industry/facilities', [], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => IndustryFacilitiesGetItem::from($item),
-            (array) $response->data,
-        ), GetIndustryFacilities::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => IndustryFacilitiesGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetIndustryFacilities::meta(),
+        );
     }
 
     /**
@@ -193,9 +228,14 @@ class IndustryResource extends AbstractResource
     public function getIndustrySystems(): EsiResult
     {
         $response = $this->transport->invoke('get', '/industry/systems', [], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => IndustrySystemsGetItem::from($item),
-            (array) $response->data,
-        ), GetIndustrySystems::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => IndustrySystemsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetIndustrySystems::meta(),
+        );
     }
 }

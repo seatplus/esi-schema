@@ -36,19 +36,20 @@ readonly class EsiResult
     /**
      * Build an EsiResult from a raw transport response and already-typed data.
      *
+     * Unpacks transport fields only (pages, isCachedLoad).
+     * Set operationMeta via the constructor's named argument when needed.
+     *
      * @template TData
      *
-     * @param  TData            $typedData
-     * @param  ?OperationMeta   $meta       OperationMeta from the calling Operation class.
+     * @param  TData  $typedData
      * @return EsiResult<TData>
      */
-    public static function fromRaw(EsiRawResponse $response, mixed $typedData, ?OperationMeta $meta = null): self
+    public static function fromRaw(EsiRawResponse $response, mixed $typedData = null): self
     {
         return new self(
             data: $typedData,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: $meta,
         );
     }
 }

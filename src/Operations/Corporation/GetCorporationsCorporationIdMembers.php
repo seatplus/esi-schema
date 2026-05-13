@@ -64,6 +64,11 @@ final class GetCorporationsCorporationIdMembers implements EsiOperationInterface
         $response = $transport->invoke('get', '/corporations/{corporation_id}/members', ['corporation_id' => $corporationId], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, self::meta());
+        return new EsiResult(
+            data: $data,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

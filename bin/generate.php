@@ -300,29 +300,49 @@ function buildReturn(array $op): string
 
         'array_item', 'array_ref' => <<<PHP
                 \$response = {$invoke};
-                return EsiResult::fromRaw(\$response, array_map(
-                    fn (object \$item) => {$dto}::from(\$item),
-                    (array) \$response->data,
-                ), __OPERATION_META__);
+                return new EsiResult(
+                    data: array_map(
+                        fn (object \$item) => {$dto}::from(\$item),
+                        (array) \$response->data,
+                    ),
+                    pages: \$response->pages,
+                    isCachedLoad: \$response->isCachedLoad,
+                    operationMeta: __OPERATION_META__,
+                );
         PHP,
 
         'array_primitive' => <<<PHP
                 \$response = {$invoke};
                 /** @var array<{$primT}> \$data */
                 \$data = array_map(fn (mixed \$i) => ({$primT}) \$i, (array) \$response->data);
-                return EsiResult::fromRaw(\$response, \$data, __OPERATION_META__);
+                return new EsiResult(
+                    data: \$data,
+                    pages: \$response->pages,
+                    isCachedLoad: \$response->isCachedLoad,
+                    operationMeta: __OPERATION_META__,
+                );
         PHP,
 
         'primitive' => <<<PHP
                 \$response = {$invoke};
                 /** @var {$primT} \$scalar */
                 \$scalar = ({$primT}) \$response->data;
-                return EsiResult::fromRaw(\$response, \$scalar, __OPERATION_META__);
+                return new EsiResult(
+                    data: \$scalar,
+                    pages: \$response->pages,
+                    isCachedLoad: \$response->isCachedLoad,
+                    operationMeta: __OPERATION_META__,
+                );
         PHP,
 
         default => <<<PHP
                 \$response = {$invoke};
-                return EsiResult::fromRaw(\$response, null, __OPERATION_META__);
+                return new EsiResult(
+                    data: null,
+                    pages: \$response->pages,
+                    isCachedLoad: \$response->isCachedLoad,
+                    operationMeta: __OPERATION_META__,
+                );
         PHP,
     };
 }

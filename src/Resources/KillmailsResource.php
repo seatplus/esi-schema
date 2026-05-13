@@ -55,10 +55,15 @@ class KillmailsResource extends AbstractResource
     public function getCharactersCharacterIdKillmailsRecent(int $characterId, int $page = 1): EsiResult
     {
         $response = $this->transport->invoke('get', '/characters/{character_id}/killmails/recent', ['character_id' => $characterId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdKillmailsRecentGetItem::from($item),
-            (array) $response->data,
-        ), GetCharactersCharacterIdKillmailsRecent::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdKillmailsRecentGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCharactersCharacterIdKillmailsRecent::meta(),
+        );
     }
 
     /**
@@ -69,10 +74,15 @@ class KillmailsResource extends AbstractResource
     public function getCorporationsCorporationIdKillmailsRecent(int $corporationId, int $page = 1): EsiResult
     {
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/killmails/recent', ['corporation_id' => $corporationId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CorporationsCorporationIdKillmailsRecentGetItem::from($item),
-            (array) $response->data,
-        ), GetCorporationsCorporationIdKillmailsRecent::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CorporationsCorporationIdKillmailsRecentGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCorporationsCorporationIdKillmailsRecent::meta(),
+        );
     }
 
     /**

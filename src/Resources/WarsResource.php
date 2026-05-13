@@ -54,7 +54,12 @@ class WarsResource extends AbstractResource
         $response = $this->transport->invoke('get', '/wars', [], ['max_war_id' => $maxWarId]);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, GetWars::meta());
+        return new EsiResult(
+            data: $data,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetWars::meta(),
+        );
     }
 
     /**
@@ -77,9 +82,14 @@ class WarsResource extends AbstractResource
     public function getWarsWarIdKillmails(int $warId, int $page = 1): EsiResult
     {
         $response = $this->transport->invoke('get', '/wars/{war_id}/killmails', ['war_id' => $warId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => WarsWarIdKillmailsGetItem::from($item),
-            (array) $response->data,
-        ), GetWarsWarIdKillmails::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => WarsWarIdKillmailsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetWarsWarIdKillmails::meta(),
+        );
     }
 }

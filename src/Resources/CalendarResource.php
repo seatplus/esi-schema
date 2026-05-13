@@ -62,10 +62,15 @@ class CalendarResource extends AbstractResource
     public function getCharactersCharacterIdCalendar(int $characterId, ?int $fromEvent = null): EsiResult
     {
         $response = $this->transport->invoke('get', '/characters/{character_id}/calendar', ['character_id' => $characterId], ['from_event' => $fromEvent]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdCalendarGetItem::from($item),
-            (array) $response->data,
-        ), GetCharactersCharacterIdCalendar::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdCalendarGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCharactersCharacterIdCalendar::meta(),
+        );
     }
 
     /**
@@ -89,7 +94,12 @@ class CalendarResource extends AbstractResource
     public function putCharactersCharacterIdCalendarEventId(mixed $requestBody, int $characterId, int $eventId): EsiResult
     {
         $response = $this->transport->invoke('put', '/characters/{character_id}/calendar/{event_id}', ['character_id' => $characterId, 'event_id' => $eventId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, PutCharactersCharacterIdCalendarEventId::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: PutCharactersCharacterIdCalendarEventId::meta(),
+        );
     }
 
     /**
@@ -99,9 +109,14 @@ class CalendarResource extends AbstractResource
     public function getCharactersCharacterIdCalendarEventIdAttendees(int $characterId, int $eventId): EsiResult
     {
         $response = $this->transport->invoke('get', '/characters/{character_id}/calendar/{event_id}/attendees', ['character_id' => $characterId, 'event_id' => $eventId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdCalendarEventIdAttendeesGetItem::from($item),
-            (array) $response->data,
-        ), GetCharactersCharacterIdCalendarEventIdAttendees::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdCalendarEventIdAttendeesGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCharactersCharacterIdCalendarEventIdAttendees::meta(),
+        );
     }
 }

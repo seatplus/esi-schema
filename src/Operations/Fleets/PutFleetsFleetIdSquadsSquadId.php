@@ -62,6 +62,11 @@ final class PutFleetsFleetIdSquadsSquadId implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, mixed $requestBody, int $fleetId, int $squadId): EsiResult
     {
         $response = $transport->invoke('put', '/fleets/{fleet_id}/squads/{squad_id}', ['fleet_id' => $fleetId, 'squad_id' => $squadId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, self::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: self::meta(),
+        );
     }
 }

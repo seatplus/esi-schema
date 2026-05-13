@@ -151,10 +151,15 @@ class CharacterResource extends AbstractResource
     public function postCharactersAffiliation(mixed $requestBody): EsiResult
     {
         $response = $this->transport->invoke('post', '/characters/affiliation', [], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersAffiliationPostItem::from($item),
-            (array) $response->data,
-        ), PostCharactersAffiliation::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersAffiliationPostItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: PostCharactersAffiliation::meta(),
+        );
     }
 
     /**
@@ -177,10 +182,15 @@ class CharacterResource extends AbstractResource
     public function getCharactersCharacterIdAgentsResearch(int $characterId): EsiResult
     {
         $response = $this->transport->invoke('get', '/characters/{character_id}/agents_research', ['character_id' => $characterId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdAgentsResearchGetItem::from($item),
-            (array) $response->data,
-        ), GetCharactersCharacterIdAgentsResearch::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdAgentsResearchGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCharactersCharacterIdAgentsResearch::meta(),
+        );
     }
 
     /**
@@ -191,10 +201,15 @@ class CharacterResource extends AbstractResource
     public function getCharactersCharacterIdBlueprints(int $characterId, int $page = 1): EsiResult
     {
         $response = $this->transport->invoke('get', '/characters/{character_id}/blueprints', ['character_id' => $characterId], ['page' => $page]);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdBlueprintsGetItem::from($item),
-            (array) $response->data,
-        ), GetCharactersCharacterIdBlueprints::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdBlueprintsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCharactersCharacterIdBlueprints::meta(),
+        );
     }
 
     /**
@@ -203,10 +218,15 @@ class CharacterResource extends AbstractResource
     public function getCharactersCharacterIdCorporationhistory(int $characterId): EsiResult
     {
         $response = $this->transport->invoke('get', '/characters/{character_id}/corporationhistory', ['character_id' => $characterId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdCorporationhistoryGetItem::from($item),
-            (array) $response->data,
-        ), GetCharactersCharacterIdCorporationhistory::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdCorporationhistoryGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCharactersCharacterIdCorporationhistory::meta(),
+        );
     }
 
     /**
@@ -216,7 +236,12 @@ class CharacterResource extends AbstractResource
     public function postCharactersCharacterIdCspa(mixed $requestBody, int $characterId): EsiResult
     {
         $response = $this->transport->invoke('post', '/characters/{character_id}/cspa', ['character_id' => $characterId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, PostCharactersCharacterIdCspa::meta());
+        return new EsiResult(
+            data: null,
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: PostCharactersCharacterIdCspa::meta(),
+        );
     }
 
     /**
@@ -240,10 +265,15 @@ class CharacterResource extends AbstractResource
     public function getCharactersCharacterIdMedals(int $characterId): EsiResult
     {
         $response = $this->transport->invoke('get', '/characters/{character_id}/medals', ['character_id' => $characterId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdMedalsGetItem::from($item),
-            (array) $response->data,
-        ), GetCharactersCharacterIdMedals::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdMedalsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCharactersCharacterIdMedals::meta(),
+        );
     }
 
     /**
@@ -253,10 +283,15 @@ class CharacterResource extends AbstractResource
     public function getCharactersCharacterIdNotifications(int $characterId): EsiResult
     {
         $response = $this->transport->invoke('get', '/characters/{character_id}/notifications', ['character_id' => $characterId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdNotificationsGetItem::from($item),
-            (array) $response->data,
-        ), GetCharactersCharacterIdNotifications::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdNotificationsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCharactersCharacterIdNotifications::meta(),
+        );
     }
 
     /**
@@ -266,10 +301,15 @@ class CharacterResource extends AbstractResource
     public function getCharactersCharacterIdNotificationsContacts(int $characterId): EsiResult
     {
         $response = $this->transport->invoke('get', '/characters/{character_id}/notifications/contacts', ['character_id' => $characterId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdNotificationsContactsGetItem::from($item),
-            (array) $response->data,
-        ), GetCharactersCharacterIdNotificationsContacts::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdNotificationsContactsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCharactersCharacterIdNotificationsContacts::meta(),
+        );
     }
 
     /**
@@ -306,10 +346,15 @@ class CharacterResource extends AbstractResource
     public function getCharactersCharacterIdStandings(int $characterId): EsiResult
     {
         $response = $this->transport->invoke('get', '/characters/{character_id}/standings', ['character_id' => $characterId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdStandingsGetItem::from($item),
-            (array) $response->data,
-        ), GetCharactersCharacterIdStandings::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdStandingsGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCharactersCharacterIdStandings::meta(),
+        );
     }
 
     /**
@@ -319,9 +364,14 @@ class CharacterResource extends AbstractResource
     public function getCharactersCharacterIdTitles(int $characterId): EsiResult
     {
         $response = $this->transport->invoke('get', '/characters/{character_id}/titles', ['character_id' => $characterId], []);
-        return EsiResult::fromRaw($response, array_map(
-            fn (object $item) => CharactersCharacterIdTitlesGetItem::from($item),
-            (array) $response->data,
-        ), GetCharactersCharacterIdTitles::meta());
+        return new EsiResult(
+            data: array_map(
+                fn (object $item) => CharactersCharacterIdTitlesGetItem::from($item),
+                (array) $response->data,
+            ),
+            pages: $response->pages,
+            isCachedLoad: $response->isCachedLoad,
+            operationMeta: GetCharactersCharacterIdTitles::meta(),
+        );
     }
 }
