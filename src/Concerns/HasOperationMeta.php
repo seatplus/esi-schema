@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace Seatplus\EsiSchema\Concerns;
 
+use Seatplus\EsiSchema\OperationMeta;
+
 /**
- * Typed accessors for ESI spec metadata baked into every result object.
+ * Typed accessor methods for ESI spec metadata on result objects.
  *
- * Both EsiResult (array endpoints) and AbstractEsiDto (object endpoints)
- * use this trait. The metadata is injected by generated Resource methods
- * from OPERATION_META at call time — no live spec fetch required.
+ * Mixed into EsiResult (array endpoints) and AbstractEsiDto (object endpoints)
+ * to expose the same metadata accessors post-call that OperationMeta provides
+ * pre-call.
  *
- * For pre-call introspection (e.g. JobChecker), use AbstractResource::metaFor().
+ * The using class must declare a public ?OperationMeta $operationMeta property.
  */
 trait HasOperationMeta
 {
@@ -21,7 +23,7 @@ trait HasOperationMeta
      */
     public function rateLimitGroup(): ?string
     {
-        return $this->operationMeta['rateLimit']['group'] ?? null;
+        return $this->operationMeta?->rateLimitGroup;
     }
 
     /**
@@ -30,9 +32,7 @@ trait HasOperationMeta
      */
     public function rateLimitMaxTokens(): ?int
     {
-        return isset($this->operationMeta['rateLimit']['max-tokens'])
-            ? (int) $this->operationMeta['rateLimit']['max-tokens']
-            : null;
+        return $this->operationMeta?->rateLimitMaxTokens;
     }
 
     /**
@@ -41,7 +41,7 @@ trait HasOperationMeta
      */
     public function rateLimitWindow(): ?string
     {
-        return $this->operationMeta['rateLimit']['window-size'] ?? null;
+        return $this->operationMeta?->rateLimitWindow;
     }
 
     /**
@@ -50,9 +50,7 @@ trait HasOperationMeta
      */
     public function cacheAge(): ?int
     {
-        return isset($this->operationMeta['cacheAge'])
-            ? (int) $this->operationMeta['cacheAge']
-            : null;
+        return $this->operationMeta?->cacheAge;
     }
 
     /**
@@ -63,7 +61,7 @@ trait HasOperationMeta
      */
     public function requiredRoles(): array
     {
-        return $this->operationMeta['requiredRoles'] ?? [];
+        return $this->operationMeta !== null ? $this->operationMeta->requiredRoles : [];
     }
 
     /**
@@ -72,7 +70,7 @@ trait HasOperationMeta
      */
     public function usesCursor(): bool
     {
-        return (bool) ($this->operationMeta['cursor'] ?? false);
+        return $this->operationMeta !== null ? $this->operationMeta->usesCursor : false;
     }
 
     /**
@@ -81,6 +79,6 @@ trait HasOperationMeta
      */
     public function requiredScope(): ?string
     {
-        return $this->operationMeta['requiredScope'] ?? null;
+        return $this->operationMeta?->requiredScope;
     }
 }

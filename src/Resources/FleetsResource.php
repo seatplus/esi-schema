@@ -2,11 +2,26 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdFleetGet;
+use Seatplus\EsiSchema\Operations\Fleets\GetCharactersCharacterIdFleet;
 use Seatplus\EsiSchema\Responses\FleetsFleetIdGet;
+use Seatplus\EsiSchema\Operations\Fleets\GetFleetsFleetId;
+use Seatplus\EsiSchema\Operations\Fleets\PutFleetsFleetId;
 use Seatplus\EsiSchema\Responses\FleetsFleetIdMembersGetItem;
+use Seatplus\EsiSchema\Operations\Fleets\GetFleetsFleetIdMembers;
+use Seatplus\EsiSchema\Operations\Fleets\PostFleetsFleetIdMembers;
+use Seatplus\EsiSchema\Operations\Fleets\DeleteFleetsFleetIdMembersMemberId;
+use Seatplus\EsiSchema\Operations\Fleets\PutFleetsFleetIdMembersMemberId;
+use Seatplus\EsiSchema\Operations\Fleets\DeleteFleetsFleetIdSquadsSquadId;
+use Seatplus\EsiSchema\Operations\Fleets\PutFleetsFleetIdSquadsSquadId;
 use Seatplus\EsiSchema\Responses\FleetsFleetIdWingsGetItem;
+use Seatplus\EsiSchema\Operations\Fleets\GetFleetsFleetIdWings;
+use Seatplus\EsiSchema\Operations\Fleets\PostFleetsFleetIdWings;
+use Seatplus\EsiSchema\Operations\Fleets\DeleteFleetsFleetIdWingsWingId;
+use Seatplus\EsiSchema\Operations\Fleets\PutFleetsFleetIdWingsWingId;
+use Seatplus\EsiSchema\Operations\Fleets\PostFleetsFleetIdWingsWingIdSquads;
 
 /**
  * ESI tag: Fleets
@@ -16,22 +31,110 @@ use Seatplus\EsiSchema\Responses\FleetsFleetIdWingsGetItem;
  */
 class FleetsResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getCharactersCharacterIdFleet' => ['cacheAge' => 60, 'rateLimit' => ['group' => 'fleet', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-fleets.read_fleet.v1'],
-        'getFleetsFleetId' => ['cacheAge' => 5, 'rateLimit' => ['group' => 'fleet', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-fleets.read_fleet.v1'],
-        'putFleetsFleetId' => ['cacheAge' => null, 'rateLimit' => ['group' => 'fleet', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-fleets.write_fleet.v1'],
-        'getFleetsFleetIdMembers' => ['cacheAge' => 5, 'rateLimit' => ['group' => 'fleet', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-fleets.read_fleet.v1'],
-        'postFleetsFleetIdMembers' => ['cacheAge' => null, 'rateLimit' => ['group' => 'fleet', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-fleets.write_fleet.v1'],
-        'deleteFleetsFleetIdMembersMemberId' => ['cacheAge' => null, 'rateLimit' => ['group' => 'fleet', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-fleets.write_fleet.v1'],
-        'putFleetsFleetIdMembersMemberId' => ['cacheAge' => null, 'rateLimit' => ['group' => 'fleet', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-fleets.write_fleet.v1'],
-        'deleteFleetsFleetIdSquadsSquadId' => ['cacheAge' => null, 'rateLimit' => ['group' => 'fleet', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-fleets.write_fleet.v1'],
-        'putFleetsFleetIdSquadsSquadId' => ['cacheAge' => null, 'rateLimit' => ['group' => 'fleet', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-fleets.write_fleet.v1'],
-        'getFleetsFleetIdWings' => ['cacheAge' => 5, 'rateLimit' => ['group' => 'fleet', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-fleets.read_fleet.v1'],
-        'postFleetsFleetIdWings' => ['cacheAge' => null, 'rateLimit' => ['group' => 'fleet', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-fleets.write_fleet.v1'],
-        'deleteFleetsFleetIdWingsWingId' => ['cacheAge' => null, 'rateLimit' => ['group' => 'fleet', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-fleets.write_fleet.v1'],
-        'putFleetsFleetIdWingsWingId' => ['cacheAge' => null, 'rateLimit' => ['group' => 'fleet', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-fleets.write_fleet.v1'],
-        'postFleetsFleetIdWingsWingIdSquads' => ['cacheAge' => null, 'rateLimit' => ['group' => 'fleet', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-fleets.write_fleet.v1'],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getCharactersCharacterIdFleet' => GetCharactersCharacterIdFleet::meta(),
+            'getFleetsFleetId' => GetFleetsFleetId::meta(),
+            'putFleetsFleetId' => PutFleetsFleetId::meta(),
+            'getFleetsFleetIdMembers' => GetFleetsFleetIdMembers::meta(),
+            'postFleetsFleetIdMembers' => PostFleetsFleetIdMembers::meta(),
+            'deleteFleetsFleetIdMembersMemberId' => DeleteFleetsFleetIdMembersMemberId::meta(),
+            'putFleetsFleetIdMembersMemberId' => PutFleetsFleetIdMembersMemberId::meta(),
+            'deleteFleetsFleetIdSquadsSquadId' => DeleteFleetsFleetIdSquadsSquadId::meta(),
+            'putFleetsFleetIdSquadsSquadId' => PutFleetsFleetIdSquadsSquadId::meta(),
+            'getFleetsFleetIdWings' => GetFleetsFleetIdWings::meta(),
+            'postFleetsFleetIdWings' => PostFleetsFleetIdWings::meta(),
+            'deleteFleetsFleetIdWingsWingId' => DeleteFleetsFleetIdWingsWingId::meta(),
+            'putFleetsFleetIdWingsWingId' => PutFleetsFleetIdWingsWingId::meta(),
+            'postFleetsFleetIdWingsWingIdSquads' => PostFleetsFleetIdWingsWingIdSquads::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdFleet. Equivalent to GetCharactersCharacterIdFleet::meta(). */
+    public static function getCharactersCharacterIdFleetMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdFleet::meta();
+    }
+
+    /** Pre-call metadata for getFleetsFleetId. Equivalent to GetFleetsFleetId::meta(). */
+    public static function getFleetsFleetIdMeta(): OperationMeta
+    {
+        return GetFleetsFleetId::meta();
+    }
+
+    /** Pre-call metadata for putFleetsFleetId. Equivalent to PutFleetsFleetId::meta(). */
+    public static function putFleetsFleetIdMeta(): OperationMeta
+    {
+        return PutFleetsFleetId::meta();
+    }
+
+    /** Pre-call metadata for getFleetsFleetIdMembers. Equivalent to GetFleetsFleetIdMembers::meta(). */
+    public static function getFleetsFleetIdMembersMeta(): OperationMeta
+    {
+        return GetFleetsFleetIdMembers::meta();
+    }
+
+    /** Pre-call metadata for postFleetsFleetIdMembers. Equivalent to PostFleetsFleetIdMembers::meta(). */
+    public static function postFleetsFleetIdMembersMeta(): OperationMeta
+    {
+        return PostFleetsFleetIdMembers::meta();
+    }
+
+    /** Pre-call metadata for deleteFleetsFleetIdMembersMemberId. Equivalent to DeleteFleetsFleetIdMembersMemberId::meta(). */
+    public static function deleteFleetsFleetIdMembersMemberIdMeta(): OperationMeta
+    {
+        return DeleteFleetsFleetIdMembersMemberId::meta();
+    }
+
+    /** Pre-call metadata for putFleetsFleetIdMembersMemberId. Equivalent to PutFleetsFleetIdMembersMemberId::meta(). */
+    public static function putFleetsFleetIdMembersMemberIdMeta(): OperationMeta
+    {
+        return PutFleetsFleetIdMembersMemberId::meta();
+    }
+
+    /** Pre-call metadata for deleteFleetsFleetIdSquadsSquadId. Equivalent to DeleteFleetsFleetIdSquadsSquadId::meta(). */
+    public static function deleteFleetsFleetIdSquadsSquadIdMeta(): OperationMeta
+    {
+        return DeleteFleetsFleetIdSquadsSquadId::meta();
+    }
+
+    /** Pre-call metadata for putFleetsFleetIdSquadsSquadId. Equivalent to PutFleetsFleetIdSquadsSquadId::meta(). */
+    public static function putFleetsFleetIdSquadsSquadIdMeta(): OperationMeta
+    {
+        return PutFleetsFleetIdSquadsSquadId::meta();
+    }
+
+    /** Pre-call metadata for getFleetsFleetIdWings. Equivalent to GetFleetsFleetIdWings::meta(). */
+    public static function getFleetsFleetIdWingsMeta(): OperationMeta
+    {
+        return GetFleetsFleetIdWings::meta();
+    }
+
+    /** Pre-call metadata for postFleetsFleetIdWings. Equivalent to PostFleetsFleetIdWings::meta(). */
+    public static function postFleetsFleetIdWingsMeta(): OperationMeta
+    {
+        return PostFleetsFleetIdWings::meta();
+    }
+
+    /** Pre-call metadata for deleteFleetsFleetIdWingsWingId. Equivalent to DeleteFleetsFleetIdWingsWingId::meta(). */
+    public static function deleteFleetsFleetIdWingsWingIdMeta(): OperationMeta
+    {
+        return DeleteFleetsFleetIdWingsWingId::meta();
+    }
+
+    /** Pre-call metadata for putFleetsFleetIdWingsWingId. Equivalent to PutFleetsFleetIdWingsWingId::meta(). */
+    public static function putFleetsFleetIdWingsWingIdMeta(): OperationMeta
+    {
+        return PutFleetsFleetIdWingsWingId::meta();
+    }
+
+    /** Pre-call metadata for postFleetsFleetIdWingsWingIdSquads. Equivalent to PostFleetsFleetIdWingsWingIdSquads::meta(). */
+    public static function postFleetsFleetIdWingsWingIdSquadsMeta(): OperationMeta
+    {
+        return PostFleetsFleetIdWingsWingIdSquads::meta();
+    }
 
     /**
      * @return CharactersCharacterIdFleetGet
@@ -43,7 +146,7 @@ class FleetsResource extends AbstractResource
         $dto = CharactersCharacterIdFleetGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdFleet'] ?? null;
+        $dto->operationMeta = GetCharactersCharacterIdFleet::meta();
         return $dto;
     }
 
@@ -57,7 +160,7 @@ class FleetsResource extends AbstractResource
         $dto = FleetsFleetIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getFleetsFleetId'] ?? null;
+        $dto->operationMeta = GetFleetsFleetId::meta();
         return $dto;
     }
 
@@ -68,7 +171,7 @@ class FleetsResource extends AbstractResource
     public function putFleetsFleetId(mixed $requestBody, int $fleetId): EsiResult
     {
         $response = $this->transport->invoke('put', '/fleets/{fleet_id}', ['fleet_id' => $fleetId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, static::OPERATION_META['putFleetsFleetId'] ?? null);
+        return EsiResult::fromRaw($response, null, PutFleetsFleetId::meta());
     }
 
     /**
@@ -81,7 +184,7 @@ class FleetsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => FleetsFleetIdMembersGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getFleetsFleetIdMembers'] ?? null);
+        ), GetFleetsFleetIdMembers::meta());
     }
 
     /**
@@ -91,7 +194,7 @@ class FleetsResource extends AbstractResource
     public function postFleetsFleetIdMembers(mixed $requestBody, int $fleetId): EsiResult
     {
         $response = $this->transport->invoke('post', '/fleets/{fleet_id}/members', ['fleet_id' => $fleetId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, static::OPERATION_META['postFleetsFleetIdMembers'] ?? null);
+        return EsiResult::fromRaw($response, null, PostFleetsFleetIdMembers::meta());
     }
 
     /**
@@ -101,7 +204,7 @@ class FleetsResource extends AbstractResource
     public function deleteFleetsFleetIdMembersMemberId(int $fleetId, int $memberId): EsiResult
     {
         $response = $this->transport->invoke('delete', '/fleets/{fleet_id}/members/{member_id}', ['fleet_id' => $fleetId, 'member_id' => $memberId], [], []);
-        return EsiResult::fromRaw($response, null, static::OPERATION_META['deleteFleetsFleetIdMembersMemberId'] ?? null);
+        return EsiResult::fromRaw($response, null, DeleteFleetsFleetIdMembersMemberId::meta());
     }
 
     /**
@@ -111,7 +214,7 @@ class FleetsResource extends AbstractResource
     public function putFleetsFleetIdMembersMemberId(mixed $requestBody, int $fleetId, int $memberId): EsiResult
     {
         $response = $this->transport->invoke('put', '/fleets/{fleet_id}/members/{member_id}', ['fleet_id' => $fleetId, 'member_id' => $memberId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, static::OPERATION_META['putFleetsFleetIdMembersMemberId'] ?? null);
+        return EsiResult::fromRaw($response, null, PutFleetsFleetIdMembersMemberId::meta());
     }
 
     /**
@@ -121,7 +224,7 @@ class FleetsResource extends AbstractResource
     public function deleteFleetsFleetIdSquadsSquadId(int $fleetId, int $squadId): EsiResult
     {
         $response = $this->transport->invoke('delete', '/fleets/{fleet_id}/squads/{squad_id}', ['fleet_id' => $fleetId, 'squad_id' => $squadId], [], []);
-        return EsiResult::fromRaw($response, null, static::OPERATION_META['deleteFleetsFleetIdSquadsSquadId'] ?? null);
+        return EsiResult::fromRaw($response, null, DeleteFleetsFleetIdSquadsSquadId::meta());
     }
 
     /**
@@ -131,7 +234,7 @@ class FleetsResource extends AbstractResource
     public function putFleetsFleetIdSquadsSquadId(mixed $requestBody, int $fleetId, int $squadId): EsiResult
     {
         $response = $this->transport->invoke('put', '/fleets/{fleet_id}/squads/{squad_id}', ['fleet_id' => $fleetId, 'squad_id' => $squadId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, static::OPERATION_META['putFleetsFleetIdSquadsSquadId'] ?? null);
+        return EsiResult::fromRaw($response, null, PutFleetsFleetIdSquadsSquadId::meta());
     }
 
     /**
@@ -144,7 +247,7 @@ class FleetsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => FleetsFleetIdWingsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getFleetsFleetIdWings'] ?? null);
+        ), GetFleetsFleetIdWings::meta());
     }
 
     /**
@@ -154,7 +257,7 @@ class FleetsResource extends AbstractResource
     public function postFleetsFleetIdWings(int $fleetId): EsiResult
     {
         $response = $this->transport->invoke('post', '/fleets/{fleet_id}/wings', ['fleet_id' => $fleetId], [], []);
-        return EsiResult::fromRaw($response, null, static::OPERATION_META['postFleetsFleetIdWings'] ?? null);
+        return EsiResult::fromRaw($response, null, PostFleetsFleetIdWings::meta());
     }
 
     /**
@@ -164,7 +267,7 @@ class FleetsResource extends AbstractResource
     public function deleteFleetsFleetIdWingsWingId(int $fleetId, int $wingId): EsiResult
     {
         $response = $this->transport->invoke('delete', '/fleets/{fleet_id}/wings/{wing_id}', ['fleet_id' => $fleetId, 'wing_id' => $wingId], [], []);
-        return EsiResult::fromRaw($response, null, static::OPERATION_META['deleteFleetsFleetIdWingsWingId'] ?? null);
+        return EsiResult::fromRaw($response, null, DeleteFleetsFleetIdWingsWingId::meta());
     }
 
     /**
@@ -174,7 +277,7 @@ class FleetsResource extends AbstractResource
     public function putFleetsFleetIdWingsWingId(mixed $requestBody, int $fleetId, int $wingId): EsiResult
     {
         $response = $this->transport->invoke('put', '/fleets/{fleet_id}/wings/{wing_id}', ['fleet_id' => $fleetId, 'wing_id' => $wingId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, static::OPERATION_META['putFleetsFleetIdWingsWingId'] ?? null);
+        return EsiResult::fromRaw($response, null, PutFleetsFleetIdWingsWingId::meta());
     }
 
     /**
@@ -184,6 +287,6 @@ class FleetsResource extends AbstractResource
     public function postFleetsFleetIdWingsWingIdSquads(int $fleetId, int $wingId): EsiResult
     {
         $response = $this->transport->invoke('post', '/fleets/{fleet_id}/wings/{wing_id}/squads', ['fleet_id' => $fleetId, 'wing_id' => $wingId], [], []);
-        return EsiResult::fromRaw($response, null, static::OPERATION_META['postFleetsFleetIdWingsWingIdSquads'] ?? null);
+        return EsiResult::fromRaw($response, null, PostFleetsFleetIdWingsWingIdSquads::meta());
     }
 }

@@ -2,29 +2,60 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\Responses\UniverseAncestriesGetItem;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseAncestries;
 use Seatplus\EsiSchema\Responses\UniverseAsteroidBeltsAsteroidBeltIdGet;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseAsteroidBeltsAsteroidBeltId;
 use Seatplus\EsiSchema\Responses\UniverseBloodlinesGetItem;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseBloodlines;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseCategories;
 use Seatplus\EsiSchema\Responses\UniverseCategoriesCategoryIdGet;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseCategoriesCategoryId;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseConstellations;
 use Seatplus\EsiSchema\Responses\UniverseConstellationsConstellationIdGet;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseConstellationsConstellationId;
 use Seatplus\EsiSchema\Responses\UniverseFactionsGetItem;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseFactions;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseGraphics;
 use Seatplus\EsiSchema\Responses\UniverseGraphicsGraphicIdGet;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseGraphicsGraphicId;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseGroups;
 use Seatplus\EsiSchema\Responses\UniverseGroupsGroupIdGet;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseGroupsGroupId;
 use Seatplus\EsiSchema\Responses\UniverseIdsPost;
+use Seatplus\EsiSchema\Operations\Universe\PostUniverseIds;
 use Seatplus\EsiSchema\Responses\UniverseMoonsMoonIdGet;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseMoonsMoonId;
 use Seatplus\EsiSchema\Responses\UniverseNamesPostItem;
+use Seatplus\EsiSchema\Operations\Universe\PostUniverseNames;
 use Seatplus\EsiSchema\Responses\UniversePlanetsPlanetIdGet;
+use Seatplus\EsiSchema\Operations\Universe\GetUniversePlanetsPlanetId;
 use Seatplus\EsiSchema\Responses\UniverseRacesGetItem;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseRaces;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseRegions;
 use Seatplus\EsiSchema\Responses\UniverseRegionsRegionIdGet;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseRegionsRegionId;
 use Seatplus\EsiSchema\Responses\UniverseStargatesStargateIdGet;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseStargatesStargateId;
 use Seatplus\EsiSchema\Responses\UniverseStarsStarIdGet;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseStarsStarId;
 use Seatplus\EsiSchema\Responses\UniverseStationsStationIdGet;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseStationsStationId;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseStructures;
 use Seatplus\EsiSchema\Responses\UniverseStructuresStructureIdGet;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseStructuresStructureId;
 use Seatplus\EsiSchema\Responses\UniverseSystemJumpsGetItem;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseSystemJumps;
 use Seatplus\EsiSchema\Responses\UniverseSystemKillsGetItem;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseSystemKills;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseSystems;
 use Seatplus\EsiSchema\Responses\UniverseSystemsSystemIdGet;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseSystemsSystemId;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseTypes;
 use Seatplus\EsiSchema\Responses\UniverseTypesTypeIdGet;
+use Seatplus\EsiSchema\Operations\Universe\GetUniverseTypesTypeId;
 
 /**
  * ESI tag: Universe
@@ -34,38 +65,222 @@ use Seatplus\EsiSchema\Responses\UniverseTypesTypeIdGet;
  */
 class UniverseResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getUniverseAncestries' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseAsteroidBeltsAsteroidBeltId' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseBloodlines' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseCategories' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseCategoriesCategoryId' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseConstellations' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseConstellationsConstellationId' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseFactions' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseGraphics' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseGraphicsGraphicId' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseGroups' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseGroupsGroupId' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'postUniverseIds' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseMoonsMoonId' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'postUniverseNames' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniversePlanetsPlanetId' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseRaces' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseRegions' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseRegionsRegionId' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseStargatesStargateId' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseStarsStarId' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseStationsStationId' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseStructures' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseStructuresStructureId' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-universe.read_structures.v1'],
-        'getUniverseSystemJumps' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseSystemKills' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseSystems' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseSystemsSystemId' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseTypes' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getUniverseTypesTypeId' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getUniverseAncestries' => GetUniverseAncestries::meta(),
+            'getUniverseAsteroidBeltsAsteroidBeltId' => GetUniverseAsteroidBeltsAsteroidBeltId::meta(),
+            'getUniverseBloodlines' => GetUniverseBloodlines::meta(),
+            'getUniverseCategories' => GetUniverseCategories::meta(),
+            'getUniverseCategoriesCategoryId' => GetUniverseCategoriesCategoryId::meta(),
+            'getUniverseConstellations' => GetUniverseConstellations::meta(),
+            'getUniverseConstellationsConstellationId' => GetUniverseConstellationsConstellationId::meta(),
+            'getUniverseFactions' => GetUniverseFactions::meta(),
+            'getUniverseGraphics' => GetUniverseGraphics::meta(),
+            'getUniverseGraphicsGraphicId' => GetUniverseGraphicsGraphicId::meta(),
+            'getUniverseGroups' => GetUniverseGroups::meta(),
+            'getUniverseGroupsGroupId' => GetUniverseGroupsGroupId::meta(),
+            'postUniverseIds' => PostUniverseIds::meta(),
+            'getUniverseMoonsMoonId' => GetUniverseMoonsMoonId::meta(),
+            'postUniverseNames' => PostUniverseNames::meta(),
+            'getUniversePlanetsPlanetId' => GetUniversePlanetsPlanetId::meta(),
+            'getUniverseRaces' => GetUniverseRaces::meta(),
+            'getUniverseRegions' => GetUniverseRegions::meta(),
+            'getUniverseRegionsRegionId' => GetUniverseRegionsRegionId::meta(),
+            'getUniverseStargatesStargateId' => GetUniverseStargatesStargateId::meta(),
+            'getUniverseStarsStarId' => GetUniverseStarsStarId::meta(),
+            'getUniverseStationsStationId' => GetUniverseStationsStationId::meta(),
+            'getUniverseStructures' => GetUniverseStructures::meta(),
+            'getUniverseStructuresStructureId' => GetUniverseStructuresStructureId::meta(),
+            'getUniverseSystemJumps' => GetUniverseSystemJumps::meta(),
+            'getUniverseSystemKills' => GetUniverseSystemKills::meta(),
+            'getUniverseSystems' => GetUniverseSystems::meta(),
+            'getUniverseSystemsSystemId' => GetUniverseSystemsSystemId::meta(),
+            'getUniverseTypes' => GetUniverseTypes::meta(),
+            'getUniverseTypesTypeId' => GetUniverseTypesTypeId::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getUniverseAncestries. Equivalent to GetUniverseAncestries::meta(). */
+    public static function getUniverseAncestriesMeta(): OperationMeta
+    {
+        return GetUniverseAncestries::meta();
+    }
+
+    /** Pre-call metadata for getUniverseAsteroidBeltsAsteroidBeltId. Equivalent to GetUniverseAsteroidBeltsAsteroidBeltId::meta(). */
+    public static function getUniverseAsteroidBeltsAsteroidBeltIdMeta(): OperationMeta
+    {
+        return GetUniverseAsteroidBeltsAsteroidBeltId::meta();
+    }
+
+    /** Pre-call metadata for getUniverseBloodlines. Equivalent to GetUniverseBloodlines::meta(). */
+    public static function getUniverseBloodlinesMeta(): OperationMeta
+    {
+        return GetUniverseBloodlines::meta();
+    }
+
+    /** Pre-call metadata for getUniverseCategories. Equivalent to GetUniverseCategories::meta(). */
+    public static function getUniverseCategoriesMeta(): OperationMeta
+    {
+        return GetUniverseCategories::meta();
+    }
+
+    /** Pre-call metadata for getUniverseCategoriesCategoryId. Equivalent to GetUniverseCategoriesCategoryId::meta(). */
+    public static function getUniverseCategoriesCategoryIdMeta(): OperationMeta
+    {
+        return GetUniverseCategoriesCategoryId::meta();
+    }
+
+    /** Pre-call metadata for getUniverseConstellations. Equivalent to GetUniverseConstellations::meta(). */
+    public static function getUniverseConstellationsMeta(): OperationMeta
+    {
+        return GetUniverseConstellations::meta();
+    }
+
+    /** Pre-call metadata for getUniverseConstellationsConstellationId. Equivalent to GetUniverseConstellationsConstellationId::meta(). */
+    public static function getUniverseConstellationsConstellationIdMeta(): OperationMeta
+    {
+        return GetUniverseConstellationsConstellationId::meta();
+    }
+
+    /** Pre-call metadata for getUniverseFactions. Equivalent to GetUniverseFactions::meta(). */
+    public static function getUniverseFactionsMeta(): OperationMeta
+    {
+        return GetUniverseFactions::meta();
+    }
+
+    /** Pre-call metadata for getUniverseGraphics. Equivalent to GetUniverseGraphics::meta(). */
+    public static function getUniverseGraphicsMeta(): OperationMeta
+    {
+        return GetUniverseGraphics::meta();
+    }
+
+    /** Pre-call metadata for getUniverseGraphicsGraphicId. Equivalent to GetUniverseGraphicsGraphicId::meta(). */
+    public static function getUniverseGraphicsGraphicIdMeta(): OperationMeta
+    {
+        return GetUniverseGraphicsGraphicId::meta();
+    }
+
+    /** Pre-call metadata for getUniverseGroups. Equivalent to GetUniverseGroups::meta(). */
+    public static function getUniverseGroupsMeta(): OperationMeta
+    {
+        return GetUniverseGroups::meta();
+    }
+
+    /** Pre-call metadata for getUniverseGroupsGroupId. Equivalent to GetUniverseGroupsGroupId::meta(). */
+    public static function getUniverseGroupsGroupIdMeta(): OperationMeta
+    {
+        return GetUniverseGroupsGroupId::meta();
+    }
+
+    /** Pre-call metadata for postUniverseIds. Equivalent to PostUniverseIds::meta(). */
+    public static function postUniverseIdsMeta(): OperationMeta
+    {
+        return PostUniverseIds::meta();
+    }
+
+    /** Pre-call metadata for getUniverseMoonsMoonId. Equivalent to GetUniverseMoonsMoonId::meta(). */
+    public static function getUniverseMoonsMoonIdMeta(): OperationMeta
+    {
+        return GetUniverseMoonsMoonId::meta();
+    }
+
+    /** Pre-call metadata for postUniverseNames. Equivalent to PostUniverseNames::meta(). */
+    public static function postUniverseNamesMeta(): OperationMeta
+    {
+        return PostUniverseNames::meta();
+    }
+
+    /** Pre-call metadata for getUniversePlanetsPlanetId. Equivalent to GetUniversePlanetsPlanetId::meta(). */
+    public static function getUniversePlanetsPlanetIdMeta(): OperationMeta
+    {
+        return GetUniversePlanetsPlanetId::meta();
+    }
+
+    /** Pre-call metadata for getUniverseRaces. Equivalent to GetUniverseRaces::meta(). */
+    public static function getUniverseRacesMeta(): OperationMeta
+    {
+        return GetUniverseRaces::meta();
+    }
+
+    /** Pre-call metadata for getUniverseRegions. Equivalent to GetUniverseRegions::meta(). */
+    public static function getUniverseRegionsMeta(): OperationMeta
+    {
+        return GetUniverseRegions::meta();
+    }
+
+    /** Pre-call metadata for getUniverseRegionsRegionId. Equivalent to GetUniverseRegionsRegionId::meta(). */
+    public static function getUniverseRegionsRegionIdMeta(): OperationMeta
+    {
+        return GetUniverseRegionsRegionId::meta();
+    }
+
+    /** Pre-call metadata for getUniverseStargatesStargateId. Equivalent to GetUniverseStargatesStargateId::meta(). */
+    public static function getUniverseStargatesStargateIdMeta(): OperationMeta
+    {
+        return GetUniverseStargatesStargateId::meta();
+    }
+
+    /** Pre-call metadata for getUniverseStarsStarId. Equivalent to GetUniverseStarsStarId::meta(). */
+    public static function getUniverseStarsStarIdMeta(): OperationMeta
+    {
+        return GetUniverseStarsStarId::meta();
+    }
+
+    /** Pre-call metadata for getUniverseStationsStationId. Equivalent to GetUniverseStationsStationId::meta(). */
+    public static function getUniverseStationsStationIdMeta(): OperationMeta
+    {
+        return GetUniverseStationsStationId::meta();
+    }
+
+    /** Pre-call metadata for getUniverseStructures. Equivalent to GetUniverseStructures::meta(). */
+    public static function getUniverseStructuresMeta(): OperationMeta
+    {
+        return GetUniverseStructures::meta();
+    }
+
+    /** Pre-call metadata for getUniverseStructuresStructureId. Equivalent to GetUniverseStructuresStructureId::meta(). */
+    public static function getUniverseStructuresStructureIdMeta(): OperationMeta
+    {
+        return GetUniverseStructuresStructureId::meta();
+    }
+
+    /** Pre-call metadata for getUniverseSystemJumps. Equivalent to GetUniverseSystemJumps::meta(). */
+    public static function getUniverseSystemJumpsMeta(): OperationMeta
+    {
+        return GetUniverseSystemJumps::meta();
+    }
+
+    /** Pre-call metadata for getUniverseSystemKills. Equivalent to GetUniverseSystemKills::meta(). */
+    public static function getUniverseSystemKillsMeta(): OperationMeta
+    {
+        return GetUniverseSystemKills::meta();
+    }
+
+    /** Pre-call metadata for getUniverseSystems. Equivalent to GetUniverseSystems::meta(). */
+    public static function getUniverseSystemsMeta(): OperationMeta
+    {
+        return GetUniverseSystems::meta();
+    }
+
+    /** Pre-call metadata for getUniverseSystemsSystemId. Equivalent to GetUniverseSystemsSystemId::meta(). */
+    public static function getUniverseSystemsSystemIdMeta(): OperationMeta
+    {
+        return GetUniverseSystemsSystemId::meta();
+    }
+
+    /** Pre-call metadata for getUniverseTypes. Equivalent to GetUniverseTypes::meta(). */
+    public static function getUniverseTypesMeta(): OperationMeta
+    {
+        return GetUniverseTypes::meta();
+    }
+
+    /** Pre-call metadata for getUniverseTypesTypeId. Equivalent to GetUniverseTypesTypeId::meta(). */
+    public static function getUniverseTypesTypeIdMeta(): OperationMeta
+    {
+        return GetUniverseTypesTypeId::meta();
+    }
 
     /**
      * @return EsiResult<array<UniverseAncestriesGetItem>>
@@ -76,7 +291,7 @@ class UniverseResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => UniverseAncestriesGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getUniverseAncestries'] ?? null);
+        ), GetUniverseAncestries::meta());
     }
 
     /**
@@ -88,7 +303,7 @@ class UniverseResource extends AbstractResource
         $dto = UniverseAsteroidBeltsAsteroidBeltIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getUniverseAsteroidBeltsAsteroidBeltId'] ?? null;
+        $dto->operationMeta = GetUniverseAsteroidBeltsAsteroidBeltId::meta();
         return $dto;
     }
 
@@ -101,7 +316,7 @@ class UniverseResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => UniverseBloodlinesGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getUniverseBloodlines'] ?? null);
+        ), GetUniverseBloodlines::meta());
     }
 
     /**
@@ -112,7 +327,7 @@ class UniverseResource extends AbstractResource
         $response = $this->transport->invoke('get', '/universe/categories', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, static::OPERATION_META['getUniverseCategories'] ?? null);
+        return EsiResult::fromRaw($response, $data, GetUniverseCategories::meta());
     }
 
     /**
@@ -124,7 +339,7 @@ class UniverseResource extends AbstractResource
         $dto = UniverseCategoriesCategoryIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getUniverseCategoriesCategoryId'] ?? null;
+        $dto->operationMeta = GetUniverseCategoriesCategoryId::meta();
         return $dto;
     }
 
@@ -136,7 +351,7 @@ class UniverseResource extends AbstractResource
         $response = $this->transport->invoke('get', '/universe/constellations', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, static::OPERATION_META['getUniverseConstellations'] ?? null);
+        return EsiResult::fromRaw($response, $data, GetUniverseConstellations::meta());
     }
 
     /**
@@ -148,7 +363,7 @@ class UniverseResource extends AbstractResource
         $dto = UniverseConstellationsConstellationIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getUniverseConstellationsConstellationId'] ?? null;
+        $dto->operationMeta = GetUniverseConstellationsConstellationId::meta();
         return $dto;
     }
 
@@ -161,7 +376,7 @@ class UniverseResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => UniverseFactionsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getUniverseFactions'] ?? null);
+        ), GetUniverseFactions::meta());
     }
 
     /**
@@ -172,7 +387,7 @@ class UniverseResource extends AbstractResource
         $response = $this->transport->invoke('get', '/universe/graphics', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, static::OPERATION_META['getUniverseGraphics'] ?? null);
+        return EsiResult::fromRaw($response, $data, GetUniverseGraphics::meta());
     }
 
     /**
@@ -184,7 +399,7 @@ class UniverseResource extends AbstractResource
         $dto = UniverseGraphicsGraphicIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getUniverseGraphicsGraphicId'] ?? null;
+        $dto->operationMeta = GetUniverseGraphicsGraphicId::meta();
         return $dto;
     }
 
@@ -197,7 +412,7 @@ class UniverseResource extends AbstractResource
         $response = $this->transport->invoke('get', '/universe/groups', [], ['page' => $page]);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, static::OPERATION_META['getUniverseGroups'] ?? null);
+        return EsiResult::fromRaw($response, $data, GetUniverseGroups::meta());
     }
 
     /**
@@ -209,7 +424,7 @@ class UniverseResource extends AbstractResource
         $dto = UniverseGroupsGroupIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getUniverseGroupsGroupId'] ?? null;
+        $dto->operationMeta = GetUniverseGroupsGroupId::meta();
         return $dto;
     }
 
@@ -222,7 +437,7 @@ class UniverseResource extends AbstractResource
         $dto = UniverseIdsPost::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['postUniverseIds'] ?? null;
+        $dto->operationMeta = PostUniverseIds::meta();
         return $dto;
     }
 
@@ -235,7 +450,7 @@ class UniverseResource extends AbstractResource
         $dto = UniverseMoonsMoonIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getUniverseMoonsMoonId'] ?? null;
+        $dto->operationMeta = GetUniverseMoonsMoonId::meta();
         return $dto;
     }
 
@@ -248,7 +463,7 @@ class UniverseResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => UniverseNamesPostItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['postUniverseNames'] ?? null);
+        ), PostUniverseNames::meta());
     }
 
     /**
@@ -260,7 +475,7 @@ class UniverseResource extends AbstractResource
         $dto = UniversePlanetsPlanetIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getUniversePlanetsPlanetId'] ?? null;
+        $dto->operationMeta = GetUniversePlanetsPlanetId::meta();
         return $dto;
     }
 
@@ -273,7 +488,7 @@ class UniverseResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => UniverseRacesGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getUniverseRaces'] ?? null);
+        ), GetUniverseRaces::meta());
     }
 
     /**
@@ -284,7 +499,7 @@ class UniverseResource extends AbstractResource
         $response = $this->transport->invoke('get', '/universe/regions', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, static::OPERATION_META['getUniverseRegions'] ?? null);
+        return EsiResult::fromRaw($response, $data, GetUniverseRegions::meta());
     }
 
     /**
@@ -296,7 +511,7 @@ class UniverseResource extends AbstractResource
         $dto = UniverseRegionsRegionIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getUniverseRegionsRegionId'] ?? null;
+        $dto->operationMeta = GetUniverseRegionsRegionId::meta();
         return $dto;
     }
 
@@ -309,7 +524,7 @@ class UniverseResource extends AbstractResource
         $dto = UniverseStargatesStargateIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getUniverseStargatesStargateId'] ?? null;
+        $dto->operationMeta = GetUniverseStargatesStargateId::meta();
         return $dto;
     }
 
@@ -322,7 +537,7 @@ class UniverseResource extends AbstractResource
         $dto = UniverseStarsStarIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getUniverseStarsStarId'] ?? null;
+        $dto->operationMeta = GetUniverseStarsStarId::meta();
         return $dto;
     }
 
@@ -335,7 +550,7 @@ class UniverseResource extends AbstractResource
         $dto = UniverseStationsStationIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getUniverseStationsStationId'] ?? null;
+        $dto->operationMeta = GetUniverseStationsStationId::meta();
         return $dto;
     }
 
@@ -347,7 +562,7 @@ class UniverseResource extends AbstractResource
         $response = $this->transport->invoke('get', '/universe/structures', [], ['filter' => $filter]);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, static::OPERATION_META['getUniverseStructures'] ?? null);
+        return EsiResult::fromRaw($response, $data, GetUniverseStructures::meta());
     }
 
     /**
@@ -360,7 +575,7 @@ class UniverseResource extends AbstractResource
         $dto = UniverseStructuresStructureIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getUniverseStructuresStructureId'] ?? null;
+        $dto->operationMeta = GetUniverseStructuresStructureId::meta();
         return $dto;
     }
 
@@ -373,7 +588,7 @@ class UniverseResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => UniverseSystemJumpsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getUniverseSystemJumps'] ?? null);
+        ), GetUniverseSystemJumps::meta());
     }
 
     /**
@@ -385,7 +600,7 @@ class UniverseResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => UniverseSystemKillsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getUniverseSystemKills'] ?? null);
+        ), GetUniverseSystemKills::meta());
     }
 
     /**
@@ -396,7 +611,7 @@ class UniverseResource extends AbstractResource
         $response = $this->transport->invoke('get', '/universe/systems', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, static::OPERATION_META['getUniverseSystems'] ?? null);
+        return EsiResult::fromRaw($response, $data, GetUniverseSystems::meta());
     }
 
     /**
@@ -408,7 +623,7 @@ class UniverseResource extends AbstractResource
         $dto = UniverseSystemsSystemIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getUniverseSystemsSystemId'] ?? null;
+        $dto->operationMeta = GetUniverseSystemsSystemId::meta();
         return $dto;
     }
 
@@ -421,7 +636,7 @@ class UniverseResource extends AbstractResource
         $response = $this->transport->invoke('get', '/universe/types', [], ['page' => $page]);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, static::OPERATION_META['getUniverseTypes'] ?? null);
+        return EsiResult::fromRaw($response, $data, GetUniverseTypes::meta());
     }
 
     /**
@@ -433,7 +648,7 @@ class UniverseResource extends AbstractResource
         $dto = UniverseTypesTypeIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getUniverseTypesTypeId'] ?? null;
+        $dto->operationMeta = GetUniverseTypesTypeId::meta();
         return $dto;
     }
 }

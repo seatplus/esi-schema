@@ -2,16 +2,26 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdContractsGetItem;
+use Seatplus\EsiSchema\Operations\Contracts\GetCharactersCharacterIdContracts;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdContractsContractIdBidsGetItem;
+use Seatplus\EsiSchema\Operations\Contracts\GetCharactersCharacterIdContractsContractIdBids;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdContractsContractIdItemsGetItem;
+use Seatplus\EsiSchema\Operations\Contracts\GetCharactersCharacterIdContractsContractIdItems;
 use Seatplus\EsiSchema\Responses\ContractsPublicBidsContractIdGetItem;
+use Seatplus\EsiSchema\Operations\Contracts\GetContractsPublicBidsContractId;
 use Seatplus\EsiSchema\Responses\ContractsPublicItemsContractIdGetItem;
+use Seatplus\EsiSchema\Operations\Contracts\GetContractsPublicItemsContractId;
 use Seatplus\EsiSchema\Responses\ContractsPublicRegionIdGetItem;
+use Seatplus\EsiSchema\Operations\Contracts\GetContractsPublicRegionId;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdContractsGetItem;
+use Seatplus\EsiSchema\Operations\Contracts\GetCorporationsCorporationIdContracts;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdContractsContractIdBidsGetItem;
+use Seatplus\EsiSchema\Operations\Contracts\GetCorporationsCorporationIdContractsContractIdBids;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdContractsContractIdItemsGetItem;
+use Seatplus\EsiSchema\Operations\Contracts\GetCorporationsCorporationIdContractsContractIdItems;
 
 /**
  * ESI tag: Contracts
@@ -21,17 +31,75 @@ use Seatplus\EsiSchema\Responses\CorporationsCorporationIdContractsContractIdIte
  */
 class ContractsResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getCharactersCharacterIdContracts' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'char-contract', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-contracts.read_character_contracts.v1'],
-        'getCharactersCharacterIdContractsContractIdBids' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'char-contract', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-contracts.read_character_contracts.v1'],
-        'getCharactersCharacterIdContractsContractIdItems' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-contract', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-contracts.read_character_contracts.v1'],
-        'getContractsPublicBidsContractId' => ['cacheAge' => 300, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getContractsPublicItemsContractId' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getContractsPublicRegionId' => ['cacheAge' => 1800, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getCorporationsCorporationIdContracts' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'corp-contract', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-contracts.read_corporation_contracts.v1'],
-        'getCorporationsCorporationIdContractsContractIdBids' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-contract', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-contracts.read_corporation_contracts.v1'],
-        'getCorporationsCorporationIdContractsContractIdItems' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-contract', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-contracts.read_corporation_contracts.v1'],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getCharactersCharacterIdContracts' => GetCharactersCharacterIdContracts::meta(),
+            'getCharactersCharacterIdContractsContractIdBids' => GetCharactersCharacterIdContractsContractIdBids::meta(),
+            'getCharactersCharacterIdContractsContractIdItems' => GetCharactersCharacterIdContractsContractIdItems::meta(),
+            'getContractsPublicBidsContractId' => GetContractsPublicBidsContractId::meta(),
+            'getContractsPublicItemsContractId' => GetContractsPublicItemsContractId::meta(),
+            'getContractsPublicRegionId' => GetContractsPublicRegionId::meta(),
+            'getCorporationsCorporationIdContracts' => GetCorporationsCorporationIdContracts::meta(),
+            'getCorporationsCorporationIdContractsContractIdBids' => GetCorporationsCorporationIdContractsContractIdBids::meta(),
+            'getCorporationsCorporationIdContractsContractIdItems' => GetCorporationsCorporationIdContractsContractIdItems::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdContracts. Equivalent to GetCharactersCharacterIdContracts::meta(). */
+    public static function getCharactersCharacterIdContractsMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdContracts::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdContractsContractIdBids. Equivalent to GetCharactersCharacterIdContractsContractIdBids::meta(). */
+    public static function getCharactersCharacterIdContractsContractIdBidsMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdContractsContractIdBids::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdContractsContractIdItems. Equivalent to GetCharactersCharacterIdContractsContractIdItems::meta(). */
+    public static function getCharactersCharacterIdContractsContractIdItemsMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdContractsContractIdItems::meta();
+    }
+
+    /** Pre-call metadata for getContractsPublicBidsContractId. Equivalent to GetContractsPublicBidsContractId::meta(). */
+    public static function getContractsPublicBidsContractIdMeta(): OperationMeta
+    {
+        return GetContractsPublicBidsContractId::meta();
+    }
+
+    /** Pre-call metadata for getContractsPublicItemsContractId. Equivalent to GetContractsPublicItemsContractId::meta(). */
+    public static function getContractsPublicItemsContractIdMeta(): OperationMeta
+    {
+        return GetContractsPublicItemsContractId::meta();
+    }
+
+    /** Pre-call metadata for getContractsPublicRegionId. Equivalent to GetContractsPublicRegionId::meta(). */
+    public static function getContractsPublicRegionIdMeta(): OperationMeta
+    {
+        return GetContractsPublicRegionId::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdContracts. Equivalent to GetCorporationsCorporationIdContracts::meta(). */
+    public static function getCorporationsCorporationIdContractsMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdContracts::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdContractsContractIdBids. Equivalent to GetCorporationsCorporationIdContractsContractIdBids::meta(). */
+    public static function getCorporationsCorporationIdContractsContractIdBidsMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdContractsContractIdBids::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdContractsContractIdItems. Equivalent to GetCorporationsCorporationIdContractsContractIdItems::meta(). */
+    public static function getCorporationsCorporationIdContractsContractIdItemsMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdContractsContractIdItems::meta();
+    }
 
     /**
      * @return EsiResult<array<CharactersCharacterIdContractsGetItem>>
@@ -44,7 +112,7 @@ class ContractsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdContractsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdContracts'] ?? null);
+        ), GetCharactersCharacterIdContracts::meta());
     }
 
     /**
@@ -57,7 +125,7 @@ class ContractsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdContractsContractIdBidsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdContractsContractIdBids'] ?? null);
+        ), GetCharactersCharacterIdContractsContractIdBids::meta());
     }
 
     /**
@@ -70,7 +138,7 @@ class ContractsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdContractsContractIdItemsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdContractsContractIdItems'] ?? null);
+        ), GetCharactersCharacterIdContractsContractIdItems::meta());
     }
 
     /**
@@ -83,7 +151,7 @@ class ContractsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => ContractsPublicBidsContractIdGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getContractsPublicBidsContractId'] ?? null);
+        ), GetContractsPublicBidsContractId::meta());
     }
 
     /**
@@ -96,7 +164,7 @@ class ContractsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => ContractsPublicItemsContractIdGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getContractsPublicItemsContractId'] ?? null);
+        ), GetContractsPublicItemsContractId::meta());
     }
 
     /**
@@ -109,7 +177,7 @@ class ContractsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => ContractsPublicRegionIdGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getContractsPublicRegionId'] ?? null);
+        ), GetContractsPublicRegionId::meta());
     }
 
     /**
@@ -123,7 +191,7 @@ class ContractsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdContractsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdContracts'] ?? null);
+        ), GetCorporationsCorporationIdContracts::meta());
     }
 
     /**
@@ -137,7 +205,7 @@ class ContractsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdContractsContractIdBidsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdContractsContractIdBids'] ?? null);
+        ), GetCorporationsCorporationIdContractsContractIdBids::meta());
     }
 
     /**
@@ -150,6 +218,6 @@ class ContractsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdContractsContractIdItemsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdContractsContractIdItems'] ?? null);
+        ), GetCorporationsCorporationIdContractsContractIdItems::meta());
     }
 }

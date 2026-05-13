@@ -2,12 +2,19 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\EsiResult;
+use Seatplus\EsiSchema\Operations\Wallet\GetCharactersCharacterIdWallet;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdWalletJournalGetItem;
+use Seatplus\EsiSchema\Operations\Wallet\GetCharactersCharacterIdWalletJournal;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdWalletTransactionsGetItem;
+use Seatplus\EsiSchema\Operations\Wallet\GetCharactersCharacterIdWalletTransactions;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdWalletsGetItem;
+use Seatplus\EsiSchema\Operations\Wallet\GetCorporationsCorporationIdWallets;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdWalletsDivisionJournalGetItem;
+use Seatplus\EsiSchema\Operations\Wallet\GetCorporationsCorporationIdWalletsDivisionJournal;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdWalletsDivisionTransactionsGetItem;
+use Seatplus\EsiSchema\Operations\Wallet\GetCorporationsCorporationIdWalletsDivisionTransactions;
 
 /**
  * ESI tag: Wallet
@@ -17,14 +24,54 @@ use Seatplus\EsiSchema\Responses\CorporationsCorporationIdWalletsDivisionTransac
  */
 class WalletResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getCharactersCharacterIdWallet' => ['cacheAge' => 120, 'rateLimit' => ['group' => 'char-wallet', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-wallet.read_character_wallet.v1'],
-        'getCharactersCharacterIdWalletJournal' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-wallet', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-wallet.read_character_wallet.v1'],
-        'getCharactersCharacterIdWalletTransactions' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-wallet', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-wallet.read_character_wallet.v1'],
-        'getCorporationsCorporationIdWallets' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'corp-wallet', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Accountant', 'Junior_Accountant'], 'cursor' => false, 'requiredScope' => 'esi-wallet.read_corporation_wallets.v1'],
-        'getCorporationsCorporationIdWalletsDivisionJournal' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-wallet', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Accountant', 'Junior_Accountant'], 'cursor' => false, 'requiredScope' => 'esi-wallet.read_corporation_wallets.v1'],
-        'getCorporationsCorporationIdWalletsDivisionTransactions' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-wallet', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Accountant', 'Junior_Accountant'], 'cursor' => false, 'requiredScope' => 'esi-wallet.read_corporation_wallets.v1'],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getCharactersCharacterIdWallet' => GetCharactersCharacterIdWallet::meta(),
+            'getCharactersCharacterIdWalletJournal' => GetCharactersCharacterIdWalletJournal::meta(),
+            'getCharactersCharacterIdWalletTransactions' => GetCharactersCharacterIdWalletTransactions::meta(),
+            'getCorporationsCorporationIdWallets' => GetCorporationsCorporationIdWallets::meta(),
+            'getCorporationsCorporationIdWalletsDivisionJournal' => GetCorporationsCorporationIdWalletsDivisionJournal::meta(),
+            'getCorporationsCorporationIdWalletsDivisionTransactions' => GetCorporationsCorporationIdWalletsDivisionTransactions::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdWallet. Equivalent to GetCharactersCharacterIdWallet::meta(). */
+    public static function getCharactersCharacterIdWalletMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdWallet::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdWalletJournal. Equivalent to GetCharactersCharacterIdWalletJournal::meta(). */
+    public static function getCharactersCharacterIdWalletJournalMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdWalletJournal::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdWalletTransactions. Equivalent to GetCharactersCharacterIdWalletTransactions::meta(). */
+    public static function getCharactersCharacterIdWalletTransactionsMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdWalletTransactions::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdWallets. Equivalent to GetCorporationsCorporationIdWallets::meta(). */
+    public static function getCorporationsCorporationIdWalletsMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdWallets::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdWalletsDivisionJournal. Equivalent to GetCorporationsCorporationIdWalletsDivisionJournal::meta(). */
+    public static function getCorporationsCorporationIdWalletsDivisionJournalMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdWalletsDivisionJournal::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdWalletsDivisionTransactions. Equivalent to GetCorporationsCorporationIdWalletsDivisionTransactions::meta(). */
+    public static function getCorporationsCorporationIdWalletsDivisionTransactionsMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdWalletsDivisionTransactions::meta();
+    }
 
     /**
      * @return EsiResult<float>
@@ -35,7 +82,7 @@ class WalletResource extends AbstractResource
         $response = $this->transport->invoke('get', '/characters/{character_id}/wallet', ['character_id' => $characterId], []);
         /** @var float $scalar */
         $scalar = (float) $response->data;
-        return EsiResult::fromRaw($response, $scalar, static::OPERATION_META['getCharactersCharacterIdWallet'] ?? null);
+        return EsiResult::fromRaw($response, $scalar, GetCharactersCharacterIdWallet::meta());
     }
 
     /**
@@ -49,7 +96,7 @@ class WalletResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdWalletJournalGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdWalletJournal'] ?? null);
+        ), GetCharactersCharacterIdWalletJournal::meta());
     }
 
     /**
@@ -62,7 +109,7 @@ class WalletResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdWalletTransactionsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdWalletTransactions'] ?? null);
+        ), GetCharactersCharacterIdWalletTransactions::meta());
     }
 
     /**
@@ -75,7 +122,7 @@ class WalletResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdWalletsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdWallets'] ?? null);
+        ), GetCorporationsCorporationIdWallets::meta());
     }
 
     /**
@@ -89,7 +136,7 @@ class WalletResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdWalletsDivisionJournalGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdWalletsDivisionJournal'] ?? null);
+        ), GetCorporationsCorporationIdWalletsDivisionJournal::meta());
     }
 
     /**
@@ -102,6 +149,6 @@ class WalletResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdWalletsDivisionTransactionsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdWalletsDivisionTransactions'] ?? null);
+        ), GetCorporationsCorporationIdWalletsDivisionTransactions::meta());
     }
 }

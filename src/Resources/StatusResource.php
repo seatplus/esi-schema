@@ -2,7 +2,9 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\Responses\StatusGet;
+use Seatplus\EsiSchema\Operations\Status\GetStatus;
 
 /**
  * ESI tag: Status
@@ -12,9 +14,19 @@ use Seatplus\EsiSchema\Responses\StatusGet;
  */
 class StatusResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getStatus' => ['cacheAge' => 30, 'rateLimit' => ['group' => 'status', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getStatus' => GetStatus::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getStatus. Equivalent to GetStatus::meta(). */
+    public static function getStatusMeta(): OperationMeta
+    {
+        return GetStatus::meta();
+    }
 
     /**
      * @return StatusGet
@@ -25,7 +37,7 @@ class StatusResource extends AbstractResource
         $dto = StatusGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getStatus'] ?? null;
+        $dto->operationMeta = GetStatus::meta();
         return $dto;
     }
 }

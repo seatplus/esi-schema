@@ -2,15 +2,24 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdIndustryJobsGetItem;
+use Seatplus\EsiSchema\Operations\Industry\GetCharactersCharacterIdIndustryJobs;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdMiningGetItem;
+use Seatplus\EsiSchema\Operations\Industry\GetCharactersCharacterIdMining;
 use Seatplus\EsiSchema\Responses\CorporationCorporationIdMiningExtractionsGetItem;
+use Seatplus\EsiSchema\Operations\Industry\GetCorporationCorporationIdMiningExtractions;
 use Seatplus\EsiSchema\Responses\CorporationCorporationIdMiningObserversGetItem;
+use Seatplus\EsiSchema\Operations\Industry\GetCorporationCorporationIdMiningObservers;
 use Seatplus\EsiSchema\Responses\CorporationCorporationIdMiningObserversObserverIdGetItem;
+use Seatplus\EsiSchema\Operations\Industry\GetCorporationCorporationIdMiningObserversObserverId;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdIndustryJobsGetItem;
+use Seatplus\EsiSchema\Operations\Industry\GetCorporationsCorporationIdIndustryJobs;
 use Seatplus\EsiSchema\Responses\IndustryFacilitiesGetItem;
+use Seatplus\EsiSchema\Operations\Industry\GetIndustryFacilities;
 use Seatplus\EsiSchema\Responses\IndustrySystemsGetItem;
+use Seatplus\EsiSchema\Operations\Industry\GetIndustrySystems;
 
 /**
  * ESI tag: Industry
@@ -20,16 +29,68 @@ use Seatplus\EsiSchema\Responses\IndustrySystemsGetItem;
  */
 class IndustryResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getCharactersCharacterIdIndustryJobs' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'char-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-industry.read_character_jobs.v1'],
-        'getCharactersCharacterIdMining' => ['cacheAge' => 600, 'rateLimit' => ['group' => 'char-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-industry.read_character_mining.v1'],
-        'getCorporationCorporationIdMiningExtractions' => ['cacheAge' => 1800, 'rateLimit' => ['group' => 'corp-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => ['Station_Manager'], 'cursor' => false, 'requiredScope' => 'esi-industry.read_corporation_mining.v1'],
-        'getCorporationCorporationIdMiningObservers' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => ['Accountant'], 'cursor' => false, 'requiredScope' => 'esi-industry.read_corporation_mining.v1'],
-        'getCorporationCorporationIdMiningObserversObserverId' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => ['Accountant'], 'cursor' => false, 'requiredScope' => 'esi-industry.read_corporation_mining.v1'],
-        'getCorporationsCorporationIdIndustryJobs' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'corp-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => ['Factory_Manager'], 'cursor' => false, 'requiredScope' => 'esi-industry.read_corporation_jobs.v1'],
-        'getIndustryFacilities' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'industry', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getIndustrySystems' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'industry', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getCharactersCharacterIdIndustryJobs' => GetCharactersCharacterIdIndustryJobs::meta(),
+            'getCharactersCharacterIdMining' => GetCharactersCharacterIdMining::meta(),
+            'getCorporationCorporationIdMiningExtractions' => GetCorporationCorporationIdMiningExtractions::meta(),
+            'getCorporationCorporationIdMiningObservers' => GetCorporationCorporationIdMiningObservers::meta(),
+            'getCorporationCorporationIdMiningObserversObserverId' => GetCorporationCorporationIdMiningObserversObserverId::meta(),
+            'getCorporationsCorporationIdIndustryJobs' => GetCorporationsCorporationIdIndustryJobs::meta(),
+            'getIndustryFacilities' => GetIndustryFacilities::meta(),
+            'getIndustrySystems' => GetIndustrySystems::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdIndustryJobs. Equivalent to GetCharactersCharacterIdIndustryJobs::meta(). */
+    public static function getCharactersCharacterIdIndustryJobsMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdIndustryJobs::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdMining. Equivalent to GetCharactersCharacterIdMining::meta(). */
+    public static function getCharactersCharacterIdMiningMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdMining::meta();
+    }
+
+    /** Pre-call metadata for getCorporationCorporationIdMiningExtractions. Equivalent to GetCorporationCorporationIdMiningExtractions::meta(). */
+    public static function getCorporationCorporationIdMiningExtractionsMeta(): OperationMeta
+    {
+        return GetCorporationCorporationIdMiningExtractions::meta();
+    }
+
+    /** Pre-call metadata for getCorporationCorporationIdMiningObservers. Equivalent to GetCorporationCorporationIdMiningObservers::meta(). */
+    public static function getCorporationCorporationIdMiningObserversMeta(): OperationMeta
+    {
+        return GetCorporationCorporationIdMiningObservers::meta();
+    }
+
+    /** Pre-call metadata for getCorporationCorporationIdMiningObserversObserverId. Equivalent to GetCorporationCorporationIdMiningObserversObserverId::meta(). */
+    public static function getCorporationCorporationIdMiningObserversObserverIdMeta(): OperationMeta
+    {
+        return GetCorporationCorporationIdMiningObserversObserverId::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdIndustryJobs. Equivalent to GetCorporationsCorporationIdIndustryJobs::meta(). */
+    public static function getCorporationsCorporationIdIndustryJobsMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdIndustryJobs::meta();
+    }
+
+    /** Pre-call metadata for getIndustryFacilities. Equivalent to GetIndustryFacilities::meta(). */
+    public static function getIndustryFacilitiesMeta(): OperationMeta
+    {
+        return GetIndustryFacilities::meta();
+    }
+
+    /** Pre-call metadata for getIndustrySystems. Equivalent to GetIndustrySystems::meta(). */
+    public static function getIndustrySystemsMeta(): OperationMeta
+    {
+        return GetIndustrySystems::meta();
+    }
 
     /**
      * @return EsiResult<array<CharactersCharacterIdIndustryJobsGetItem>>
@@ -41,7 +102,7 @@ class IndustryResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdIndustryJobsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdIndustryJobs'] ?? null);
+        ), GetCharactersCharacterIdIndustryJobs::meta());
     }
 
     /**
@@ -55,7 +116,7 @@ class IndustryResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdMiningGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdMining'] ?? null);
+        ), GetCharactersCharacterIdMining::meta());
     }
 
     /**
@@ -69,7 +130,7 @@ class IndustryResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationCorporationIdMiningExtractionsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationCorporationIdMiningExtractions'] ?? null);
+        ), GetCorporationCorporationIdMiningExtractions::meta());
     }
 
     /**
@@ -83,7 +144,7 @@ class IndustryResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationCorporationIdMiningObserversGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationCorporationIdMiningObservers'] ?? null);
+        ), GetCorporationCorporationIdMiningObservers::meta());
     }
 
     /**
@@ -97,7 +158,7 @@ class IndustryResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationCorporationIdMiningObserversObserverIdGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationCorporationIdMiningObserversObserverId'] ?? null);
+        ), GetCorporationCorporationIdMiningObserversObserverId::meta());
     }
 
     /**
@@ -111,7 +172,7 @@ class IndustryResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdIndustryJobsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdIndustryJobs'] ?? null);
+        ), GetCorporationsCorporationIdIndustryJobs::meta());
     }
 
     /**
@@ -123,7 +184,7 @@ class IndustryResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => IndustryFacilitiesGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getIndustryFacilities'] ?? null);
+        ), GetIndustryFacilities::meta());
     }
 
     /**
@@ -135,6 +196,6 @@ class IndustryResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => IndustrySystemsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getIndustrySystems'] ?? null);
+        ), GetIndustrySystems::meta());
     }
 }

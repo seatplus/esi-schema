@@ -2,9 +2,13 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdLocationGet;
+use Seatplus\EsiSchema\Operations\Location\GetCharactersCharacterIdLocation;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdOnlineGet;
+use Seatplus\EsiSchema\Operations\Location\GetCharactersCharacterIdOnline;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdShipGet;
+use Seatplus\EsiSchema\Operations\Location\GetCharactersCharacterIdShip;
 
 /**
  * ESI tag: Location
@@ -14,11 +18,33 @@ use Seatplus\EsiSchema\Responses\CharactersCharacterIdShipGet;
  */
 class LocationResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getCharactersCharacterIdLocation' => ['cacheAge' => 5, 'rateLimit' => ['group' => 'char-location', 'max-tokens' => 1200, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-location.read_location.v1'],
-        'getCharactersCharacterIdOnline' => ['cacheAge' => 60, 'rateLimit' => ['group' => 'char-location', 'max-tokens' => 1200, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-location.read_online.v1'],
-        'getCharactersCharacterIdShip' => ['cacheAge' => 5, 'rateLimit' => ['group' => 'char-location', 'max-tokens' => 1200, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-location.read_ship_type.v1'],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getCharactersCharacterIdLocation' => GetCharactersCharacterIdLocation::meta(),
+            'getCharactersCharacterIdOnline' => GetCharactersCharacterIdOnline::meta(),
+            'getCharactersCharacterIdShip' => GetCharactersCharacterIdShip::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdLocation. Equivalent to GetCharactersCharacterIdLocation::meta(). */
+    public static function getCharactersCharacterIdLocationMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdLocation::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdOnline. Equivalent to GetCharactersCharacterIdOnline::meta(). */
+    public static function getCharactersCharacterIdOnlineMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdOnline::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdShip. Equivalent to GetCharactersCharacterIdShip::meta(). */
+    public static function getCharactersCharacterIdShipMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdShip::meta();
+    }
 
     /**
      * @return CharactersCharacterIdLocationGet
@@ -30,7 +56,7 @@ class LocationResource extends AbstractResource
         $dto = CharactersCharacterIdLocationGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdLocation'] ?? null;
+        $dto->operationMeta = GetCharactersCharacterIdLocation::meta();
         return $dto;
     }
 
@@ -44,7 +70,7 @@ class LocationResource extends AbstractResource
         $dto = CharactersCharacterIdOnlineGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdOnline'] ?? null;
+        $dto->operationMeta = GetCharactersCharacterIdOnline::meta();
         return $dto;
     }
 
@@ -58,7 +84,7 @@ class LocationResource extends AbstractResource
         $dto = CharactersCharacterIdShipGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdShip'] ?? null;
+        $dto->operationMeta = GetCharactersCharacterIdShip::meta();
         return $dto;
     }
 }

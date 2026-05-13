@@ -134,55 +134,36 @@ it('EsiResult::fromRaw carries isCachedLoad', function (): void {
 it('AssetsResource::metaFor returns correct metadata for char endpoint', function (): void {
     $meta = AssetsResource::metaFor('getCharactersCharacterIdAssets');
 
-    expect($meta->cacheAge())->toBe(3600)
-        ->and($meta->requiredRoles())->toBeEmpty()
-        ->and($meta->usesCursor())->toBeFalse()
-        ->and($meta->rateLimitGroup())->toBe('char-asset')
-        ->and($meta->rateLimitMaxTokens())->toBe(1800)
-        ->and($meta->requiredScope())->toBe('esi-assets.read_assets.v1');
+    expect($meta->cacheAge)->toBe(3600)
+        ->and($meta->requiredRoles)->toBeEmpty()
+        ->and($meta->usesCursor)->toBeFalse()
+        ->and($meta->rateLimitGroup)->toBe('char-asset')
+        ->and($meta->rateLimitMaxTokens)->toBe(1800)
+        ->and($meta->requiredScope)->toBe('esi-assets.read_assets.v1');
 });
 
 it('AssetsResource::metaFor returns corp rate-limit group and required Director role', function (): void {
     $meta = AssetsResource::metaFor('getCorporationsCorporationIdAssets');
 
-    expect($meta->rateLimitGroup())->toBe('corp-asset')
-        ->and($meta->requiredRoles())->toBe(['Director'])
-        ->and($meta->requiredScope())->toBe('esi-assets.read_corporation_assets.v1');
+    expect($meta->rateLimitGroup)->toBe('corp-asset')
+        ->and($meta->requiredRoles)->toBe(['Director'])
+        ->and($meta->requiredScope)->toBe('esi-assets.read_corporation_assets.v1');
 });
 
 it('metaFor returns safe defaults for unknown operationId', function (): void {
     $meta = AssetsResource::metaFor('doesNotExist');
 
-    expect($meta->cacheAge())->toBeNull()
-        ->and($meta->rateLimitGroup())->toBeNull()
-        ->and($meta->requiredRoles())->toBeEmpty()
-        ->and($meta->usesCursor())->toBeFalse()
-        ->and($meta->requiredScope())->toBeNull();
+    expect($meta->cacheAge)->toBeNull()
+        ->and($meta->rateLimitGroup)->toBeNull()
+        ->and($meta->requiredRoles)->toBeEmpty()
+        ->and($meta->usesCursor)->toBeFalse()
+        ->and($meta->requiredScope)->toBeNull();
 });
 
 it('FreelanceJobsResource::metaFor marks cursor endpoints correctly', function (): void {
     $meta = \Seatplus\EsiSchema\Resources\FreelanceJobsResource::metaFor('getFreelanceJobsListing');
 
-    expect($meta->usesCursor())->toBeTrue();
-});
-
-it('OperationMeta::tokenSatisfies returns true when token carries the required scope', function (): void {
-    $meta = AssetsResource::metaFor('getCharactersCharacterIdAssets');
-    $scopes = ['esi-assets.read_assets.v1', 'esi-wallet.read_character_wallet.v1'];
-
-    expect($meta->tokenSatisfies($scopes))->toBeTrue();
-});
-
-it('OperationMeta::tokenSatisfies returns false when required scope is absent', function (): void {
-    $meta = AssetsResource::metaFor('getCharactersCharacterIdAssets');
-    $scopes = ['esi-wallet.read_character_wallet.v1'];
-
-    expect($meta->tokenSatisfies($scopes))->toBeFalse();
-});
-
-it('OperationMeta::tokenSatisfies returns true for public endpoints regardless of token scopes', function (): void {
-    $meta = AssetsResource::metaFor('doesNotExist'); // no requiredScope → null
-    expect($meta->tokenSatisfies([]))->toBeTrue();
+    expect($meta->usesCursor)->toBeTrue();
 });
 
 // ---------------------------------------------------------------------------

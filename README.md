@@ -18,11 +18,11 @@ composer require seatplus/esi-schema
 
 ## Quick Start — Operation Classes
 
-Each ESI endpoint has its own generated class under `src/Operations/`. Classes implement `EsiOperationInterface` and expose two static methods:
+Each ESI endpoint has its own generated class under `src/Operations/{Tag}/`. Classes implement `EsiOperationInterface` and expose two static methods:
 
 ```php
-use Seatplus\EsiSchema\Operations\GetCharactersCharacterIdAssets;
-use Seatplus\EsiSchema\Operations\GetMarketsPrices;
+use Seatplus\EsiSchema\Operations\Assets\GetCharactersCharacterIdAssets;
+use Seatplus\EsiSchema\Operations\Market\GetMarketsPrices;
 
 // 1. Pre-call introspection — no transport needed
 $meta = GetCharactersCharacterIdAssets::meta();
@@ -57,11 +57,32 @@ $prices = GetMarketsPrices::execute($transport);
 GetMarketsPrices::meta()->requiredScope(); // null
 ```
 
-### eveapi pattern
+### Operation class namespaces
+
+Operations are grouped by ESI tag into 33 subfolders:
+
+| Namespace | Example class |
+|---|---|
+| `Operations\Alliance` | `GetAlliancesAllianceId` |
+| `Operations\Assets` | `GetCharactersCharacterIdAssets` |
+| `Operations\Character` | `GetCharactersCharacterId` |
+| `Operations\Corporation` | `GetCorporationsCorporationId` |
+| `Operations\FactionWarfare` | `GetFwStats` |
+| `Operations\Market` | `GetMarketsPrices` |
+| `Operations\Universe` | `GetUniverseTypesTypeId` |
+| `Operations\Wallet` | `GetCharactersCharacterIdWallet` |
+| `Operations\Skills` | `GetCharactersCharacterIdSkills` |
+| … (33 total) | |
+
+Full class names follow the pattern `Seatplus\EsiSchema\Operations\{Tag}\{PascalCaseOperationId}`.
+
+### eveapi integration pattern
 
 The intended use in queue jobs:
 
 ```php
+use Seatplus\EsiSchema\Operations\Assets\GetCharactersCharacterIdAssets;
+
 class CharacterAssetJob extends EsiJob
 {
     public function __construct(
@@ -121,7 +142,7 @@ $result->usesCursor();         // false
 
 ## Implementing a Transport
 
-All Resources depend only on `EsiTransportInterface`. Implement it to connect any HTTP client:
+All Resources and Operations depend only on `EsiTransportInterface`. Implement it to connect any HTTP client:
 
 ```php
 use Seatplus\EsiSchema\Contracts\EsiTransportInterface;
@@ -159,9 +180,10 @@ The reference implementation is [seatplus/esi-client](https://github.com/seatplu
 EsiTransportInterface          # Contract: any transport implements this
        │
        ├── Operations/         # 208 generated classes — one per ESI endpoint
-       │    └── GetCharactersCharacterIdAssets
-       │         ├── static meta(): OperationMeta   # pre-call typed metadata
-       │         └── static execute($transport, ...$args): EsiResult
+       │    └── Assets/
+       │         └── GetCharactersCharacterIdAssets
+       │              ├── static meta(): OperationMeta   # pre-call typed metadata
+       │              └── static execute($transport, ...$args): EsiResult
        │
        └── Resources/          # 33 generated tag-based resource classes (legacy)
             └── AssetsResource($transport)
@@ -194,9 +216,78 @@ HasOperationMeta trait         # rateLimitGroup(), cacheAge(), requiredScope(), 
 
 ---
 
-## Versioning
+## Design Decisions
 
-Each major version tracks a specific ESI compatibility date.
+### 1. Static operation classes
+
+Each ESI endpoint is represented as a **pure static class** (`final class`) rather than an instantiated service or a method on a resource. This means:
+
+- **Zero allocation**: `GetCharactersCharacterIdAssets::meta()` is a direct static call — no `new`, no DI.
+- **PHPStan traces the return type directly**: `::execute()` returns `EsiResult<GetCharactersCharacterIdAssetsItem>`, fully known at static analysis time.
+- **The class name is the identifier**: `OPERATION = GetCharactersCharacterIdAssets::class` is a constant reference — no magic strings needed in jobs.
+
+### 2. OPERATION_META baked in at generation time
+
+The metadata array (`requiredScope`, `rateLimitGroup`, `cacheAge`, …) is **embedded as a PHP constant** inside each generated class:
+
+```php
+private const array OPERATION_META = [
+    'requiredScope' => 'esi-assets.read_assets.v1',
+    'rateLimit'     => ['group' => 'char-asset', 'max-tokens' => 1800, 'window-size' => '15m'],
+    'cacheAge'      => 3600,
+    'requiredRoles' => [],
+];
+```
+
+There is no runtime spec fetch, no file read, no I/O. The trade-off: when CCP changes the spec, you must **regenerate and release a new version**. This is intentional — spec drift is a deploy-time concern, not a runtime concern.
+
+### 3. Tag-based subfolders for Operations
+
+The 208 operation classes live in `src/Operations/{Tag}/` (33 subfolders), matching the ESI API tag taxonomy. This means:
+
+- **Group imports** are idiomatic: `use Seatplus\EsiSchema\Operations\Assets\{GetCharactersCharacterIdAssets, GetCorporationsCorporationIdAssets}`.
+- The folder structure mirrors the `Resources/` layer, making it easy to locate related classes.
+- Tag names with spaces become PascalCase: `Faction Warfare` → `FactionWarfare`.
+
+### 4. `HasOperationMeta` as a trait (not a base class)
+
+The 7 metadata accessors (`rateLimitGroup()`, `cacheAge()`, `requiredScope()`, …) are implemented once in `Concerns\HasOperationMeta` and mixed into three unrelated types:
+
+- `EsiResult<T>` — a `readonly class` (cannot extend an abstract class)
+- `AbstractEsiDto` — an abstract class for single-object DTOs
+- `OperationMeta` — the pre-call DTO itself
+
+A shared base class would require all three to extend the same root, which is impossible across `readonly` and `abstract` classes in PHP. The trait avoids this without duplicating logic.
+
+### 5. Zero runtime dependencies
+
+`composer.json` has **no `require` entries** (only `require-dev` for `symfony/yaml` used by the generator). The published library is pure PHP 8.3. Any consumer project controls their own HTTP, caching, and serialization stack. This library's only job is to describe ESI's type system.
+
+### 6. `EsiTransportInterface` as the sole injection boundary
+
+All network I/O is delegated to the single `EsiTransportInterface::invoke()` method. The library knows nothing about Guzzle, cURL, OAuth tokens, or HTTP caching. This separation means:
+
+- Tests mock `EsiTransportInterface` — no network required.
+- The reference transport ([seatplus/esi-client](https://github.com/seatplus/esi-client)) can be swapped for any other HTTP client by any consumer.
+- Future changes to ESI's auth model only affect the transport, not this library.
+
+### 7. Versioning tied to ESI compatibility_date
+
+ESI uses [`compatibility_date`](https://github.com/esi/esi-docs/blob/main/docs/services/esi) to gate breaking spec changes behind an opt-in date. This library's major version tracks the spec date in use:
+
+| Library major | ESI compatibility_date | Composer |
+|---|---|---|
+| `1.x` | `2025-12-16` | `^1.0` |
+
+When CCP introduces a new breaking date and the generated types change in a backwards-incompatible way, a new `2.x` major is released. Minor versions within a major are used for generator improvements and non-breaking spec additions.
+
+### 8. Resources retained for backwards compatibility
+
+The `Resources/` layer (33 tag-based classes with instance methods) was the original API. It remains fully functional and is not deprecated — it is simply a higher-level wrapper over the same `OPERATION_META` data. The Operation classes are the **canonical new API**; Resources are preferred when you want to call several endpoints on the same tag without repeating the transport argument.
+
+---
+
+## Versioning
 
 | Branch / Major | ESI Compatibility Date | Composer constraint |
 |---|---|---|
@@ -210,7 +301,7 @@ When CCP publishes a new compatibility date with breaking schema changes, a new 
 
 ```bash
 php bin/generate.php    # fetches latest spec, regenerates all DTOs + Resources + Operations
-vendor/bin/pint         # auto-format generated output
+vendor/bin/pint         # auto-format generated output (run after generate if needed)
 ```
 
 The generator reads the live OAS3 spec from `https://esi.evetech.net/meta/openapi.yaml?compatibility_date=2025-12-16`.
@@ -218,7 +309,9 @@ The generator reads the live OAS3 spec from `https://esi.evetech.net/meta/openap
 It emits:
 - `src/Responses/*.php` — ~218 typed DTO classes (one per ESI schema object)
 - `src/Resources/*.php` — 33 tag-based resource classes
-- `src/Operations/*.php` — 208 operation classes (one per ESI endpoint)
+- `src/Operations/{Tag}/*.php` — 208 operation classes grouped by ESI tag
+
+**Do not manually edit generated files.** Changes are overwritten on next regeneration. To change generated output, edit `bin/generate.php`.
 
 ---
 
@@ -231,3 +324,9 @@ composer test:types         # PHPStan static analysis
 composer test:type-coverage # 100% type coverage check
 composer lint               # Pint auto-format (modifies files)
 ```
+
+---
+
+## Contributing
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed design rationale.

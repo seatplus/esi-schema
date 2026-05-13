@@ -294,7 +294,7 @@ function buildReturn(array $op): string
                 \$dto = {$dto}::from((object) \$response->data);
                 \$dto->isCachedLoad = \$response->isCachedLoad;
                 \$dto->pages = \$response->pages;
-                \$dto->operationMeta = static::OPERATION_META['{$methodName}'] ?? null;
+                \$dto->operationMeta = __OPERATION_META__;
                 return \$dto;
         PHP,
 
@@ -303,26 +303,26 @@ function buildReturn(array $op): string
                 return EsiResult::fromRaw(\$response, array_map(
                     fn (object \$item) => {$dto}::from(\$item),
                     (array) \$response->data,
-                ), static::OPERATION_META['{$methodName}'] ?? null);
+                ), __OPERATION_META__);
         PHP,
 
         'array_primitive' => <<<PHP
                 \$response = {$invoke};
                 /** @var array<{$primT}> \$data */
                 \$data = array_map(fn (mixed \$i) => ({$primT}) \$i, (array) \$response->data);
-                return EsiResult::fromRaw(\$response, \$data, static::OPERATION_META['{$methodName}'] ?? null);
+                return EsiResult::fromRaw(\$response, \$data, __OPERATION_META__);
         PHP,
 
         'primitive' => <<<PHP
                 \$response = {$invoke};
                 /** @var {$primT} \$scalar */
                 \$scalar = ({$primT}) \$response->data;
-                return EsiResult::fromRaw(\$response, \$scalar, static::OPERATION_META['{$methodName}'] ?? null);
+                return EsiResult::fromRaw(\$response, \$scalar, __OPERATION_META__);
         PHP,
 
         default => <<<PHP
                 \$response = {$invoke};
-                return EsiResult::fromRaw(\$response, null, static::OPERATION_META['{$methodName}'] ?? null);
+                return EsiResult::fromRaw(\$response, null, __OPERATION_META__);
         PHP,
     };
 }
@@ -366,22 +366,28 @@ function generateResourceFile(string $tag, array $ops): string
 {
     $resourceClass = tagToResourceClass($tag);
     $compatDate    = ESI_COMPATIBILITY_DATE;
+    $subNs         = str_replace(' ', '', $tag); // 'Faction Warfare' → 'FactionWarfare'
 
-    $useStatements = [];
-    $methods       = [];
-    $metaEntries   = [];
-    $usesEsiResult = false;
+    $useStatements  = [];
+    $methods        = [];
+    $metaForCases   = [];  // 'operationId' => OperationClass::meta()
+    $companionMetas = [];  // static getXxxMeta() methods
+    $usesEsiResult  = false;
 
     foreach ($ops as $op) {
-        $sig  = buildMethodSig($op);
-        $body = buildReturn($op);
-        $doc  = "     * @return {$op['phpDocReturn']}";
-        $auth = $op['isAuth'] ? "\n     * @scope " . implode(', ', $op['scopes']) : '';
-        $paged = $op['xPages'] ? "\n     * @paginated Use \$page param to iterate pages." : '';
+        $sig        = buildMethodSig($op);
+        $body       = buildReturn($op);
+        $doc        = "     * @return {$op['phpDocReturn']}";
+        $auth       = $op['isAuth'] ? "\n     * @scope " . implode(', ', $op['scopes']) : '';
+        $paged      = $op['xPages'] ? "\n     * @paginated Use \$page param to iterate pages." : '';
+        $className  = ucfirst($op['methodName']);
 
         if ($op['dtoClass'] && ! in_array($op['dtoClass'], ['int', 'float', 'bool', 'string'], true)) {
             $useStatements[] = "use Seatplus\\EsiSchema\\Responses\\{$op['dtoClass']};";
         }
+
+        // Import the corresponding Operation class for meta delegation
+        $useStatements[] = "use Seatplus\\EsiSchema\\Operations\\{$subNs}\\{$className};";
 
         $returnHint = $op['responseType'] === 'object'
             ? ($op['dtoClass'] ?? 'mixed')
@@ -390,51 +396,42 @@ function generateResourceFile(string $tag, array $ops): string
         if ($returnHint === 'EsiResult') {
             $usesEsiResult = true;
         }
+
+        // Replace __OPERATION_META__ placeholder with the Operation class meta() call
+        $resolvedBody = str_replace('__OPERATION_META__', "{$className}::meta()", $body);
+
         $methods[] = <<<PHP
             /**
         {$doc}{$auth}{$paged}
              */
             public function {$op['methodName']}({$sig}): {$returnHint}
             {
-        {$body}
+        {$resolvedBody}
             }
         PHP;
 
-        // Build OPERATION_META entry
-        $cacheAge      = $op['cacheAge'] !== null ? (string) $op['cacheAge'] : 'null';
-        $requiredRoles = empty($op['requiredRoles']) ? '[]' : "['" . implode("', '", $op['requiredRoles']) . "']";
-        $cursor        = $op['cursor'] ? 'true' : 'false';
-        $requiredScope = empty($op['scopes']) ? 'null' : "'" . $op['scopes'][0] . "'";
+        // metaFor() match arm
+        $metaForCases[] = "            '{$op['methodName']}' => {$className}::meta()";
 
-        if ($op['rateLimit'] !== null) {
-            $rl = $op['rateLimit'];
-            $rateLimitStr = sprintf(
-                "['group' => '%s', 'max-tokens' => %d, 'window-size' => '%s']",
-                $rl['group'],
-                (int) $rl['max-tokens'],
-                $rl['window-size'],
-            );
-        } else {
-            $rateLimitStr = 'null';
-        }
-
-        $metaEntries[$op['methodName']] = sprintf(
-            "        '%s' => ['cacheAge' => %s, 'rateLimit' => %s, 'requiredRoles' => %s, 'cursor' => %s, 'requiredScope' => %s]",
-            $op['methodName'],
-            $cacheAge,
-            $rateLimitStr,
-            $requiredRoles,
-            $cursor,
-            $requiredScope,
-        );
+        // Companion static meta method
+        $companionMetas[] = <<<PHP
+            /** Pre-call metadata for {$op['methodName']}. Equivalent to {$className}::meta(). */
+            public static function {$op['methodName']}Meta(): OperationMeta
+            {
+                return {$className}::meta();
+            }
+        PHP;
     }
 
     if ($usesEsiResult) {
         array_unshift($useStatements, 'use Seatplus\\EsiSchema\\EsiResult;');
     }
-    $useBlock     = empty($useStatements) ? '' : implode("\n", array_unique($useStatements)) . "\n";
-    $methodsBlock = implode("\n\n", $methods);
-    $metaBlock    = implode(",\n", array_values($metaEntries));
+    array_unshift($useStatements, 'use Seatplus\\EsiSchema\\OperationMeta;');
+
+    $useBlock       = empty($useStatements) ? '' : implode("\n", array_unique($useStatements)) . "\n";
+    $methodsBlock   = implode("\n\n", $methods);
+    $companionBlock = implode("\n\n", $companionMetas);
+    $matchBlock     = implode(",\n", $metaForCases);
 
     return <<<PHP
     <?php
@@ -450,16 +447,21 @@ function generateResourceFile(string $tag, array $ops): string
      */
     class {$resourceClass} extends AbstractResource
     {
-        protected const array OPERATION_META = [
-    {$metaBlock},
-        ];
+        public static function metaFor(string \$operationId): OperationMeta
+        {
+            return match (\$operationId) {
+    {$matchBlock},
+                default => new OperationMeta(),
+            };
+        }
+
+    {$companionBlock}
 
     {$methodsBlock}
     }
 
     PHP;
 }
-
 // ---------------------------------------------------------------------------
 // Generator: per-route operation class
 // ---------------------------------------------------------------------------
@@ -477,25 +479,16 @@ function generateOperationClass(array $op): string
     $auth        = $op['isAuth'] ? "\n     * @scope " . implode(', ', $op['scopes']) : '';
     $paged       = $op['xPages'] ? "\n     * @paginated Use \$page param to iterate pages." : '';
 
-    // Meta array inline (same format as OPERATION_META entries, without the key)
-    $cacheAge      = $op['cacheAge'] !== null ? (string) $op['cacheAge'] : 'null';
-    $requiredRoles = empty($op['requiredRoles']) ? '[]' : "['" . implode("', '", $op['requiredRoles']) . "']";
-    $cursor        = $op['cursor'] ? 'true' : 'false';
-    $requiredScope = empty($op['scopes']) ? 'null' : "'" . $op['scopes'][0] . "'";
+    // Individual typed constants
+    $cacheAge        = $op['cacheAge'] !== null ? (string) $op['cacheAge'] : 'null';
+    $requiredRoles   = empty($op['requiredRoles']) ? '[]' : "['" . implode("', '", $op['requiredRoles']) . "']";
+    $cursor          = $op['cursor'] ? 'true' : 'false';
+    $requiredScope   = empty($op['scopes']) ? 'null' : "'" . $op['scopes'][0] . "'";
+    $rateLimitGroup  = $op['rateLimit'] !== null ? "'{$op['rateLimit']['group']}'" : 'null';
+    $rateLimitTokens = $op['rateLimit'] !== null ? (string) (int) $op['rateLimit']['max-tokens'] : 'null';
+    $rateLimitWindow = $op['rateLimit'] !== null ? "'{$op['rateLimit']['window-size']}'" : 'null';
 
-    if ($op['rateLimit'] !== null) {
-        $rl = $op['rateLimit'];
-        $rateLimitStr = sprintf(
-            "['group' => '%s', 'max-tokens' => %d, 'window-size' => '%s']",
-            $rl['group'],
-            (int) $rl['max-tokens'],
-            $rl['window-size'],
-        );
-    } else {
-        $rateLimitStr = 'null';
-    }
-
-    $useStatements = ['use Seatplus\\EsiSchema\\Contracts\\EsiOperationInterface;'];
+    $useStatements   = ['use Seatplus\\EsiSchema\\Contracts\\EsiOperationInterface;'];
     $useStatements[] = 'use Seatplus\\EsiSchema\\Contracts\\EsiTransportInterface;';
     if ($returnHint === 'EsiResult') {
         $useStatements[] = 'use Seatplus\\EsiSchema\\EsiResult;';
@@ -506,10 +499,10 @@ function generateOperationClass(array $op): string
         $useStatements[] = "use Seatplus\\EsiSchema\\Responses\\{$op['dtoClass']};";
     }
 
-    // Replace $this->transport with $transport in the body (operation classes are static)
+    // Replace $this->transport with $transport (operation classes are static)
+    // Replace __OPERATION_META__ placeholder with self::meta()
     $staticBody = str_replace('$this->transport->invoke', '$transport->invoke', $body);
-    // Replace static::OPERATION_META[...] references with self::META
-    $staticBody = preg_replace("/static::OPERATION_META\['{$op['methodName']}'\] \?\? null/", 'self::META', $staticBody);
+    $staticBody = str_replace('__OPERATION_META__', 'self::meta()', $staticBody);
 
     $useBlock = implode("\n", array_unique($useStatements));
 
@@ -530,12 +523,42 @@ function generateOperationClass(array $op): string
      */
     final class {$className} implements EsiOperationInterface
     {
-        /** @var array<string,mixed> */
-        private const array META = ['cacheAge' => {$cacheAge}, 'rateLimit' => {$rateLimitStr}, 'requiredRoles' => {$requiredRoles}, 'cursor' => {$cursor}, 'requiredScope' => {$requiredScope}];
+        /** Required OAuth2 scope. Null for public endpoints. */
+        public const ?string REQUIRED_SCOPE = {$requiredScope};
+
+        /** Rate-limit group name (e.g. 'char-asset'). Null when not rate-limited. */
+        public const ?string RATE_LIMIT_GROUP = {$rateLimitGroup};
+
+        /** Maximum token bucket size for this rate-limit group. */
+        public const ?int RATE_LIMIT_MAX_TOKENS = {$rateLimitTokens};
+
+        /** Rate-limit window duration (e.g. '15m'). */
+        public const ?string RATE_LIMIT_WINDOW = {$rateLimitWindow};
+
+        /** Cache TTL in seconds. Null for non-cached endpoints. */
+        public const ?int CACHE_AGE = {$cacheAge};
+
+        /**
+         * EVE corporation roles required (e.g. ['Director']).
+         *
+         * @var list<string>
+         */
+        public const array REQUIRED_ROLES = {$requiredRoles};
+
+        /** True for cursor-paginated endpoints. */
+        public const bool USES_CURSOR = {$cursor};
 
         public static function meta(): OperationMeta
         {
-            return OperationMeta::from(self::META);
+            return new OperationMeta(
+                requiredScope: self::REQUIRED_SCOPE,
+                rateLimitGroup: self::RATE_LIMIT_GROUP,
+                rateLimitMaxTokens: self::RATE_LIMIT_MAX_TOKENS,
+                rateLimitWindow: self::RATE_LIMIT_WINDOW,
+                cacheAge: self::CACHE_AGE,
+                requiredRoles: self::REQUIRED_ROLES,
+                usesCursor: self::USES_CURSOR,
+            );
         }
 
         /**
@@ -549,7 +572,6 @@ function generateOperationClass(array $op): string
 
     PHP;
 }
-
 // ---------------------------------------------------------------------------
 // Build tag → operations map
 // ---------------------------------------------------------------------------

@@ -2,9 +2,13 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\EsiResult;
+use Seatplus\EsiSchema\Operations\Wars\GetWars;
 use Seatplus\EsiSchema\Responses\WarsWarIdGet;
+use Seatplus\EsiSchema\Operations\Wars\GetWarsWarId;
 use Seatplus\EsiSchema\Responses\WarsWarIdKillmailsGetItem;
+use Seatplus\EsiSchema\Operations\Wars\GetWarsWarIdKillmails;
 
 /**
  * ESI tag: Wars
@@ -14,11 +18,33 @@ use Seatplus\EsiSchema\Responses\WarsWarIdKillmailsGetItem;
  */
 class WarsResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getWars' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'killmail', 'max-tokens' => 3600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getWarsWarId' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'killmail', 'max-tokens' => 3600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getWarsWarIdKillmails' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'killmail', 'max-tokens' => 3600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getWars' => GetWars::meta(),
+            'getWarsWarId' => GetWarsWarId::meta(),
+            'getWarsWarIdKillmails' => GetWarsWarIdKillmails::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getWars. Equivalent to GetWars::meta(). */
+    public static function getWarsMeta(): OperationMeta
+    {
+        return GetWars::meta();
+    }
+
+    /** Pre-call metadata for getWarsWarId. Equivalent to GetWarsWarId::meta(). */
+    public static function getWarsWarIdMeta(): OperationMeta
+    {
+        return GetWarsWarId::meta();
+    }
+
+    /** Pre-call metadata for getWarsWarIdKillmails. Equivalent to GetWarsWarIdKillmails::meta(). */
+    public static function getWarsWarIdKillmailsMeta(): OperationMeta
+    {
+        return GetWarsWarIdKillmails::meta();
+    }
 
     /**
      * @return EsiResult<array<int>>
@@ -28,7 +54,7 @@ class WarsResource extends AbstractResource
         $response = $this->transport->invoke('get', '/wars', [], ['max_war_id' => $maxWarId]);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, static::OPERATION_META['getWars'] ?? null);
+        return EsiResult::fromRaw($response, $data, GetWars::meta());
     }
 
     /**
@@ -40,7 +66,7 @@ class WarsResource extends AbstractResource
         $dto = WarsWarIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getWarsWarId'] ?? null;
+        $dto->operationMeta = GetWarsWarId::meta();
         return $dto;
     }
 
@@ -54,6 +80,6 @@ class WarsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => WarsWarIdKillmailsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getWarsWarIdKillmails'] ?? null);
+        ), GetWarsWarIdKillmails::meta());
     }
 }

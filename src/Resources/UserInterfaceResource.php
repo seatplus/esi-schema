@@ -2,7 +2,13 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\EsiResult;
+use Seatplus\EsiSchema\Operations\UserInterface\PostUiAutopilotWaypoint;
+use Seatplus\EsiSchema\Operations\UserInterface\PostUiOpenwindowContract;
+use Seatplus\EsiSchema\Operations\UserInterface\PostUiOpenwindowInformation;
+use Seatplus\EsiSchema\Operations\UserInterface\PostUiOpenwindowMarketdetails;
+use Seatplus\EsiSchema\Operations\UserInterface\PostUiOpenwindowNewmail;
 
 /**
  * ESI tag: UserInterface
@@ -12,13 +18,47 @@ use Seatplus\EsiSchema\EsiResult;
  */
 class UserInterfaceResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'postUiAutopilotWaypoint' => ['cacheAge' => null, 'rateLimit' => ['group' => 'ui', 'max-tokens' => 900, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-ui.write_waypoint.v1'],
-        'postUiOpenwindowContract' => ['cacheAge' => null, 'rateLimit' => ['group' => 'ui', 'max-tokens' => 900, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-ui.open_window.v1'],
-        'postUiOpenwindowInformation' => ['cacheAge' => null, 'rateLimit' => ['group' => 'ui', 'max-tokens' => 900, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-ui.open_window.v1'],
-        'postUiOpenwindowMarketdetails' => ['cacheAge' => null, 'rateLimit' => ['group' => 'ui', 'max-tokens' => 900, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-ui.open_window.v1'],
-        'postUiOpenwindowNewmail' => ['cacheAge' => null, 'rateLimit' => ['group' => 'ui', 'max-tokens' => 900, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-ui.open_window.v1'],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'postUiAutopilotWaypoint' => PostUiAutopilotWaypoint::meta(),
+            'postUiOpenwindowContract' => PostUiOpenwindowContract::meta(),
+            'postUiOpenwindowInformation' => PostUiOpenwindowInformation::meta(),
+            'postUiOpenwindowMarketdetails' => PostUiOpenwindowMarketdetails::meta(),
+            'postUiOpenwindowNewmail' => PostUiOpenwindowNewmail::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for postUiAutopilotWaypoint. Equivalent to PostUiAutopilotWaypoint::meta(). */
+    public static function postUiAutopilotWaypointMeta(): OperationMeta
+    {
+        return PostUiAutopilotWaypoint::meta();
+    }
+
+    /** Pre-call metadata for postUiOpenwindowContract. Equivalent to PostUiOpenwindowContract::meta(). */
+    public static function postUiOpenwindowContractMeta(): OperationMeta
+    {
+        return PostUiOpenwindowContract::meta();
+    }
+
+    /** Pre-call metadata for postUiOpenwindowInformation. Equivalent to PostUiOpenwindowInformation::meta(). */
+    public static function postUiOpenwindowInformationMeta(): OperationMeta
+    {
+        return PostUiOpenwindowInformation::meta();
+    }
+
+    /** Pre-call metadata for postUiOpenwindowMarketdetails. Equivalent to PostUiOpenwindowMarketdetails::meta(). */
+    public static function postUiOpenwindowMarketdetailsMeta(): OperationMeta
+    {
+        return PostUiOpenwindowMarketdetails::meta();
+    }
+
+    /** Pre-call metadata for postUiOpenwindowNewmail. Equivalent to PostUiOpenwindowNewmail::meta(). */
+    public static function postUiOpenwindowNewmailMeta(): OperationMeta
+    {
+        return PostUiOpenwindowNewmail::meta();
+    }
 
     /**
      * @return EsiResult<null>
@@ -27,7 +67,7 @@ class UserInterfaceResource extends AbstractResource
     public function postUiAutopilotWaypoint(bool $addToBeginning, bool $clearOtherWaypoints, int $destinationId): EsiResult
     {
         $response = $this->transport->invoke('post', '/ui/autopilot/waypoint', [], ['add_to_beginning' => $addToBeginning, 'clear_other_waypoints' => $clearOtherWaypoints, 'destination_id' => $destinationId], []);
-        return EsiResult::fromRaw($response, null, static::OPERATION_META['postUiAutopilotWaypoint'] ?? null);
+        return EsiResult::fromRaw($response, null, PostUiAutopilotWaypoint::meta());
     }
 
     /**
@@ -37,7 +77,7 @@ class UserInterfaceResource extends AbstractResource
     public function postUiOpenwindowContract(int $contractId): EsiResult
     {
         $response = $this->transport->invoke('post', '/ui/openwindow/contract', [], ['contract_id' => $contractId], []);
-        return EsiResult::fromRaw($response, null, static::OPERATION_META['postUiOpenwindowContract'] ?? null);
+        return EsiResult::fromRaw($response, null, PostUiOpenwindowContract::meta());
     }
 
     /**
@@ -47,7 +87,7 @@ class UserInterfaceResource extends AbstractResource
     public function postUiOpenwindowInformation(int $targetId): EsiResult
     {
         $response = $this->transport->invoke('post', '/ui/openwindow/information', [], ['target_id' => $targetId], []);
-        return EsiResult::fromRaw($response, null, static::OPERATION_META['postUiOpenwindowInformation'] ?? null);
+        return EsiResult::fromRaw($response, null, PostUiOpenwindowInformation::meta());
     }
 
     /**
@@ -57,7 +97,7 @@ class UserInterfaceResource extends AbstractResource
     public function postUiOpenwindowMarketdetails(int $typeId): EsiResult
     {
         $response = $this->transport->invoke('post', '/ui/openwindow/marketdetails', [], ['type_id' => $typeId], []);
-        return EsiResult::fromRaw($response, null, static::OPERATION_META['postUiOpenwindowMarketdetails'] ?? null);
+        return EsiResult::fromRaw($response, null, PostUiOpenwindowMarketdetails::meta());
     }
 
     /**
@@ -67,6 +107,6 @@ class UserInterfaceResource extends AbstractResource
     public function postUiOpenwindowNewmail(mixed $requestBody): EsiResult
     {
         $response = $this->transport->invoke('post', '/ui/openwindow/newmail', [], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, static::OPERATION_META['postUiOpenwindowNewmail'] ?? null);
+        return EsiResult::fromRaw($response, null, PostUiOpenwindowNewmail::meta());
     }
 }

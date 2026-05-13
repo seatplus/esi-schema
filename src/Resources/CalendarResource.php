@@ -2,10 +2,15 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdCalendarGetItem;
+use Seatplus\EsiSchema\Operations\Calendar\GetCharactersCharacterIdCalendar;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdCalendarEventIdGet;
+use Seatplus\EsiSchema\Operations\Calendar\GetCharactersCharacterIdCalendarEventId;
+use Seatplus\EsiSchema\Operations\Calendar\PutCharactersCharacterIdCalendarEventId;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdCalendarEventIdAttendeesGetItem;
+use Seatplus\EsiSchema\Operations\Calendar\GetCharactersCharacterIdCalendarEventIdAttendees;
 
 /**
  * ESI tag: Calendar
@@ -15,12 +20,40 @@ use Seatplus\EsiSchema\Responses\CharactersCharacterIdCalendarEventIdAttendeesGe
  */
 class CalendarResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getCharactersCharacterIdCalendar' => ['cacheAge' => 5, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-calendar.read_calendar_events.v1'],
-        'getCharactersCharacterIdCalendarEventId' => ['cacheAge' => 5, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-calendar.read_calendar_events.v1'],
-        'putCharactersCharacterIdCalendarEventId' => ['cacheAge' => 5, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-calendar.respond_calendar_events.v1'],
-        'getCharactersCharacterIdCalendarEventIdAttendees' => ['cacheAge' => 600, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-calendar.read_calendar_events.v1'],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getCharactersCharacterIdCalendar' => GetCharactersCharacterIdCalendar::meta(),
+            'getCharactersCharacterIdCalendarEventId' => GetCharactersCharacterIdCalendarEventId::meta(),
+            'putCharactersCharacterIdCalendarEventId' => PutCharactersCharacterIdCalendarEventId::meta(),
+            'getCharactersCharacterIdCalendarEventIdAttendees' => GetCharactersCharacterIdCalendarEventIdAttendees::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdCalendar. Equivalent to GetCharactersCharacterIdCalendar::meta(). */
+    public static function getCharactersCharacterIdCalendarMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdCalendar::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdCalendarEventId. Equivalent to GetCharactersCharacterIdCalendarEventId::meta(). */
+    public static function getCharactersCharacterIdCalendarEventIdMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdCalendarEventId::meta();
+    }
+
+    /** Pre-call metadata for putCharactersCharacterIdCalendarEventId. Equivalent to PutCharactersCharacterIdCalendarEventId::meta(). */
+    public static function putCharactersCharacterIdCalendarEventIdMeta(): OperationMeta
+    {
+        return PutCharactersCharacterIdCalendarEventId::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdCalendarEventIdAttendees. Equivalent to GetCharactersCharacterIdCalendarEventIdAttendees::meta(). */
+    public static function getCharactersCharacterIdCalendarEventIdAttendeesMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdCalendarEventIdAttendees::meta();
+    }
 
     /**
      * @return EsiResult<array<CharactersCharacterIdCalendarGetItem>>
@@ -32,7 +65,7 @@ class CalendarResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdCalendarGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdCalendar'] ?? null);
+        ), GetCharactersCharacterIdCalendar::meta());
     }
 
     /**
@@ -45,7 +78,7 @@ class CalendarResource extends AbstractResource
         $dto = CharactersCharacterIdCalendarEventIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdCalendarEventId'] ?? null;
+        $dto->operationMeta = GetCharactersCharacterIdCalendarEventId::meta();
         return $dto;
     }
 
@@ -56,7 +89,7 @@ class CalendarResource extends AbstractResource
     public function putCharactersCharacterIdCalendarEventId(mixed $requestBody, int $characterId, int $eventId): EsiResult
     {
         $response = $this->transport->invoke('put', '/characters/{character_id}/calendar/{event_id}', ['character_id' => $characterId, 'event_id' => $eventId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, static::OPERATION_META['putCharactersCharacterIdCalendarEventId'] ?? null);
+        return EsiResult::fromRaw($response, null, PutCharactersCharacterIdCalendarEventId::meta());
     }
 
     /**
@@ -69,6 +102,6 @@ class CalendarResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdCalendarEventIdAttendeesGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdCalendarEventIdAttendees'] ?? null);
+        ), GetCharactersCharacterIdCalendarEventIdAttendees::meta());
     }
 }

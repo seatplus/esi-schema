@@ -2,9 +2,12 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdLoyaltyPointsGetItem;
+use Seatplus\EsiSchema\Operations\Loyalty\GetCharactersCharacterIdLoyaltyPoints;
 use Seatplus\EsiSchema\Responses\LoyaltyStoresCorporationIdOffersGetItem;
+use Seatplus\EsiSchema\Operations\Loyalty\GetLoyaltyStoresCorporationIdOffers;
 
 /**
  * ESI tag: Loyalty
@@ -14,10 +17,26 @@ use Seatplus\EsiSchema\Responses\LoyaltyStoresCorporationIdOffersGetItem;
  */
 class LoyaltyResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getCharactersCharacterIdLoyaltyPoints' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-wallet', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-characters.read_loyalty.v1'],
-        'getLoyaltyStoresCorporationIdOffers' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getCharactersCharacterIdLoyaltyPoints' => GetCharactersCharacterIdLoyaltyPoints::meta(),
+            'getLoyaltyStoresCorporationIdOffers' => GetLoyaltyStoresCorporationIdOffers::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdLoyaltyPoints. Equivalent to GetCharactersCharacterIdLoyaltyPoints::meta(). */
+    public static function getCharactersCharacterIdLoyaltyPointsMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdLoyaltyPoints::meta();
+    }
+
+    /** Pre-call metadata for getLoyaltyStoresCorporationIdOffers. Equivalent to GetLoyaltyStoresCorporationIdOffers::meta(). */
+    public static function getLoyaltyStoresCorporationIdOffersMeta(): OperationMeta
+    {
+        return GetLoyaltyStoresCorporationIdOffers::meta();
+    }
 
     /**
      * @return EsiResult<array<CharactersCharacterIdLoyaltyPointsGetItem>>
@@ -29,7 +48,7 @@ class LoyaltyResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdLoyaltyPointsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdLoyaltyPoints'] ?? null);
+        ), GetCharactersCharacterIdLoyaltyPoints::meta());
     }
 
     /**
@@ -41,6 +60,6 @@ class LoyaltyResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => LoyaltyStoresCorporationIdOffersGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getLoyaltyStoresCorporationIdOffers'] ?? null);
+        ), GetLoyaltyStoresCorporationIdOffers::meta());
     }
 }

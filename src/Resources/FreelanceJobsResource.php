@@ -2,12 +2,19 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\Responses\CharactersFreelanceJobsListing;
+use Seatplus\EsiSchema\Operations\FreelanceJobs\GetCharactersFreelanceJobsListing;
 use Seatplus\EsiSchema\Responses\CharactersFreelanceJobsParticipation;
+use Seatplus\EsiSchema\Operations\FreelanceJobs\GetCharactersFreelanceJobsParticipation;
 use Seatplus\EsiSchema\Responses\CorporationsFreelanceJobsListing;
+use Seatplus\EsiSchema\Operations\FreelanceJobs\GetCorporationsFreelanceJobsListing;
 use Seatplus\EsiSchema\Responses\CorporationsFreelanceJobsParticipants;
+use Seatplus\EsiSchema\Operations\FreelanceJobs\GetCorporationsFreelanceJobsParticipants;
 use Seatplus\EsiSchema\Responses\FreelanceJobsListing;
+use Seatplus\EsiSchema\Operations\FreelanceJobs\GetFreelanceJobsListing;
 use Seatplus\EsiSchema\Responses\FreelanceJobsDetail;
+use Seatplus\EsiSchema\Operations\FreelanceJobs\GetFreelanceJobsDetail;
 
 /**
  * ESI tag: FreelanceJobs
@@ -17,14 +24,54 @@ use Seatplus\EsiSchema\Responses\FreelanceJobsDetail;
  */
 class FreelanceJobsResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getCharactersFreelanceJobsListing' => ['cacheAge' => 60, 'rateLimit' => ['group' => 'char-freelance-job', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-characters.read_freelance_jobs.v1'],
-        'getCharactersFreelanceJobsParticipation' => ['cacheAge' => 60, 'rateLimit' => ['group' => 'char-freelance-job', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-characters.read_freelance_jobs.v1'],
-        'getCorporationsFreelanceJobsListing' => ['cacheAge' => 0, 'rateLimit' => ['group' => 'corp-freelance-job', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Project_Manager'], 'cursor' => true, 'requiredScope' => 'esi-corporations.read_freelance_jobs.v1'],
-        'getCorporationsFreelanceJobsParticipants' => ['cacheAge' => 0, 'rateLimit' => ['group' => 'corp-freelance-job', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Project_Manager'], 'cursor' => true, 'requiredScope' => 'esi-corporations.read_freelance_jobs.v1'],
-        'getFreelanceJobsListing' => ['cacheAge' => 0, 'rateLimit' => ['group' => 'freelance-job', 'max-tokens' => 900, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => true, 'requiredScope' => null],
-        'getFreelanceJobsDetail' => ['cacheAge' => 60, 'rateLimit' => ['group' => 'freelance-job', 'max-tokens' => 900, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getCharactersFreelanceJobsListing' => GetCharactersFreelanceJobsListing::meta(),
+            'getCharactersFreelanceJobsParticipation' => GetCharactersFreelanceJobsParticipation::meta(),
+            'getCorporationsFreelanceJobsListing' => GetCorporationsFreelanceJobsListing::meta(),
+            'getCorporationsFreelanceJobsParticipants' => GetCorporationsFreelanceJobsParticipants::meta(),
+            'getFreelanceJobsListing' => GetFreelanceJobsListing::meta(),
+            'getFreelanceJobsDetail' => GetFreelanceJobsDetail::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getCharactersFreelanceJobsListing. Equivalent to GetCharactersFreelanceJobsListing::meta(). */
+    public static function getCharactersFreelanceJobsListingMeta(): OperationMeta
+    {
+        return GetCharactersFreelanceJobsListing::meta();
+    }
+
+    /** Pre-call metadata for getCharactersFreelanceJobsParticipation. Equivalent to GetCharactersFreelanceJobsParticipation::meta(). */
+    public static function getCharactersFreelanceJobsParticipationMeta(): OperationMeta
+    {
+        return GetCharactersFreelanceJobsParticipation::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsFreelanceJobsListing. Equivalent to GetCorporationsFreelanceJobsListing::meta(). */
+    public static function getCorporationsFreelanceJobsListingMeta(): OperationMeta
+    {
+        return GetCorporationsFreelanceJobsListing::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsFreelanceJobsParticipants. Equivalent to GetCorporationsFreelanceJobsParticipants::meta(). */
+    public static function getCorporationsFreelanceJobsParticipantsMeta(): OperationMeta
+    {
+        return GetCorporationsFreelanceJobsParticipants::meta();
+    }
+
+    /** Pre-call metadata for getFreelanceJobsListing. Equivalent to GetFreelanceJobsListing::meta(). */
+    public static function getFreelanceJobsListingMeta(): OperationMeta
+    {
+        return GetFreelanceJobsListing::meta();
+    }
+
+    /** Pre-call metadata for getFreelanceJobsDetail. Equivalent to GetFreelanceJobsDetail::meta(). */
+    public static function getFreelanceJobsDetailMeta(): OperationMeta
+    {
+        return GetFreelanceJobsDetail::meta();
+    }
 
     /**
      * @return CharactersFreelanceJobsListing
@@ -36,7 +83,7 @@ class FreelanceJobsResource extends AbstractResource
         $dto = CharactersFreelanceJobsListing::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCharactersFreelanceJobsListing'] ?? null;
+        $dto->operationMeta = GetCharactersFreelanceJobsListing::meta();
         return $dto;
     }
 
@@ -50,7 +97,7 @@ class FreelanceJobsResource extends AbstractResource
         $dto = CharactersFreelanceJobsParticipation::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCharactersFreelanceJobsParticipation'] ?? null;
+        $dto->operationMeta = GetCharactersFreelanceJobsParticipation::meta();
         return $dto;
     }
 
@@ -64,7 +111,7 @@ class FreelanceJobsResource extends AbstractResource
         $dto = CorporationsFreelanceJobsListing::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCorporationsFreelanceJobsListing'] ?? null;
+        $dto->operationMeta = GetCorporationsFreelanceJobsListing::meta();
         return $dto;
     }
 
@@ -78,7 +125,7 @@ class FreelanceJobsResource extends AbstractResource
         $dto = CorporationsFreelanceJobsParticipants::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCorporationsFreelanceJobsParticipants'] ?? null;
+        $dto->operationMeta = GetCorporationsFreelanceJobsParticipants::meta();
         return $dto;
     }
 
@@ -91,7 +138,7 @@ class FreelanceJobsResource extends AbstractResource
         $dto = FreelanceJobsListing::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getFreelanceJobsListing'] ?? null;
+        $dto->operationMeta = GetFreelanceJobsListing::meta();
         return $dto;
     }
 
@@ -104,7 +151,7 @@ class FreelanceJobsResource extends AbstractResource
         $dto = FreelanceJobsDetail::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getFreelanceJobsDetail'] ?? null;
+        $dto->operationMeta = GetFreelanceJobsDetail::meta();
         return $dto;
     }
 }

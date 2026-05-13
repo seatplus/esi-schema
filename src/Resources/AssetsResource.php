@@ -2,13 +2,20 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdAssetsGetItem;
+use Seatplus\EsiSchema\Operations\Assets\GetCharactersCharacterIdAssets;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdAssetsLocationsPostItem;
+use Seatplus\EsiSchema\Operations\Assets\PostCharactersCharacterIdAssetsLocations;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdAssetsNamesPostItem;
+use Seatplus\EsiSchema\Operations\Assets\PostCharactersCharacterIdAssetsNames;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdAssetsGetItem;
+use Seatplus\EsiSchema\Operations\Assets\GetCorporationsCorporationIdAssets;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdAssetsLocationsPostItem;
+use Seatplus\EsiSchema\Operations\Assets\PostCorporationsCorporationIdAssetsLocations;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdAssetsNamesPostItem;
+use Seatplus\EsiSchema\Operations\Assets\PostCorporationsCorporationIdAssetsNames;
 
 /**
  * ESI tag: Assets
@@ -18,14 +25,54 @@ use Seatplus\EsiSchema\Responses\CorporationsCorporationIdAssetsNamesPostItem;
  */
 class AssetsResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getCharactersCharacterIdAssets' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-asset', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-assets.read_assets.v1'],
-        'postCharactersCharacterIdAssetsLocations' => ['cacheAge' => null, 'rateLimit' => ['group' => 'char-asset', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-assets.read_assets.v1'],
-        'postCharactersCharacterIdAssetsNames' => ['cacheAge' => null, 'rateLimit' => ['group' => 'char-asset', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-assets.read_assets.v1'],
-        'getCorporationsCorporationIdAssets' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-asset', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false, 'requiredScope' => 'esi-assets.read_corporation_assets.v1'],
-        'postCorporationsCorporationIdAssetsLocations' => ['cacheAge' => null, 'rateLimit' => ['group' => 'corp-asset', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false, 'requiredScope' => 'esi-assets.read_corporation_assets.v1'],
-        'postCorporationsCorporationIdAssetsNames' => ['cacheAge' => null, 'rateLimit' => ['group' => 'corp-asset', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false, 'requiredScope' => 'esi-assets.read_corporation_assets.v1'],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getCharactersCharacterIdAssets' => GetCharactersCharacterIdAssets::meta(),
+            'postCharactersCharacterIdAssetsLocations' => PostCharactersCharacterIdAssetsLocations::meta(),
+            'postCharactersCharacterIdAssetsNames' => PostCharactersCharacterIdAssetsNames::meta(),
+            'getCorporationsCorporationIdAssets' => GetCorporationsCorporationIdAssets::meta(),
+            'postCorporationsCorporationIdAssetsLocations' => PostCorporationsCorporationIdAssetsLocations::meta(),
+            'postCorporationsCorporationIdAssetsNames' => PostCorporationsCorporationIdAssetsNames::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdAssets. Equivalent to GetCharactersCharacterIdAssets::meta(). */
+    public static function getCharactersCharacterIdAssetsMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdAssets::meta();
+    }
+
+    /** Pre-call metadata for postCharactersCharacterIdAssetsLocations. Equivalent to PostCharactersCharacterIdAssetsLocations::meta(). */
+    public static function postCharactersCharacterIdAssetsLocationsMeta(): OperationMeta
+    {
+        return PostCharactersCharacterIdAssetsLocations::meta();
+    }
+
+    /** Pre-call metadata for postCharactersCharacterIdAssetsNames. Equivalent to PostCharactersCharacterIdAssetsNames::meta(). */
+    public static function postCharactersCharacterIdAssetsNamesMeta(): OperationMeta
+    {
+        return PostCharactersCharacterIdAssetsNames::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdAssets. Equivalent to GetCorporationsCorporationIdAssets::meta(). */
+    public static function getCorporationsCorporationIdAssetsMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdAssets::meta();
+    }
+
+    /** Pre-call metadata for postCorporationsCorporationIdAssetsLocations. Equivalent to PostCorporationsCorporationIdAssetsLocations::meta(). */
+    public static function postCorporationsCorporationIdAssetsLocationsMeta(): OperationMeta
+    {
+        return PostCorporationsCorporationIdAssetsLocations::meta();
+    }
+
+    /** Pre-call metadata for postCorporationsCorporationIdAssetsNames. Equivalent to PostCorporationsCorporationIdAssetsNames::meta(). */
+    public static function postCorporationsCorporationIdAssetsNamesMeta(): OperationMeta
+    {
+        return PostCorporationsCorporationIdAssetsNames::meta();
+    }
 
     /**
      * @return EsiResult<array<CharactersCharacterIdAssetsGetItem>>
@@ -38,7 +85,7 @@ class AssetsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdAssetsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdAssets'] ?? null);
+        ), GetCharactersCharacterIdAssets::meta());
     }
 
     /**
@@ -51,7 +98,7 @@ class AssetsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdAssetsLocationsPostItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['postCharactersCharacterIdAssetsLocations'] ?? null);
+        ), PostCharactersCharacterIdAssetsLocations::meta());
     }
 
     /**
@@ -64,7 +111,7 @@ class AssetsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdAssetsNamesPostItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['postCharactersCharacterIdAssetsNames'] ?? null);
+        ), PostCharactersCharacterIdAssetsNames::meta());
     }
 
     /**
@@ -78,7 +125,7 @@ class AssetsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdAssetsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdAssets'] ?? null);
+        ), GetCorporationsCorporationIdAssets::meta());
     }
 
     /**
@@ -91,7 +138,7 @@ class AssetsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdAssetsLocationsPostItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['postCorporationsCorporationIdAssetsLocations'] ?? null);
+        ), PostCorporationsCorporationIdAssetsLocations::meta());
     }
 
     /**
@@ -104,6 +151,6 @@ class AssetsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdAssetsNamesPostItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['postCorporationsCorporationIdAssetsNames'] ?? null);
+        ), PostCorporationsCorporationIdAssetsNames::meta());
     }
 }

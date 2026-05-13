@@ -2,7 +2,9 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\Responses\Route;
+use Seatplus\EsiSchema\Operations\Routes\PostRoute;
 
 /**
  * ESI tag: Routes
@@ -12,9 +14,19 @@ use Seatplus\EsiSchema\Responses\Route;
  */
 class RoutesResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'postRoute' => ['cacheAge' => 0, 'rateLimit' => ['group' => 'routes', 'max-tokens' => 3600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'postRoute' => PostRoute::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for postRoute. Equivalent to PostRoute::meta(). */
+    public static function postRouteMeta(): OperationMeta
+    {
+        return PostRoute::meta();
+    }
 
     /**
      * @return Route
@@ -25,7 +37,7 @@ class RoutesResource extends AbstractResource
         $dto = Route::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['postRoute'] ?? null;
+        $dto->operationMeta = PostRoute::meta();
         return $dto;
     }
 }

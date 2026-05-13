@@ -2,16 +2,28 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdOrdersGetItem;
+use Seatplus\EsiSchema\Operations\Market\GetCharactersCharacterIdOrders;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdOrdersHistoryGetItem;
+use Seatplus\EsiSchema\Operations\Market\GetCharactersCharacterIdOrdersHistory;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdOrdersGetItem;
+use Seatplus\EsiSchema\Operations\Market\GetCorporationsCorporationIdOrders;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdOrdersHistoryGetItem;
+use Seatplus\EsiSchema\Operations\Market\GetCorporationsCorporationIdOrdersHistory;
+use Seatplus\EsiSchema\Operations\Market\GetMarketsGroups;
 use Seatplus\EsiSchema\Responses\MarketsGroupsMarketGroupIdGet;
+use Seatplus\EsiSchema\Operations\Market\GetMarketsGroupsMarketGroupId;
 use Seatplus\EsiSchema\Responses\MarketsPricesGetItem;
+use Seatplus\EsiSchema\Operations\Market\GetMarketsPrices;
 use Seatplus\EsiSchema\Responses\MarketsStructuresStructureIdGetItem;
+use Seatplus\EsiSchema\Operations\Market\GetMarketsStructuresStructureId;
 use Seatplus\EsiSchema\Responses\MarketsRegionIdHistoryGetItem;
+use Seatplus\EsiSchema\Operations\Market\GetMarketsRegionIdHistory;
 use Seatplus\EsiSchema\Responses\MarketsRegionIdOrdersGetItem;
+use Seatplus\EsiSchema\Operations\Market\GetMarketsRegionIdOrders;
+use Seatplus\EsiSchema\Operations\Market\GetMarketsRegionIdTypes;
 
 /**
  * ESI tag: Market
@@ -21,19 +33,89 @@ use Seatplus\EsiSchema\Responses\MarketsRegionIdOrdersGetItem;
  */
 class MarketResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getCharactersCharacterIdOrders' => ['cacheAge' => 1200, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-markets.read_character_orders.v1'],
-        'getCharactersCharacterIdOrdersHistory' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-markets.read_character_orders.v1'],
-        'getCorporationsCorporationIdOrders' => ['cacheAge' => 1200, 'rateLimit' => null, 'requiredRoles' => ['Accountant', 'Trader'], 'cursor' => false, 'requiredScope' => 'esi-markets.read_corporation_orders.v1'],
-        'getCorporationsCorporationIdOrdersHistory' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => ['Accountant', 'Trader'], 'cursor' => false, 'requiredScope' => 'esi-markets.read_corporation_orders.v1'],
-        'getMarketsGroups' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getMarketsGroupsMarketGroupId' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getMarketsPrices' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getMarketsStructuresStructureId' => ['cacheAge' => 300, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-markets.structure_markets.v1'],
-        'getMarketsRegionIdHistory' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getMarketsRegionIdOrders' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'market-order', 'max-tokens' => 12000, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getMarketsRegionIdTypes' => ['cacheAge' => 600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getCharactersCharacterIdOrders' => GetCharactersCharacterIdOrders::meta(),
+            'getCharactersCharacterIdOrdersHistory' => GetCharactersCharacterIdOrdersHistory::meta(),
+            'getCorporationsCorporationIdOrders' => GetCorporationsCorporationIdOrders::meta(),
+            'getCorporationsCorporationIdOrdersHistory' => GetCorporationsCorporationIdOrdersHistory::meta(),
+            'getMarketsGroups' => GetMarketsGroups::meta(),
+            'getMarketsGroupsMarketGroupId' => GetMarketsGroupsMarketGroupId::meta(),
+            'getMarketsPrices' => GetMarketsPrices::meta(),
+            'getMarketsStructuresStructureId' => GetMarketsStructuresStructureId::meta(),
+            'getMarketsRegionIdHistory' => GetMarketsRegionIdHistory::meta(),
+            'getMarketsRegionIdOrders' => GetMarketsRegionIdOrders::meta(),
+            'getMarketsRegionIdTypes' => GetMarketsRegionIdTypes::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdOrders. Equivalent to GetCharactersCharacterIdOrders::meta(). */
+    public static function getCharactersCharacterIdOrdersMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdOrders::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdOrdersHistory. Equivalent to GetCharactersCharacterIdOrdersHistory::meta(). */
+    public static function getCharactersCharacterIdOrdersHistoryMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdOrdersHistory::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdOrders. Equivalent to GetCorporationsCorporationIdOrders::meta(). */
+    public static function getCorporationsCorporationIdOrdersMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdOrders::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdOrdersHistory. Equivalent to GetCorporationsCorporationIdOrdersHistory::meta(). */
+    public static function getCorporationsCorporationIdOrdersHistoryMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdOrdersHistory::meta();
+    }
+
+    /** Pre-call metadata for getMarketsGroups. Equivalent to GetMarketsGroups::meta(). */
+    public static function getMarketsGroupsMeta(): OperationMeta
+    {
+        return GetMarketsGroups::meta();
+    }
+
+    /** Pre-call metadata for getMarketsGroupsMarketGroupId. Equivalent to GetMarketsGroupsMarketGroupId::meta(). */
+    public static function getMarketsGroupsMarketGroupIdMeta(): OperationMeta
+    {
+        return GetMarketsGroupsMarketGroupId::meta();
+    }
+
+    /** Pre-call metadata for getMarketsPrices. Equivalent to GetMarketsPrices::meta(). */
+    public static function getMarketsPricesMeta(): OperationMeta
+    {
+        return GetMarketsPrices::meta();
+    }
+
+    /** Pre-call metadata for getMarketsStructuresStructureId. Equivalent to GetMarketsStructuresStructureId::meta(). */
+    public static function getMarketsStructuresStructureIdMeta(): OperationMeta
+    {
+        return GetMarketsStructuresStructureId::meta();
+    }
+
+    /** Pre-call metadata for getMarketsRegionIdHistory. Equivalent to GetMarketsRegionIdHistory::meta(). */
+    public static function getMarketsRegionIdHistoryMeta(): OperationMeta
+    {
+        return GetMarketsRegionIdHistory::meta();
+    }
+
+    /** Pre-call metadata for getMarketsRegionIdOrders. Equivalent to GetMarketsRegionIdOrders::meta(). */
+    public static function getMarketsRegionIdOrdersMeta(): OperationMeta
+    {
+        return GetMarketsRegionIdOrders::meta();
+    }
+
+    /** Pre-call metadata for getMarketsRegionIdTypes. Equivalent to GetMarketsRegionIdTypes::meta(). */
+    public static function getMarketsRegionIdTypesMeta(): OperationMeta
+    {
+        return GetMarketsRegionIdTypes::meta();
+    }
 
     /**
      * @return EsiResult<array<CharactersCharacterIdOrdersGetItem>>
@@ -45,7 +127,7 @@ class MarketResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdOrdersGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdOrders'] ?? null);
+        ), GetCharactersCharacterIdOrders::meta());
     }
 
     /**
@@ -59,7 +141,7 @@ class MarketResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdOrdersHistoryGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdOrdersHistory'] ?? null);
+        ), GetCharactersCharacterIdOrdersHistory::meta());
     }
 
     /**
@@ -73,7 +155,7 @@ class MarketResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdOrdersGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdOrders'] ?? null);
+        ), GetCorporationsCorporationIdOrders::meta());
     }
 
     /**
@@ -87,7 +169,7 @@ class MarketResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdOrdersHistoryGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdOrdersHistory'] ?? null);
+        ), GetCorporationsCorporationIdOrdersHistory::meta());
     }
 
     /**
@@ -98,7 +180,7 @@ class MarketResource extends AbstractResource
         $response = $this->transport->invoke('get', '/markets/groups', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, static::OPERATION_META['getMarketsGroups'] ?? null);
+        return EsiResult::fromRaw($response, $data, GetMarketsGroups::meta());
     }
 
     /**
@@ -110,7 +192,7 @@ class MarketResource extends AbstractResource
         $dto = MarketsGroupsMarketGroupIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getMarketsGroupsMarketGroupId'] ?? null;
+        $dto->operationMeta = GetMarketsGroupsMarketGroupId::meta();
         return $dto;
     }
 
@@ -123,7 +205,7 @@ class MarketResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => MarketsPricesGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getMarketsPrices'] ?? null);
+        ), GetMarketsPrices::meta());
     }
 
     /**
@@ -137,7 +219,7 @@ class MarketResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => MarketsStructuresStructureIdGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getMarketsStructuresStructureId'] ?? null);
+        ), GetMarketsStructuresStructureId::meta());
     }
 
     /**
@@ -149,7 +231,7 @@ class MarketResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => MarketsRegionIdHistoryGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getMarketsRegionIdHistory'] ?? null);
+        ), GetMarketsRegionIdHistory::meta());
     }
 
     /**
@@ -162,7 +244,7 @@ class MarketResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => MarketsRegionIdOrdersGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getMarketsRegionIdOrders'] ?? null);
+        ), GetMarketsRegionIdOrders::meta());
     }
 
     /**
@@ -174,6 +256,6 @@ class MarketResource extends AbstractResource
         $response = $this->transport->invoke('get', '/markets/{region_id}/types', ['region_id' => $regionId], ['page' => $page]);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, static::OPERATION_META['getMarketsRegionIdTypes'] ?? null);
+        return EsiResult::fromRaw($response, $data, GetMarketsRegionIdTypes::meta());
     }
 }

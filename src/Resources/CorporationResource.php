@@ -2,26 +2,49 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\EsiResult;
+use Seatplus\EsiSchema\Operations\Corporation\GetCorporationsNpccorps;
 use Seatplus\EsiSchema\Responses\CorporationsDetail;
+use Seatplus\EsiSchema\Operations\Corporation\GetCorporationsCorporationId;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdAlliancehistoryGetItem;
+use Seatplus\EsiSchema\Operations\Corporation\GetCorporationsCorporationIdAlliancehistory;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdBlueprintsGetItem;
+use Seatplus\EsiSchema\Operations\Corporation\GetCorporationsCorporationIdBlueprints;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdContainersLogsGetItem;
+use Seatplus\EsiSchema\Operations\Corporation\GetCorporationsCorporationIdContainersLogs;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdDivisionsGet;
+use Seatplus\EsiSchema\Operations\Corporation\GetCorporationsCorporationIdDivisions;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdFacilitiesGetItem;
+use Seatplus\EsiSchema\Operations\Corporation\GetCorporationsCorporationIdFacilities;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdIconsGet;
+use Seatplus\EsiSchema\Operations\Corporation\GetCorporationsCorporationIdIcons;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdMedalsGetItem;
+use Seatplus\EsiSchema\Operations\Corporation\GetCorporationsCorporationIdMedals;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdMedalsIssuedGetItem;
+use Seatplus\EsiSchema\Operations\Corporation\GetCorporationsCorporationIdMedalsIssued;
+use Seatplus\EsiSchema\Operations\Corporation\GetCorporationsCorporationIdMembers;
+use Seatplus\EsiSchema\Operations\Corporation\GetCorporationsCorporationIdMembersLimit;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdMembersTitlesGetItem;
+use Seatplus\EsiSchema\Operations\Corporation\GetCorporationsCorporationIdMembersTitles;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdMembertrackingGetItem;
+use Seatplus\EsiSchema\Operations\Corporation\GetCorporationsCorporationIdMembertracking;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdRolesGetItem;
+use Seatplus\EsiSchema\Operations\Corporation\GetCorporationsCorporationIdRoles;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdRolesHistoryGetItem;
+use Seatplus\EsiSchema\Operations\Corporation\GetCorporationsCorporationIdRolesHistory;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdShareholdersGetItem;
+use Seatplus\EsiSchema\Operations\Corporation\GetCorporationsCorporationIdShareholders;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdStandingsGetItem;
+use Seatplus\EsiSchema\Operations\Corporation\GetCorporationsCorporationIdStandings;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdStarbasesGetItem;
+use Seatplus\EsiSchema\Operations\Corporation\GetCorporationsCorporationIdStarbases;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdStarbasesStarbaseIdGet;
+use Seatplus\EsiSchema\Operations\Corporation\GetCorporationsCorporationIdStarbasesStarbaseId;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdStructuresGetItem;
+use Seatplus\EsiSchema\Operations\Corporation\GetCorporationsCorporationIdStructures;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdTitlesGetItem;
+use Seatplus\EsiSchema\Operations\Corporation\GetCorporationsCorporationIdTitles;
 
 /**
  * ESI tag: Corporation
@@ -31,30 +54,166 @@ use Seatplus\EsiSchema\Responses\CorporationsCorporationIdTitlesGetItem;
  */
 class CorporationResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getCorporationsNpccorps' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getCorporationsCorporationId' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getCorporationsCorporationIdAlliancehistory' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getCorporationsCorporationIdBlueprints' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false, 'requiredScope' => 'esi-corporations.read_blueprints.v1'],
-        'getCorporationsCorporationIdContainersLogs' => ['cacheAge' => 600, 'rateLimit' => null, 'requiredRoles' => ['Director'], 'cursor' => false, 'requiredScope' => 'esi-corporations.read_container_logs.v1'],
-        'getCorporationsCorporationIdDivisions' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-wallet', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false, 'requiredScope' => 'esi-corporations.read_divisions.v1'],
-        'getCorporationsCorporationIdFacilities' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => ['Factory_Manager'], 'cursor' => false, 'requiredScope' => 'esi-corporations.read_facilities.v1'],
-        'getCorporationsCorporationIdIcons' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getCorporationsCorporationIdMedals' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-detail', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-corporations.read_medals.v1'],
-        'getCorporationsCorporationIdMedalsIssued' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-detail', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false, 'requiredScope' => 'esi-corporations.read_medals.v1'],
-        'getCorporationsCorporationIdMembers' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-member', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-corporations.read_corporation_membership.v1'],
-        'getCorporationsCorporationIdMembersLimit' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-member', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false, 'requiredScope' => 'esi-corporations.track_members.v1'],
-        'getCorporationsCorporationIdMembersTitles' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-member', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false, 'requiredScope' => 'esi-corporations.read_titles.v1'],
-        'getCorporationsCorporationIdMembertracking' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-member', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false, 'requiredScope' => 'esi-corporations.track_members.v1'],
-        'getCorporationsCorporationIdRoles' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-member', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-corporations.read_corporation_membership.v1'],
-        'getCorporationsCorporationIdRolesHistory' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-member', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false, 'requiredScope' => 'esi-corporations.read_corporation_membership.v1'],
-        'getCorporationsCorporationIdShareholders' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-detail', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false, 'requiredScope' => 'esi-wallet.read_corporation_wallets.v1'],
-        'getCorporationsCorporationIdStandings' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-member', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-corporations.read_standings.v1'],
-        'getCorporationsCorporationIdStarbases' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => ['Director'], 'cursor' => false, 'requiredScope' => 'esi-corporations.read_starbases.v1'],
-        'getCorporationsCorporationIdStarbasesStarbaseId' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => ['Director'], 'cursor' => false, 'requiredScope' => 'esi-corporations.read_starbases.v1'],
-        'getCorporationsCorporationIdStructures' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => ['Station_Manager'], 'cursor' => false, 'requiredScope' => 'esi-corporations.read_structures.v1'],
-        'getCorporationsCorporationIdTitles' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-detail', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false, 'requiredScope' => 'esi-corporations.read_titles.v1'],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getCorporationsNpccorps' => GetCorporationsNpccorps::meta(),
+            'getCorporationsCorporationId' => GetCorporationsCorporationId::meta(),
+            'getCorporationsCorporationIdAlliancehistory' => GetCorporationsCorporationIdAlliancehistory::meta(),
+            'getCorporationsCorporationIdBlueprints' => GetCorporationsCorporationIdBlueprints::meta(),
+            'getCorporationsCorporationIdContainersLogs' => GetCorporationsCorporationIdContainersLogs::meta(),
+            'getCorporationsCorporationIdDivisions' => GetCorporationsCorporationIdDivisions::meta(),
+            'getCorporationsCorporationIdFacilities' => GetCorporationsCorporationIdFacilities::meta(),
+            'getCorporationsCorporationIdIcons' => GetCorporationsCorporationIdIcons::meta(),
+            'getCorporationsCorporationIdMedals' => GetCorporationsCorporationIdMedals::meta(),
+            'getCorporationsCorporationIdMedalsIssued' => GetCorporationsCorporationIdMedalsIssued::meta(),
+            'getCorporationsCorporationIdMembers' => GetCorporationsCorporationIdMembers::meta(),
+            'getCorporationsCorporationIdMembersLimit' => GetCorporationsCorporationIdMembersLimit::meta(),
+            'getCorporationsCorporationIdMembersTitles' => GetCorporationsCorporationIdMembersTitles::meta(),
+            'getCorporationsCorporationIdMembertracking' => GetCorporationsCorporationIdMembertracking::meta(),
+            'getCorporationsCorporationIdRoles' => GetCorporationsCorporationIdRoles::meta(),
+            'getCorporationsCorporationIdRolesHistory' => GetCorporationsCorporationIdRolesHistory::meta(),
+            'getCorporationsCorporationIdShareholders' => GetCorporationsCorporationIdShareholders::meta(),
+            'getCorporationsCorporationIdStandings' => GetCorporationsCorporationIdStandings::meta(),
+            'getCorporationsCorporationIdStarbases' => GetCorporationsCorporationIdStarbases::meta(),
+            'getCorporationsCorporationIdStarbasesStarbaseId' => GetCorporationsCorporationIdStarbasesStarbaseId::meta(),
+            'getCorporationsCorporationIdStructures' => GetCorporationsCorporationIdStructures::meta(),
+            'getCorporationsCorporationIdTitles' => GetCorporationsCorporationIdTitles::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getCorporationsNpccorps. Equivalent to GetCorporationsNpccorps::meta(). */
+    public static function getCorporationsNpccorpsMeta(): OperationMeta
+    {
+        return GetCorporationsNpccorps::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationId. Equivalent to GetCorporationsCorporationId::meta(). */
+    public static function getCorporationsCorporationIdMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationId::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdAlliancehistory. Equivalent to GetCorporationsCorporationIdAlliancehistory::meta(). */
+    public static function getCorporationsCorporationIdAlliancehistoryMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdAlliancehistory::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdBlueprints. Equivalent to GetCorporationsCorporationIdBlueprints::meta(). */
+    public static function getCorporationsCorporationIdBlueprintsMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdBlueprints::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdContainersLogs. Equivalent to GetCorporationsCorporationIdContainersLogs::meta(). */
+    public static function getCorporationsCorporationIdContainersLogsMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdContainersLogs::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdDivisions. Equivalent to GetCorporationsCorporationIdDivisions::meta(). */
+    public static function getCorporationsCorporationIdDivisionsMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdDivisions::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdFacilities. Equivalent to GetCorporationsCorporationIdFacilities::meta(). */
+    public static function getCorporationsCorporationIdFacilitiesMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdFacilities::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdIcons. Equivalent to GetCorporationsCorporationIdIcons::meta(). */
+    public static function getCorporationsCorporationIdIconsMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdIcons::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdMedals. Equivalent to GetCorporationsCorporationIdMedals::meta(). */
+    public static function getCorporationsCorporationIdMedalsMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdMedals::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdMedalsIssued. Equivalent to GetCorporationsCorporationIdMedalsIssued::meta(). */
+    public static function getCorporationsCorporationIdMedalsIssuedMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdMedalsIssued::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdMembers. Equivalent to GetCorporationsCorporationIdMembers::meta(). */
+    public static function getCorporationsCorporationIdMembersMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdMembers::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdMembersLimit. Equivalent to GetCorporationsCorporationIdMembersLimit::meta(). */
+    public static function getCorporationsCorporationIdMembersLimitMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdMembersLimit::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdMembersTitles. Equivalent to GetCorporationsCorporationIdMembersTitles::meta(). */
+    public static function getCorporationsCorporationIdMembersTitlesMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdMembersTitles::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdMembertracking. Equivalent to GetCorporationsCorporationIdMembertracking::meta(). */
+    public static function getCorporationsCorporationIdMembertrackingMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdMembertracking::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdRoles. Equivalent to GetCorporationsCorporationIdRoles::meta(). */
+    public static function getCorporationsCorporationIdRolesMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdRoles::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdRolesHistory. Equivalent to GetCorporationsCorporationIdRolesHistory::meta(). */
+    public static function getCorporationsCorporationIdRolesHistoryMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdRolesHistory::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdShareholders. Equivalent to GetCorporationsCorporationIdShareholders::meta(). */
+    public static function getCorporationsCorporationIdShareholdersMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdShareholders::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdStandings. Equivalent to GetCorporationsCorporationIdStandings::meta(). */
+    public static function getCorporationsCorporationIdStandingsMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdStandings::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdStarbases. Equivalent to GetCorporationsCorporationIdStarbases::meta(). */
+    public static function getCorporationsCorporationIdStarbasesMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdStarbases::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdStarbasesStarbaseId. Equivalent to GetCorporationsCorporationIdStarbasesStarbaseId::meta(). */
+    public static function getCorporationsCorporationIdStarbasesStarbaseIdMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdStarbasesStarbaseId::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdStructures. Equivalent to GetCorporationsCorporationIdStructures::meta(). */
+    public static function getCorporationsCorporationIdStructuresMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdStructures::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdTitles. Equivalent to GetCorporationsCorporationIdTitles::meta(). */
+    public static function getCorporationsCorporationIdTitlesMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdTitles::meta();
+    }
 
     /**
      * @return EsiResult<array<int>>
@@ -64,7 +223,7 @@ class CorporationResource extends AbstractResource
         $response = $this->transport->invoke('get', '/corporations/npccorps', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, static::OPERATION_META['getCorporationsNpccorps'] ?? null);
+        return EsiResult::fromRaw($response, $data, GetCorporationsNpccorps::meta());
     }
 
     /**
@@ -76,7 +235,7 @@ class CorporationResource extends AbstractResource
         $dto = CorporationsDetail::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCorporationsCorporationId'] ?? null;
+        $dto->operationMeta = GetCorporationsCorporationId::meta();
         return $dto;
     }
 
@@ -89,7 +248,7 @@ class CorporationResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdAlliancehistoryGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdAlliancehistory'] ?? null);
+        ), GetCorporationsCorporationIdAlliancehistory::meta());
     }
 
     /**
@@ -103,7 +262,7 @@ class CorporationResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdBlueprintsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdBlueprints'] ?? null);
+        ), GetCorporationsCorporationIdBlueprints::meta());
     }
 
     /**
@@ -117,7 +276,7 @@ class CorporationResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdContainersLogsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdContainersLogs'] ?? null);
+        ), GetCorporationsCorporationIdContainersLogs::meta());
     }
 
     /**
@@ -130,7 +289,7 @@ class CorporationResource extends AbstractResource
         $dto = CorporationsCorporationIdDivisionsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCorporationsCorporationIdDivisions'] ?? null;
+        $dto->operationMeta = GetCorporationsCorporationIdDivisions::meta();
         return $dto;
     }
 
@@ -144,7 +303,7 @@ class CorporationResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdFacilitiesGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdFacilities'] ?? null);
+        ), GetCorporationsCorporationIdFacilities::meta());
     }
 
     /**
@@ -156,7 +315,7 @@ class CorporationResource extends AbstractResource
         $dto = CorporationsCorporationIdIconsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCorporationsCorporationIdIcons'] ?? null;
+        $dto->operationMeta = GetCorporationsCorporationIdIcons::meta();
         return $dto;
     }
 
@@ -171,7 +330,7 @@ class CorporationResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdMedalsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdMedals'] ?? null);
+        ), GetCorporationsCorporationIdMedals::meta());
     }
 
     /**
@@ -185,7 +344,7 @@ class CorporationResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdMedalsIssuedGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdMedalsIssued'] ?? null);
+        ), GetCorporationsCorporationIdMedalsIssued::meta());
     }
 
     /**
@@ -197,7 +356,7 @@ class CorporationResource extends AbstractResource
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/members', ['corporation_id' => $corporationId], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, static::OPERATION_META['getCorporationsCorporationIdMembers'] ?? null);
+        return EsiResult::fromRaw($response, $data, GetCorporationsCorporationIdMembers::meta());
     }
 
     /**
@@ -209,7 +368,7 @@ class CorporationResource extends AbstractResource
         $response = $this->transport->invoke('get', '/corporations/{corporation_id}/members/limit', ['corporation_id' => $corporationId], []);
         /** @var int $scalar */
         $scalar = (int) $response->data;
-        return EsiResult::fromRaw($response, $scalar, static::OPERATION_META['getCorporationsCorporationIdMembersLimit'] ?? null);
+        return EsiResult::fromRaw($response, $scalar, GetCorporationsCorporationIdMembersLimit::meta());
     }
 
     /**
@@ -222,7 +381,7 @@ class CorporationResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdMembersTitlesGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdMembersTitles'] ?? null);
+        ), GetCorporationsCorporationIdMembersTitles::meta());
     }
 
     /**
@@ -235,7 +394,7 @@ class CorporationResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdMembertrackingGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdMembertracking'] ?? null);
+        ), GetCorporationsCorporationIdMembertracking::meta());
     }
 
     /**
@@ -248,7 +407,7 @@ class CorporationResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdRolesGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdRoles'] ?? null);
+        ), GetCorporationsCorporationIdRoles::meta());
     }
 
     /**
@@ -262,7 +421,7 @@ class CorporationResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdRolesHistoryGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdRolesHistory'] ?? null);
+        ), GetCorporationsCorporationIdRolesHistory::meta());
     }
 
     /**
@@ -276,7 +435,7 @@ class CorporationResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdShareholdersGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdShareholders'] ?? null);
+        ), GetCorporationsCorporationIdShareholders::meta());
     }
 
     /**
@@ -290,7 +449,7 @@ class CorporationResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdStandingsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdStandings'] ?? null);
+        ), GetCorporationsCorporationIdStandings::meta());
     }
 
     /**
@@ -304,7 +463,7 @@ class CorporationResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdStarbasesGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdStarbases'] ?? null);
+        ), GetCorporationsCorporationIdStarbases::meta());
     }
 
     /**
@@ -317,7 +476,7 @@ class CorporationResource extends AbstractResource
         $dto = CorporationsCorporationIdStarbasesStarbaseIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCorporationsCorporationIdStarbasesStarbaseId'] ?? null;
+        $dto->operationMeta = GetCorporationsCorporationIdStarbasesStarbaseId::meta();
         return $dto;
     }
 
@@ -332,7 +491,7 @@ class CorporationResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdStructuresGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdStructures'] ?? null);
+        ), GetCorporationsCorporationIdStructures::meta());
     }
 
     /**
@@ -345,6 +504,6 @@ class CorporationResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdTitlesGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdTitles'] ?? null);
+        ), GetCorporationsCorporationIdTitles::meta());
     }
 }

@@ -2,9 +2,13 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdAttributesGet;
+use Seatplus\EsiSchema\Operations\Skills\GetCharactersCharacterIdAttributes;
+use Seatplus\EsiSchema\Operations\Skills\GetCharactersCharacterIdSkillqueue;
 use Seatplus\EsiSchema\Responses\CharactersSkills;
+use Seatplus\EsiSchema\Operations\Skills\GetCharactersCharacterIdSkills;
 
 /**
  * ESI tag: Skills
@@ -14,11 +18,33 @@ use Seatplus\EsiSchema\Responses\CharactersSkills;
  */
 class SkillsResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getCharactersCharacterIdAttributes' => ['cacheAge' => 120, 'rateLimit' => ['group' => 'char-detail', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-skills.read_skills.v1'],
-        'getCharactersCharacterIdSkillqueue' => ['cacheAge' => 60, 'rateLimit' => ['group' => 'char-detail', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-skills.read_skillqueue.v1'],
-        'getCharactersCharacterIdSkills' => ['cacheAge' => 60, 'rateLimit' => ['group' => 'char-detail', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-skills.read_skills.v1'],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getCharactersCharacterIdAttributes' => GetCharactersCharacterIdAttributes::meta(),
+            'getCharactersCharacterIdSkillqueue' => GetCharactersCharacterIdSkillqueue::meta(),
+            'getCharactersCharacterIdSkills' => GetCharactersCharacterIdSkills::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdAttributes. Equivalent to GetCharactersCharacterIdAttributes::meta(). */
+    public static function getCharactersCharacterIdAttributesMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdAttributes::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdSkillqueue. Equivalent to GetCharactersCharacterIdSkillqueue::meta(). */
+    public static function getCharactersCharacterIdSkillqueueMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdSkillqueue::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdSkills. Equivalent to GetCharactersCharacterIdSkills::meta(). */
+    public static function getCharactersCharacterIdSkillsMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdSkills::meta();
+    }
 
     /**
      * @return CharactersCharacterIdAttributesGet
@@ -30,7 +56,7 @@ class SkillsResource extends AbstractResource
         $dto = CharactersCharacterIdAttributesGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdAttributes'] ?? null;
+        $dto->operationMeta = GetCharactersCharacterIdAttributes::meta();
         return $dto;
     }
 
@@ -41,7 +67,7 @@ class SkillsResource extends AbstractResource
     public function getCharactersCharacterIdSkillqueue(int $characterId): EsiResult
     {
         $response = $this->transport->invoke('get', '/characters/{character_id}/skillqueue', ['character_id' => $characterId], []);
-        return EsiResult::fromRaw($response, null, static::OPERATION_META['getCharactersCharacterIdSkillqueue'] ?? null);
+        return EsiResult::fromRaw($response, null, GetCharactersCharacterIdSkillqueue::meta());
     }
 
     /**
@@ -54,7 +80,7 @@ class SkillsResource extends AbstractResource
         $dto = CharactersSkills::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdSkills'] ?? null;
+        $dto->operationMeta = GetCharactersCharacterIdSkills::meta();
         return $dto;
     }
 }

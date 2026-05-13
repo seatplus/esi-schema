@@ -2,15 +2,24 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdFwStatsGet;
+use Seatplus\EsiSchema\Operations\FactionWarfare\GetCharactersCharacterIdFwStats;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdFwStatsGet;
+use Seatplus\EsiSchema\Operations\FactionWarfare\GetCorporationsCorporationIdFwStats;
 use Seatplus\EsiSchema\Responses\FwLeaderboardsGet;
+use Seatplus\EsiSchema\Operations\FactionWarfare\GetFwLeaderboards;
 use Seatplus\EsiSchema\Responses\FwLeaderboardsCharactersGet;
+use Seatplus\EsiSchema\Operations\FactionWarfare\GetFwLeaderboardsCharacters;
 use Seatplus\EsiSchema\Responses\FwLeaderboardsCorporationsGet;
+use Seatplus\EsiSchema\Operations\FactionWarfare\GetFwLeaderboardsCorporations;
 use Seatplus\EsiSchema\Responses\FwStatsGetItem;
+use Seatplus\EsiSchema\Operations\FactionWarfare\GetFwStats;
 use Seatplus\EsiSchema\Responses\FwSystemsGetItem;
+use Seatplus\EsiSchema\Operations\FactionWarfare\GetFwSystems;
 use Seatplus\EsiSchema\Responses\FwWarsGetItem;
+use Seatplus\EsiSchema\Operations\FactionWarfare\GetFwWars;
 
 /**
  * ESI tag: FactionWarfare
@@ -20,16 +29,68 @@ use Seatplus\EsiSchema\Responses\FwWarsGetItem;
  */
 class FactionWarfareResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getCharactersCharacterIdFwStats' => ['cacheAge' => null, 'rateLimit' => ['group' => 'factional-warfare', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-characters.read_fw_stats.v1'],
-        'getCorporationsCorporationIdFwStats' => ['cacheAge' => null, 'rateLimit' => ['group' => 'factional-warfare', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-corporations.read_fw_stats.v1'],
-        'getFwLeaderboards' => ['cacheAge' => null, 'rateLimit' => ['group' => 'factional-warfare', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getFwLeaderboardsCharacters' => ['cacheAge' => null, 'rateLimit' => ['group' => 'factional-warfare', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getFwLeaderboardsCorporations' => ['cacheAge' => null, 'rateLimit' => ['group' => 'factional-warfare', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getFwStats' => ['cacheAge' => null, 'rateLimit' => ['group' => 'factional-warfare', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getFwSystems' => ['cacheAge' => 1800, 'rateLimit' => ['group' => 'factional-warfare', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getFwWars' => ['cacheAge' => null, 'rateLimit' => ['group' => 'factional-warfare', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getCharactersCharacterIdFwStats' => GetCharactersCharacterIdFwStats::meta(),
+            'getCorporationsCorporationIdFwStats' => GetCorporationsCorporationIdFwStats::meta(),
+            'getFwLeaderboards' => GetFwLeaderboards::meta(),
+            'getFwLeaderboardsCharacters' => GetFwLeaderboardsCharacters::meta(),
+            'getFwLeaderboardsCorporations' => GetFwLeaderboardsCorporations::meta(),
+            'getFwStats' => GetFwStats::meta(),
+            'getFwSystems' => GetFwSystems::meta(),
+            'getFwWars' => GetFwWars::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdFwStats. Equivalent to GetCharactersCharacterIdFwStats::meta(). */
+    public static function getCharactersCharacterIdFwStatsMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdFwStats::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdFwStats. Equivalent to GetCorporationsCorporationIdFwStats::meta(). */
+    public static function getCorporationsCorporationIdFwStatsMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdFwStats::meta();
+    }
+
+    /** Pre-call metadata for getFwLeaderboards. Equivalent to GetFwLeaderboards::meta(). */
+    public static function getFwLeaderboardsMeta(): OperationMeta
+    {
+        return GetFwLeaderboards::meta();
+    }
+
+    /** Pre-call metadata for getFwLeaderboardsCharacters. Equivalent to GetFwLeaderboardsCharacters::meta(). */
+    public static function getFwLeaderboardsCharactersMeta(): OperationMeta
+    {
+        return GetFwLeaderboardsCharacters::meta();
+    }
+
+    /** Pre-call metadata for getFwLeaderboardsCorporations. Equivalent to GetFwLeaderboardsCorporations::meta(). */
+    public static function getFwLeaderboardsCorporationsMeta(): OperationMeta
+    {
+        return GetFwLeaderboardsCorporations::meta();
+    }
+
+    /** Pre-call metadata for getFwStats. Equivalent to GetFwStats::meta(). */
+    public static function getFwStatsMeta(): OperationMeta
+    {
+        return GetFwStats::meta();
+    }
+
+    /** Pre-call metadata for getFwSystems. Equivalent to GetFwSystems::meta(). */
+    public static function getFwSystemsMeta(): OperationMeta
+    {
+        return GetFwSystems::meta();
+    }
+
+    /** Pre-call metadata for getFwWars. Equivalent to GetFwWars::meta(). */
+    public static function getFwWarsMeta(): OperationMeta
+    {
+        return GetFwWars::meta();
+    }
 
     /**
      * @return CharactersCharacterIdFwStatsGet
@@ -41,7 +102,7 @@ class FactionWarfareResource extends AbstractResource
         $dto = CharactersCharacterIdFwStatsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdFwStats'] ?? null;
+        $dto->operationMeta = GetCharactersCharacterIdFwStats::meta();
         return $dto;
     }
 
@@ -55,7 +116,7 @@ class FactionWarfareResource extends AbstractResource
         $dto = CorporationsCorporationIdFwStatsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCorporationsCorporationIdFwStats'] ?? null;
+        $dto->operationMeta = GetCorporationsCorporationIdFwStats::meta();
         return $dto;
     }
 
@@ -68,7 +129,7 @@ class FactionWarfareResource extends AbstractResource
         $dto = FwLeaderboardsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getFwLeaderboards'] ?? null;
+        $dto->operationMeta = GetFwLeaderboards::meta();
         return $dto;
     }
 
@@ -81,7 +142,7 @@ class FactionWarfareResource extends AbstractResource
         $dto = FwLeaderboardsCharactersGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getFwLeaderboardsCharacters'] ?? null;
+        $dto->operationMeta = GetFwLeaderboardsCharacters::meta();
         return $dto;
     }
 
@@ -94,7 +155,7 @@ class FactionWarfareResource extends AbstractResource
         $dto = FwLeaderboardsCorporationsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getFwLeaderboardsCorporations'] ?? null;
+        $dto->operationMeta = GetFwLeaderboardsCorporations::meta();
         return $dto;
     }
 
@@ -107,7 +168,7 @@ class FactionWarfareResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => FwStatsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getFwStats'] ?? null);
+        ), GetFwStats::meta());
     }
 
     /**
@@ -119,7 +180,7 @@ class FactionWarfareResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => FwSystemsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getFwSystems'] ?? null);
+        ), GetFwSystems::meta());
     }
 
     /**
@@ -131,6 +192,6 @@ class FactionWarfareResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => FwWarsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getFwWars'] ?? null);
+        ), GetFwWars::meta());
     }
 }

@@ -2,8 +2,10 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\Responses\InsurancePricesGetItem;
+use Seatplus\EsiSchema\Operations\Insurance\GetInsurancePrices;
 
 /**
  * ESI tag: Insurance
@@ -13,9 +15,19 @@ use Seatplus\EsiSchema\Responses\InsurancePricesGetItem;
  */
 class InsuranceResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getInsurancePrices' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'insurance', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getInsurancePrices' => GetInsurancePrices::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getInsurancePrices. Equivalent to GetInsurancePrices::meta(). */
+    public static function getInsurancePricesMeta(): OperationMeta
+    {
+        return GetInsurancePrices::meta();
+    }
 
     /**
      * @return EsiResult<array<InsurancePricesGetItem>>
@@ -26,6 +38,6 @@ class InsuranceResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => InsurancePricesGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getInsurancePrices'] ?? null);
+        ), GetInsurancePrices::meta());
     }
 }

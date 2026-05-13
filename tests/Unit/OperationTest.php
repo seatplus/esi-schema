@@ -31,46 +31,27 @@ it('GetCharactersCharacterIdAssets::meta returns correct metadata', function ():
     $meta = GetCharactersCharacterIdAssets::meta();
 
     expect($meta)->toBeInstanceOf(OperationMeta::class)
-        ->and($meta->cacheAge())->toBe(3600)
-        ->and($meta->rateLimitGroup())->toBe('char-asset')
-        ->and($meta->rateLimitMaxTokens())->toBe(1800)
-        ->and($meta->requiredScope())->toBe('esi-assets.read_assets.v1')
-        ->and($meta->requiredRoles())->toBeEmpty()
-        ->and($meta->usesCursor())->toBeFalse();
+        ->and($meta->cacheAge)->toBe(3600)
+        ->and($meta->rateLimitGroup)->toBe('char-asset')
+        ->and($meta->rateLimitMaxTokens)->toBe(1800)
+        ->and($meta->requiredScope)->toBe('esi-assets.read_assets.v1')
+        ->and($meta->requiredRoles)->toBeEmpty()
+        ->and($meta->usesCursor)->toBeFalse();
 });
 
 it('GetCorporationsCorporationIdAssets::meta returns director role requirement', function (): void {
     $meta = GetCorporationsCorporationIdAssets::meta();
 
-    expect($meta->requiredRoles())->toBe(['Director'])
-        ->and($meta->requiredScope())->toBe('esi-assets.read_corporation_assets.v1')
-        ->and($meta->rateLimitGroup())->toBe('corp-asset');
+    expect($meta->requiredRoles)->toBe(['Director'])
+        ->and($meta->requiredScope)->toBe('esi-assets.read_corporation_assets.v1')
+        ->and($meta->rateLimitGroup)->toBe('corp-asset');
 });
 
 it('GetMarketsPrices::meta returns null scope for public endpoint', function (): void {
     $meta = GetMarketsPrices::meta();
 
-    expect($meta->requiredScope())->toBeNull()
-        ->and($meta->requiredRoles())->toBeEmpty();
-});
-
-// ---------------------------------------------------------------------------
-// tokenSatisfies() via operation meta
-// ---------------------------------------------------------------------------
-
-it('operation meta tokenSatisfies returns true when scope is present', function (): void {
-    $scopes = ['esi-assets.read_assets.v1', 'esi-wallet.read_character_wallet.v1'];
-
-    expect(GetCharactersCharacterIdAssets::meta()->tokenSatisfies($scopes))->toBeTrue();
-});
-
-it('operation meta tokenSatisfies returns false when scope is missing', function (): void {
-    expect(GetCharactersCharacterIdAssets::meta()->tokenSatisfies(['esi-wallet.read_character_wallet.v1']))
-        ->toBeFalse();
-});
-
-it('public operation meta tokenSatisfies always returns true', function (): void {
-    expect(GetMarketsPrices::meta()->tokenSatisfies([]))->toBeTrue();
+    expect($meta->requiredScope)->toBeNull()
+        ->and($meta->requiredRoles)->toBeEmpty();
 });
 
 // ---------------------------------------------------------------------------

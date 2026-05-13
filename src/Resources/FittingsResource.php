@@ -2,8 +2,12 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdFittingsGetItem;
+use Seatplus\EsiSchema\Operations\Fittings\GetCharactersCharacterIdFittings;
+use Seatplus\EsiSchema\Operations\Fittings\PostCharactersCharacterIdFittings;
+use Seatplus\EsiSchema\Operations\Fittings\DeleteCharactersCharacterIdFittingsFittingId;
 
 /**
  * ESI tag: Fittings
@@ -13,11 +17,33 @@ use Seatplus\EsiSchema\Responses\CharactersCharacterIdFittingsGetItem;
  */
 class FittingsResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getCharactersCharacterIdFittings' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'fitting', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-fittings.read_fittings.v1'],
-        'postCharactersCharacterIdFittings' => ['cacheAge' => null, 'rateLimit' => ['group' => 'fitting', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-fittings.write_fittings.v1'],
-        'deleteCharactersCharacterIdFittingsFittingId' => ['cacheAge' => null, 'rateLimit' => ['group' => 'fitting', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-fittings.write_fittings.v1'],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getCharactersCharacterIdFittings' => GetCharactersCharacterIdFittings::meta(),
+            'postCharactersCharacterIdFittings' => PostCharactersCharacterIdFittings::meta(),
+            'deleteCharactersCharacterIdFittingsFittingId' => DeleteCharactersCharacterIdFittingsFittingId::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdFittings. Equivalent to GetCharactersCharacterIdFittings::meta(). */
+    public static function getCharactersCharacterIdFittingsMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdFittings::meta();
+    }
+
+    /** Pre-call metadata for postCharactersCharacterIdFittings. Equivalent to PostCharactersCharacterIdFittings::meta(). */
+    public static function postCharactersCharacterIdFittingsMeta(): OperationMeta
+    {
+        return PostCharactersCharacterIdFittings::meta();
+    }
+
+    /** Pre-call metadata for deleteCharactersCharacterIdFittingsFittingId. Equivalent to DeleteCharactersCharacterIdFittingsFittingId::meta(). */
+    public static function deleteCharactersCharacterIdFittingsFittingIdMeta(): OperationMeta
+    {
+        return DeleteCharactersCharacterIdFittingsFittingId::meta();
+    }
 
     /**
      * @return EsiResult<array<CharactersCharacterIdFittingsGetItem>>
@@ -29,7 +55,7 @@ class FittingsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdFittingsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdFittings'] ?? null);
+        ), GetCharactersCharacterIdFittings::meta());
     }
 
     /**
@@ -39,7 +65,7 @@ class FittingsResource extends AbstractResource
     public function postCharactersCharacterIdFittings(mixed $requestBody, int $characterId): EsiResult
     {
         $response = $this->transport->invoke('post', '/characters/{character_id}/fittings', ['character_id' => $characterId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, static::OPERATION_META['postCharactersCharacterIdFittings'] ?? null);
+        return EsiResult::fromRaw($response, null, PostCharactersCharacterIdFittings::meta());
     }
 
     /**
@@ -49,6 +75,6 @@ class FittingsResource extends AbstractResource
     public function deleteCharactersCharacterIdFittingsFittingId(int $characterId, int $fittingId): EsiResult
     {
         $response = $this->transport->invoke('delete', '/characters/{character_id}/fittings/{fitting_id}', ['character_id' => $characterId, 'fitting_id' => $fittingId], [], []);
-        return EsiResult::fromRaw($response, null, static::OPERATION_META['deleteCharactersCharacterIdFittingsFittingId'] ?? null);
+        return EsiResult::fromRaw($response, null, DeleteCharactersCharacterIdFittingsFittingId::meta());
     }
 }

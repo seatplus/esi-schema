@@ -2,8 +2,11 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdClonesGet;
+use Seatplus\EsiSchema\Operations\Clones\GetCharactersCharacterIdClones;
+use Seatplus\EsiSchema\Operations\Clones\GetCharactersCharacterIdImplants;
 
 /**
  * ESI tag: Clones
@@ -13,10 +16,26 @@ use Seatplus\EsiSchema\Responses\CharactersCharacterIdClonesGet;
  */
 class ClonesResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getCharactersCharacterIdClones' => ['cacheAge' => 120, 'rateLimit' => ['group' => 'char-location', 'max-tokens' => 1200, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-clones.read_clones.v1'],
-        'getCharactersCharacterIdImplants' => ['cacheAge' => 120, 'rateLimit' => ['group' => 'char-detail', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-clones.read_implants.v1'],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getCharactersCharacterIdClones' => GetCharactersCharacterIdClones::meta(),
+            'getCharactersCharacterIdImplants' => GetCharactersCharacterIdImplants::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdClones. Equivalent to GetCharactersCharacterIdClones::meta(). */
+    public static function getCharactersCharacterIdClonesMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdClones::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdImplants. Equivalent to GetCharactersCharacterIdImplants::meta(). */
+    public static function getCharactersCharacterIdImplantsMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdImplants::meta();
+    }
 
     /**
      * @return CharactersCharacterIdClonesGet
@@ -28,7 +47,7 @@ class ClonesResource extends AbstractResource
         $dto = CharactersCharacterIdClonesGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdClones'] ?? null;
+        $dto->operationMeta = GetCharactersCharacterIdClones::meta();
         return $dto;
     }
 
@@ -41,6 +60,6 @@ class ClonesResource extends AbstractResource
         $response = $this->transport->invoke('get', '/characters/{character_id}/implants', ['character_id' => $characterId], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, static::OPERATION_META['getCharactersCharacterIdImplants'] ?? null);
+        return EsiResult::fromRaw($response, $data, GetCharactersCharacterIdImplants::meta());
     }
 }

@@ -2,10 +2,14 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdKillmailsRecentGetItem;
+use Seatplus\EsiSchema\Operations\Killmails\GetCharactersCharacterIdKillmailsRecent;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdKillmailsRecentGetItem;
+use Seatplus\EsiSchema\Operations\Killmails\GetCorporationsCorporationIdKillmailsRecent;
 use Seatplus\EsiSchema\Responses\KillmailsKillmailIdKillmailHashGet;
+use Seatplus\EsiSchema\Operations\Killmails\GetKillmailsKillmailIdKillmailHash;
 
 /**
  * ESI tag: Killmails
@@ -15,11 +19,33 @@ use Seatplus\EsiSchema\Responses\KillmailsKillmailIdKillmailHashGet;
  */
 class KillmailsResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getCharactersCharacterIdKillmailsRecent' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'char-killmail', 'max-tokens' => 30, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-killmails.read_killmails.v1'],
-        'getCorporationsCorporationIdKillmailsRecent' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'corp-killmail', 'max-tokens' => 30, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false, 'requiredScope' => 'esi-killmails.read_corporation_killmails.v1'],
-        'getKillmailsKillmailIdKillmailHash' => ['cacheAge' => 2592000, 'rateLimit' => ['group' => 'killmail', 'max-tokens' => 3600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getCharactersCharacterIdKillmailsRecent' => GetCharactersCharacterIdKillmailsRecent::meta(),
+            'getCorporationsCorporationIdKillmailsRecent' => GetCorporationsCorporationIdKillmailsRecent::meta(),
+            'getKillmailsKillmailIdKillmailHash' => GetKillmailsKillmailIdKillmailHash::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdKillmailsRecent. Equivalent to GetCharactersCharacterIdKillmailsRecent::meta(). */
+    public static function getCharactersCharacterIdKillmailsRecentMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdKillmailsRecent::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdKillmailsRecent. Equivalent to GetCorporationsCorporationIdKillmailsRecent::meta(). */
+    public static function getCorporationsCorporationIdKillmailsRecentMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdKillmailsRecent::meta();
+    }
+
+    /** Pre-call metadata for getKillmailsKillmailIdKillmailHash. Equivalent to GetKillmailsKillmailIdKillmailHash::meta(). */
+    public static function getKillmailsKillmailIdKillmailHashMeta(): OperationMeta
+    {
+        return GetKillmailsKillmailIdKillmailHash::meta();
+    }
 
     /**
      * @return EsiResult<array<CharactersCharacterIdKillmailsRecentGetItem>>
@@ -32,7 +58,7 @@ class KillmailsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdKillmailsRecentGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdKillmailsRecent'] ?? null);
+        ), GetCharactersCharacterIdKillmailsRecent::meta());
     }
 
     /**
@@ -46,7 +72,7 @@ class KillmailsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdKillmailsRecentGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdKillmailsRecent'] ?? null);
+        ), GetCorporationsCorporationIdKillmailsRecent::meta());
     }
 
     /**
@@ -58,7 +84,7 @@ class KillmailsResource extends AbstractResource
         $dto = KillmailsKillmailIdKillmailHashGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getKillmailsKillmailIdKillmailHash'] ?? null;
+        $dto->operationMeta = GetKillmailsKillmailIdKillmailHash::meta();
         return $dto;
     }
 }

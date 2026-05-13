@@ -2,10 +2,14 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\Responses\SovereigntyCampaignsGetItem;
+use Seatplus\EsiSchema\Operations\Sovereignty\GetSovereigntyCampaigns;
 use Seatplus\EsiSchema\Responses\SovereigntyMapGetItem;
+use Seatplus\EsiSchema\Operations\Sovereignty\GetSovereigntyMap;
 use Seatplus\EsiSchema\Responses\SovereigntyStructuresGetItem;
+use Seatplus\EsiSchema\Operations\Sovereignty\GetSovereigntyStructures;
 
 /**
  * ESI tag: Sovereignty
@@ -15,11 +19,33 @@ use Seatplus\EsiSchema\Responses\SovereigntyStructuresGetItem;
  */
 class SovereigntyResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getSovereigntyCampaigns' => ['cacheAge' => 5, 'rateLimit' => ['group' => 'sovereignty', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getSovereigntyMap' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'sovereignty', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getSovereigntyStructures' => ['cacheAge' => 120, 'rateLimit' => ['group' => 'sovereignty', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getSovereigntyCampaigns' => GetSovereigntyCampaigns::meta(),
+            'getSovereigntyMap' => GetSovereigntyMap::meta(),
+            'getSovereigntyStructures' => GetSovereigntyStructures::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getSovereigntyCampaigns. Equivalent to GetSovereigntyCampaigns::meta(). */
+    public static function getSovereigntyCampaignsMeta(): OperationMeta
+    {
+        return GetSovereigntyCampaigns::meta();
+    }
+
+    /** Pre-call metadata for getSovereigntyMap. Equivalent to GetSovereigntyMap::meta(). */
+    public static function getSovereigntyMapMeta(): OperationMeta
+    {
+        return GetSovereigntyMap::meta();
+    }
+
+    /** Pre-call metadata for getSovereigntyStructures. Equivalent to GetSovereigntyStructures::meta(). */
+    public static function getSovereigntyStructuresMeta(): OperationMeta
+    {
+        return GetSovereigntyStructures::meta();
+    }
 
     /**
      * @return EsiResult<array<SovereigntyCampaignsGetItem>>
@@ -30,7 +56,7 @@ class SovereigntyResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => SovereigntyCampaignsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getSovereigntyCampaigns'] ?? null);
+        ), GetSovereigntyCampaigns::meta());
     }
 
     /**
@@ -42,7 +68,7 @@ class SovereigntyResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => SovereigntyMapGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getSovereigntyMap'] ?? null);
+        ), GetSovereigntyMap::meta());
     }
 
     /**
@@ -54,6 +80,6 @@ class SovereigntyResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => SovereigntyStructuresGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getSovereigntyStructures'] ?? null);
+        ), GetSovereigntyStructures::meta());
     }
 }

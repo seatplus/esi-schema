@@ -2,8 +2,10 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\Responses\IncursionsGetItem;
+use Seatplus\EsiSchema\Operations\Incursions\GetIncursions;
 
 /**
  * ESI tag: Incursions
@@ -13,9 +15,19 @@ use Seatplus\EsiSchema\Responses\IncursionsGetItem;
  */
 class IncursionsResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getIncursions' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'incursion', 'max-tokens' => 150, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getIncursions' => GetIncursions::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getIncursions. Equivalent to GetIncursions::meta(). */
+    public static function getIncursionsMeta(): OperationMeta
+    {
+        return GetIncursions::meta();
+    }
 
     /**
      * @return EsiResult<array<IncursionsGetItem>>
@@ -26,6 +38,6 @@ class IncursionsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => IncursionsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getIncursions'] ?? null);
+        ), GetIncursions::meta());
     }
 }

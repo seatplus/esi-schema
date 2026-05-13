@@ -2,10 +2,15 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\Responses\CorporationsProjectsListing;
+use Seatplus\EsiSchema\Operations\CorporationProjects\GetCorporationsProjectsListing;
 use Seatplus\EsiSchema\Responses\CorporationsProjectsDetail;
+use Seatplus\EsiSchema\Operations\CorporationProjects\GetCorporationsProjectsDetail;
 use Seatplus\EsiSchema\Responses\CorporationsProjectsContribution;
+use Seatplus\EsiSchema\Operations\CorporationProjects\GetCorporationsProjectsContribution;
 use Seatplus\EsiSchema\Responses\CorporationsProjectsContributors;
+use Seatplus\EsiSchema\Operations\CorporationProjects\GetCorporationsProjectsContributors;
 
 /**
  * ESI tag: CorporationProjects
@@ -15,12 +20,40 @@ use Seatplus\EsiSchema\Responses\CorporationsProjectsContributors;
  */
 class CorporationProjectsResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getCorporationsProjectsListing' => ['cacheAge' => 0, 'rateLimit' => ['group' => 'corp-project', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => true, 'requiredScope' => 'esi-corporations.read_projects.v1'],
-        'getCorporationsProjectsDetail' => ['cacheAge' => 60, 'rateLimit' => ['group' => 'corp-project', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-corporations.read_projects.v1'],
-        'getCorporationsProjectsContribution' => ['cacheAge' => 60, 'rateLimit' => ['group' => 'corp-project', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-corporations.read_projects.v1'],
-        'getCorporationsProjectsContributors' => ['cacheAge' => 0, 'rateLimit' => ['group' => 'corp-project', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => ['Project_Manager'], 'cursor' => true, 'requiredScope' => 'esi-corporations.read_projects.v1'],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getCorporationsProjectsListing' => GetCorporationsProjectsListing::meta(),
+            'getCorporationsProjectsDetail' => GetCorporationsProjectsDetail::meta(),
+            'getCorporationsProjectsContribution' => GetCorporationsProjectsContribution::meta(),
+            'getCorporationsProjectsContributors' => GetCorporationsProjectsContributors::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getCorporationsProjectsListing. Equivalent to GetCorporationsProjectsListing::meta(). */
+    public static function getCorporationsProjectsListingMeta(): OperationMeta
+    {
+        return GetCorporationsProjectsListing::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsProjectsDetail. Equivalent to GetCorporationsProjectsDetail::meta(). */
+    public static function getCorporationsProjectsDetailMeta(): OperationMeta
+    {
+        return GetCorporationsProjectsDetail::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsProjectsContribution. Equivalent to GetCorporationsProjectsContribution::meta(). */
+    public static function getCorporationsProjectsContributionMeta(): OperationMeta
+    {
+        return GetCorporationsProjectsContribution::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsProjectsContributors. Equivalent to GetCorporationsProjectsContributors::meta(). */
+    public static function getCorporationsProjectsContributorsMeta(): OperationMeta
+    {
+        return GetCorporationsProjectsContributors::meta();
+    }
 
     /**
      * @return CorporationsProjectsListing
@@ -32,7 +65,7 @@ class CorporationProjectsResource extends AbstractResource
         $dto = CorporationsProjectsListing::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCorporationsProjectsListing'] ?? null;
+        $dto->operationMeta = GetCorporationsProjectsListing::meta();
         return $dto;
     }
 
@@ -46,7 +79,7 @@ class CorporationProjectsResource extends AbstractResource
         $dto = CorporationsProjectsDetail::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCorporationsProjectsDetail'] ?? null;
+        $dto->operationMeta = GetCorporationsProjectsDetail::meta();
         return $dto;
     }
 
@@ -60,7 +93,7 @@ class CorporationProjectsResource extends AbstractResource
         $dto = CorporationsProjectsContribution::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCorporationsProjectsContribution'] ?? null;
+        $dto->operationMeta = GetCorporationsProjectsContribution::meta();
         return $dto;
     }
 
@@ -74,7 +107,7 @@ class CorporationProjectsResource extends AbstractResource
         $dto = CorporationsProjectsContributors::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCorporationsProjectsContributors'] ?? null;
+        $dto->operationMeta = GetCorporationsProjectsContributors::meta();
         return $dto;
     }
 }

@@ -2,13 +2,23 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\Responses\AlliancesAllianceIdContactsGetItem;
+use Seatplus\EsiSchema\Operations\Contacts\GetAlliancesAllianceIdContacts;
 use Seatplus\EsiSchema\Responses\AlliancesAllianceIdContactsLabelsGetItem;
+use Seatplus\EsiSchema\Operations\Contacts\GetAlliancesAllianceIdContactsLabels;
+use Seatplus\EsiSchema\Operations\Contacts\DeleteCharactersCharacterIdContacts;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdContactsGetItem;
+use Seatplus\EsiSchema\Operations\Contacts\GetCharactersCharacterIdContacts;
+use Seatplus\EsiSchema\Operations\Contacts\PostCharactersCharacterIdContacts;
+use Seatplus\EsiSchema\Operations\Contacts\PutCharactersCharacterIdContacts;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdContactsLabelsGetItem;
+use Seatplus\EsiSchema\Operations\Contacts\GetCharactersCharacterIdContactsLabels;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdContactsGetItem;
+use Seatplus\EsiSchema\Operations\Contacts\GetCorporationsCorporationIdContacts;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdContactsLabelsGetItem;
+use Seatplus\EsiSchema\Operations\Contacts\GetCorporationsCorporationIdContactsLabels;
 
 /**
  * ESI tag: Contacts
@@ -18,17 +28,75 @@ use Seatplus\EsiSchema\Responses\CorporationsCorporationIdContactsLabelsGetItem;
  */
 class ContactsResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getAlliancesAllianceIdContacts' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'alliance-social', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-alliances.read_contacts.v1'],
-        'getAlliancesAllianceIdContactsLabels' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'alliance-social', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-alliances.read_contacts.v1'],
-        'deleteCharactersCharacterIdContacts' => ['cacheAge' => null, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-characters.write_contacts.v1'],
-        'getCharactersCharacterIdContacts' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-characters.read_contacts.v1'],
-        'postCharactersCharacterIdContacts' => ['cacheAge' => null, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-characters.write_contacts.v1'],
-        'putCharactersCharacterIdContacts' => ['cacheAge' => null, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-characters.write_contacts.v1'],
-        'getCharactersCharacterIdContactsLabels' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-characters.read_contacts.v1'],
-        'getCorporationsCorporationIdContacts' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'corp-social', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-corporations.read_contacts.v1'],
-        'getCorporationsCorporationIdContactsLabels' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'corp-social', 'max-tokens' => 300, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-corporations.read_contacts.v1'],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getAlliancesAllianceIdContacts' => GetAlliancesAllianceIdContacts::meta(),
+            'getAlliancesAllianceIdContactsLabels' => GetAlliancesAllianceIdContactsLabels::meta(),
+            'deleteCharactersCharacterIdContacts' => DeleteCharactersCharacterIdContacts::meta(),
+            'getCharactersCharacterIdContacts' => GetCharactersCharacterIdContacts::meta(),
+            'postCharactersCharacterIdContacts' => PostCharactersCharacterIdContacts::meta(),
+            'putCharactersCharacterIdContacts' => PutCharactersCharacterIdContacts::meta(),
+            'getCharactersCharacterIdContactsLabels' => GetCharactersCharacterIdContactsLabels::meta(),
+            'getCorporationsCorporationIdContacts' => GetCorporationsCorporationIdContacts::meta(),
+            'getCorporationsCorporationIdContactsLabels' => GetCorporationsCorporationIdContactsLabels::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getAlliancesAllianceIdContacts. Equivalent to GetAlliancesAllianceIdContacts::meta(). */
+    public static function getAlliancesAllianceIdContactsMeta(): OperationMeta
+    {
+        return GetAlliancesAllianceIdContacts::meta();
+    }
+
+    /** Pre-call metadata for getAlliancesAllianceIdContactsLabels. Equivalent to GetAlliancesAllianceIdContactsLabels::meta(). */
+    public static function getAlliancesAllianceIdContactsLabelsMeta(): OperationMeta
+    {
+        return GetAlliancesAllianceIdContactsLabels::meta();
+    }
+
+    /** Pre-call metadata for deleteCharactersCharacterIdContacts. Equivalent to DeleteCharactersCharacterIdContacts::meta(). */
+    public static function deleteCharactersCharacterIdContactsMeta(): OperationMeta
+    {
+        return DeleteCharactersCharacterIdContacts::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdContacts. Equivalent to GetCharactersCharacterIdContacts::meta(). */
+    public static function getCharactersCharacterIdContactsMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdContacts::meta();
+    }
+
+    /** Pre-call metadata for postCharactersCharacterIdContacts. Equivalent to PostCharactersCharacterIdContacts::meta(). */
+    public static function postCharactersCharacterIdContactsMeta(): OperationMeta
+    {
+        return PostCharactersCharacterIdContacts::meta();
+    }
+
+    /** Pre-call metadata for putCharactersCharacterIdContacts. Equivalent to PutCharactersCharacterIdContacts::meta(). */
+    public static function putCharactersCharacterIdContactsMeta(): OperationMeta
+    {
+        return PutCharactersCharacterIdContacts::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdContactsLabels. Equivalent to GetCharactersCharacterIdContactsLabels::meta(). */
+    public static function getCharactersCharacterIdContactsLabelsMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdContactsLabels::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdContacts. Equivalent to GetCorporationsCorporationIdContacts::meta(). */
+    public static function getCorporationsCorporationIdContactsMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdContacts::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdContactsLabels. Equivalent to GetCorporationsCorporationIdContactsLabels::meta(). */
+    public static function getCorporationsCorporationIdContactsLabelsMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdContactsLabels::meta();
+    }
 
     /**
      * @return EsiResult<array<AlliancesAllianceIdContactsGetItem>>
@@ -41,7 +109,7 @@ class ContactsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => AlliancesAllianceIdContactsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getAlliancesAllianceIdContacts'] ?? null);
+        ), GetAlliancesAllianceIdContacts::meta());
     }
 
     /**
@@ -54,7 +122,7 @@ class ContactsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => AlliancesAllianceIdContactsLabelsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getAlliancesAllianceIdContactsLabels'] ?? null);
+        ), GetAlliancesAllianceIdContactsLabels::meta());
     }
 
     /**
@@ -64,7 +132,7 @@ class ContactsResource extends AbstractResource
     public function deleteCharactersCharacterIdContacts(int $characterId, array $contactIds): EsiResult
     {
         $response = $this->transport->invoke('delete', '/characters/{character_id}/contacts', ['character_id' => $characterId], ['contact_ids' => $contactIds], []);
-        return EsiResult::fromRaw($response, null, static::OPERATION_META['deleteCharactersCharacterIdContacts'] ?? null);
+        return EsiResult::fromRaw($response, null, DeleteCharactersCharacterIdContacts::meta());
     }
 
     /**
@@ -78,7 +146,7 @@ class ContactsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdContactsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdContacts'] ?? null);
+        ), GetCharactersCharacterIdContacts::meta());
     }
 
     /**
@@ -88,7 +156,7 @@ class ContactsResource extends AbstractResource
     public function postCharactersCharacterIdContacts(mixed $requestBody, int $characterId, float $standing, ?array $labelIds = null, ?bool $watched = null): EsiResult
     {
         $response = $this->transport->invoke('post', '/characters/{character_id}/contacts', ['character_id' => $characterId], ['label_ids' => $labelIds, 'standing' => $standing, 'watched' => $watched], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, static::OPERATION_META['postCharactersCharacterIdContacts'] ?? null);
+        return EsiResult::fromRaw($response, null, PostCharactersCharacterIdContacts::meta());
     }
 
     /**
@@ -98,7 +166,7 @@ class ContactsResource extends AbstractResource
     public function putCharactersCharacterIdContacts(mixed $requestBody, int $characterId, float $standing, ?array $labelIds = null, ?bool $watched = null): EsiResult
     {
         $response = $this->transport->invoke('put', '/characters/{character_id}/contacts', ['character_id' => $characterId], ['label_ids' => $labelIds, 'standing' => $standing, 'watched' => $watched], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, static::OPERATION_META['putCharactersCharacterIdContacts'] ?? null);
+        return EsiResult::fromRaw($response, null, PutCharactersCharacterIdContacts::meta());
     }
 
     /**
@@ -111,7 +179,7 @@ class ContactsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdContactsLabelsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdContactsLabels'] ?? null);
+        ), GetCharactersCharacterIdContactsLabels::meta());
     }
 
     /**
@@ -125,7 +193,7 @@ class ContactsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdContactsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdContacts'] ?? null);
+        ), GetCorporationsCorporationIdContacts::meta());
     }
 
     /**
@@ -138,6 +206,6 @@ class ContactsResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdContactsLabelsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdContactsLabels'] ?? null);
+        ), GetCorporationsCorporationIdContactsLabels::meta());
     }
 }

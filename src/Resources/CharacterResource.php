@@ -2,20 +2,35 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\Responses\CharactersAffiliationPostItem;
+use Seatplus\EsiSchema\Operations\Character\PostCharactersAffiliation;
 use Seatplus\EsiSchema\Responses\CharactersDetail;
+use Seatplus\EsiSchema\Operations\Character\GetCharactersCharacterId;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdAgentsResearchGetItem;
+use Seatplus\EsiSchema\Operations\Character\GetCharactersCharacterIdAgentsResearch;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdBlueprintsGetItem;
+use Seatplus\EsiSchema\Operations\Character\GetCharactersCharacterIdBlueprints;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdCorporationhistoryGetItem;
+use Seatplus\EsiSchema\Operations\Character\GetCharactersCharacterIdCorporationhistory;
+use Seatplus\EsiSchema\Operations\Character\PostCharactersCharacterIdCspa;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdFatigueGet;
+use Seatplus\EsiSchema\Operations\Character\GetCharactersCharacterIdFatigue;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdMedalsGetItem;
+use Seatplus\EsiSchema\Operations\Character\GetCharactersCharacterIdMedals;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdNotificationsGetItem;
+use Seatplus\EsiSchema\Operations\Character\GetCharactersCharacterIdNotifications;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdNotificationsContactsGetItem;
+use Seatplus\EsiSchema\Operations\Character\GetCharactersCharacterIdNotificationsContacts;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdPortraitGet;
+use Seatplus\EsiSchema\Operations\Character\GetCharactersCharacterIdPortrait;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdRolesGet;
+use Seatplus\EsiSchema\Operations\Character\GetCharactersCharacterIdRoles;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdStandingsGetItem;
+use Seatplus\EsiSchema\Operations\Character\GetCharactersCharacterIdStandings;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdTitlesGetItem;
+use Seatplus\EsiSchema\Operations\Character\GetCharactersCharacterIdTitles;
 
 /**
  * ESI tag: Character
@@ -25,22 +40,110 @@ use Seatplus\EsiSchema\Responses\CharactersCharacterIdTitlesGetItem;
  */
 class CharacterResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'postCharactersAffiliation' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getCharactersCharacterId' => ['cacheAge' => 86400, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getCharactersCharacterIdAgentsResearch' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-characters.read_agents_research.v1'],
-        'getCharactersCharacterIdBlueprints' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-characters.read_blueprints.v1'],
-        'getCharactersCharacterIdCorporationhistory' => ['cacheAge' => 86400, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'postCharactersCharacterIdCspa' => ['cacheAge' => null, 'rateLimit' => ['group' => 'char-detail', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-characters.read_contacts.v1'],
-        'getCharactersCharacterIdFatigue' => ['cacheAge' => 300, 'rateLimit' => ['group' => 'char-location', 'max-tokens' => 1200, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-characters.read_fatigue.v1'],
-        'getCharactersCharacterIdMedals' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-detail', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-characters.read_medals.v1'],
-        'getCharactersCharacterIdNotifications' => ['cacheAge' => 600, 'rateLimit' => ['group' => 'char-notification', 'max-tokens' => 15, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-characters.read_notifications.v1'],
-        'getCharactersCharacterIdNotificationsContacts' => ['cacheAge' => 600, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-characters.read_notifications.v1'],
-        'getCharactersCharacterIdPortrait' => ['cacheAge' => null, 'rateLimit' => ['group' => 'char-detail', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getCharactersCharacterIdRoles' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-detail', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-characters.read_corporation_roles.v1'],
-        'getCharactersCharacterIdStandings' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-social', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-characters.read_standings.v1'],
-        'getCharactersCharacterIdTitles' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-detail', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-characters.read_titles.v1'],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'postCharactersAffiliation' => PostCharactersAffiliation::meta(),
+            'getCharactersCharacterId' => GetCharactersCharacterId::meta(),
+            'getCharactersCharacterIdAgentsResearch' => GetCharactersCharacterIdAgentsResearch::meta(),
+            'getCharactersCharacterIdBlueprints' => GetCharactersCharacterIdBlueprints::meta(),
+            'getCharactersCharacterIdCorporationhistory' => GetCharactersCharacterIdCorporationhistory::meta(),
+            'postCharactersCharacterIdCspa' => PostCharactersCharacterIdCspa::meta(),
+            'getCharactersCharacterIdFatigue' => GetCharactersCharacterIdFatigue::meta(),
+            'getCharactersCharacterIdMedals' => GetCharactersCharacterIdMedals::meta(),
+            'getCharactersCharacterIdNotifications' => GetCharactersCharacterIdNotifications::meta(),
+            'getCharactersCharacterIdNotificationsContacts' => GetCharactersCharacterIdNotificationsContacts::meta(),
+            'getCharactersCharacterIdPortrait' => GetCharactersCharacterIdPortrait::meta(),
+            'getCharactersCharacterIdRoles' => GetCharactersCharacterIdRoles::meta(),
+            'getCharactersCharacterIdStandings' => GetCharactersCharacterIdStandings::meta(),
+            'getCharactersCharacterIdTitles' => GetCharactersCharacterIdTitles::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for postCharactersAffiliation. Equivalent to PostCharactersAffiliation::meta(). */
+    public static function postCharactersAffiliationMeta(): OperationMeta
+    {
+        return PostCharactersAffiliation::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterId. Equivalent to GetCharactersCharacterId::meta(). */
+    public static function getCharactersCharacterIdMeta(): OperationMeta
+    {
+        return GetCharactersCharacterId::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdAgentsResearch. Equivalent to GetCharactersCharacterIdAgentsResearch::meta(). */
+    public static function getCharactersCharacterIdAgentsResearchMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdAgentsResearch::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdBlueprints. Equivalent to GetCharactersCharacterIdBlueprints::meta(). */
+    public static function getCharactersCharacterIdBlueprintsMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdBlueprints::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdCorporationhistory. Equivalent to GetCharactersCharacterIdCorporationhistory::meta(). */
+    public static function getCharactersCharacterIdCorporationhistoryMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdCorporationhistory::meta();
+    }
+
+    /** Pre-call metadata for postCharactersCharacterIdCspa. Equivalent to PostCharactersCharacterIdCspa::meta(). */
+    public static function postCharactersCharacterIdCspaMeta(): OperationMeta
+    {
+        return PostCharactersCharacterIdCspa::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdFatigue. Equivalent to GetCharactersCharacterIdFatigue::meta(). */
+    public static function getCharactersCharacterIdFatigueMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdFatigue::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdMedals. Equivalent to GetCharactersCharacterIdMedals::meta(). */
+    public static function getCharactersCharacterIdMedalsMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdMedals::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdNotifications. Equivalent to GetCharactersCharacterIdNotifications::meta(). */
+    public static function getCharactersCharacterIdNotificationsMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdNotifications::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdNotificationsContacts. Equivalent to GetCharactersCharacterIdNotificationsContacts::meta(). */
+    public static function getCharactersCharacterIdNotificationsContactsMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdNotificationsContacts::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdPortrait. Equivalent to GetCharactersCharacterIdPortrait::meta(). */
+    public static function getCharactersCharacterIdPortraitMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdPortrait::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdRoles. Equivalent to GetCharactersCharacterIdRoles::meta(). */
+    public static function getCharactersCharacterIdRolesMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdRoles::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdStandings. Equivalent to GetCharactersCharacterIdStandings::meta(). */
+    public static function getCharactersCharacterIdStandingsMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdStandings::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdTitles. Equivalent to GetCharactersCharacterIdTitles::meta(). */
+    public static function getCharactersCharacterIdTitlesMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdTitles::meta();
+    }
 
     /**
      * @return EsiResult<array<CharactersAffiliationPostItem>>
@@ -51,7 +154,7 @@ class CharacterResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersAffiliationPostItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['postCharactersAffiliation'] ?? null);
+        ), PostCharactersAffiliation::meta());
     }
 
     /**
@@ -63,7 +166,7 @@ class CharacterResource extends AbstractResource
         $dto = CharactersDetail::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterId'] ?? null;
+        $dto->operationMeta = GetCharactersCharacterId::meta();
         return $dto;
     }
 
@@ -77,7 +180,7 @@ class CharacterResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdAgentsResearchGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdAgentsResearch'] ?? null);
+        ), GetCharactersCharacterIdAgentsResearch::meta());
     }
 
     /**
@@ -91,7 +194,7 @@ class CharacterResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdBlueprintsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdBlueprints'] ?? null);
+        ), GetCharactersCharacterIdBlueprints::meta());
     }
 
     /**
@@ -103,7 +206,7 @@ class CharacterResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdCorporationhistoryGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdCorporationhistory'] ?? null);
+        ), GetCharactersCharacterIdCorporationhistory::meta());
     }
 
     /**
@@ -113,7 +216,7 @@ class CharacterResource extends AbstractResource
     public function postCharactersCharacterIdCspa(mixed $requestBody, int $characterId): EsiResult
     {
         $response = $this->transport->invoke('post', '/characters/{character_id}/cspa', ['character_id' => $characterId], [], (array) $requestBody);
-        return EsiResult::fromRaw($response, null, static::OPERATION_META['postCharactersCharacterIdCspa'] ?? null);
+        return EsiResult::fromRaw($response, null, PostCharactersCharacterIdCspa::meta());
     }
 
     /**
@@ -126,7 +229,7 @@ class CharacterResource extends AbstractResource
         $dto = CharactersCharacterIdFatigueGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdFatigue'] ?? null;
+        $dto->operationMeta = GetCharactersCharacterIdFatigue::meta();
         return $dto;
     }
 
@@ -140,7 +243,7 @@ class CharacterResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdMedalsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdMedals'] ?? null);
+        ), GetCharactersCharacterIdMedals::meta());
     }
 
     /**
@@ -153,7 +256,7 @@ class CharacterResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdNotificationsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdNotifications'] ?? null);
+        ), GetCharactersCharacterIdNotifications::meta());
     }
 
     /**
@@ -166,7 +269,7 @@ class CharacterResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdNotificationsContactsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdNotificationsContacts'] ?? null);
+        ), GetCharactersCharacterIdNotificationsContacts::meta());
     }
 
     /**
@@ -178,7 +281,7 @@ class CharacterResource extends AbstractResource
         $dto = CharactersCharacterIdPortraitGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdPortrait'] ?? null;
+        $dto->operationMeta = GetCharactersCharacterIdPortrait::meta();
         return $dto;
     }
 
@@ -192,7 +295,7 @@ class CharacterResource extends AbstractResource
         $dto = CharactersCharacterIdRolesGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdRoles'] ?? null;
+        $dto->operationMeta = GetCharactersCharacterIdRoles::meta();
         return $dto;
     }
 
@@ -206,7 +309,7 @@ class CharacterResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdStandingsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdStandings'] ?? null);
+        ), GetCharactersCharacterIdStandings::meta());
     }
 
     /**
@@ -219,6 +322,6 @@ class CharacterResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdTitlesGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdTitles'] ?? null);
+        ), GetCharactersCharacterIdTitles::meta());
     }
 }

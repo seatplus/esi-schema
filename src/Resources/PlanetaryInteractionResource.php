@@ -2,11 +2,16 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdPlanetsGetItem;
+use Seatplus\EsiSchema\Operations\PlanetaryInteraction\GetCharactersCharacterIdPlanets;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdPlanetsPlanetIdGet;
+use Seatplus\EsiSchema\Operations\PlanetaryInteraction\GetCharactersCharacterIdPlanetsPlanetId;
 use Seatplus\EsiSchema\Responses\CorporationsCorporationIdCustomsOfficesGetItem;
+use Seatplus\EsiSchema\Operations\PlanetaryInteraction\GetCorporationsCorporationIdCustomsOffices;
 use Seatplus\EsiSchema\Responses\UniverseSchematicsSchematicIdGet;
+use Seatplus\EsiSchema\Operations\PlanetaryInteraction\GetUniverseSchematicsSchematicId;
 
 /**
  * ESI tag: PlanetaryInteraction
@@ -16,12 +21,40 @@ use Seatplus\EsiSchema\Responses\UniverseSchematicsSchematicIdGet;
  */
 class PlanetaryInteractionResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getCharactersCharacterIdPlanets' => ['cacheAge' => 600, 'rateLimit' => ['group' => 'char-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-planets.manage_planets.v1'],
-        'getCharactersCharacterIdPlanetsPlanetId' => ['cacheAge' => 600, 'rateLimit' => ['group' => 'char-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-planets.manage_planets.v1'],
-        'getCorporationsCorporationIdCustomsOffices' => ['cacheAge' => 3600, 'rateLimit' => ['group' => 'corp-industry', 'max-tokens' => 600, 'window-size' => '15m'], 'requiredRoles' => ['Director'], 'cursor' => false, 'requiredScope' => 'esi-planets.read_customs_offices.v1'],
-        'getUniverseSchematicsSchematicId' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getCharactersCharacterIdPlanets' => GetCharactersCharacterIdPlanets::meta(),
+            'getCharactersCharacterIdPlanetsPlanetId' => GetCharactersCharacterIdPlanetsPlanetId::meta(),
+            'getCorporationsCorporationIdCustomsOffices' => GetCorporationsCorporationIdCustomsOffices::meta(),
+            'getUniverseSchematicsSchematicId' => GetUniverseSchematicsSchematicId::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdPlanets. Equivalent to GetCharactersCharacterIdPlanets::meta(). */
+    public static function getCharactersCharacterIdPlanetsMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdPlanets::meta();
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdPlanetsPlanetId. Equivalent to GetCharactersCharacterIdPlanetsPlanetId::meta(). */
+    public static function getCharactersCharacterIdPlanetsPlanetIdMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdPlanetsPlanetId::meta();
+    }
+
+    /** Pre-call metadata for getCorporationsCorporationIdCustomsOffices. Equivalent to GetCorporationsCorporationIdCustomsOffices::meta(). */
+    public static function getCorporationsCorporationIdCustomsOfficesMeta(): OperationMeta
+    {
+        return GetCorporationsCorporationIdCustomsOffices::meta();
+    }
+
+    /** Pre-call metadata for getUniverseSchematicsSchematicId. Equivalent to GetUniverseSchematicsSchematicId::meta(). */
+    public static function getUniverseSchematicsSchematicIdMeta(): OperationMeta
+    {
+        return GetUniverseSchematicsSchematicId::meta();
+    }
 
     /**
      * @return EsiResult<array<CharactersCharacterIdPlanetsGetItem>>
@@ -33,7 +66,7 @@ class PlanetaryInteractionResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CharactersCharacterIdPlanetsGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCharactersCharacterIdPlanets'] ?? null);
+        ), GetCharactersCharacterIdPlanets::meta());
     }
 
     /**
@@ -46,7 +79,7 @@ class PlanetaryInteractionResource extends AbstractResource
         $dto = CharactersCharacterIdPlanetsPlanetIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdPlanetsPlanetId'] ?? null;
+        $dto->operationMeta = GetCharactersCharacterIdPlanetsPlanetId::meta();
         return $dto;
     }
 
@@ -61,7 +94,7 @@ class PlanetaryInteractionResource extends AbstractResource
         return EsiResult::fromRaw($response, array_map(
             fn (object $item) => CorporationsCorporationIdCustomsOfficesGetItem::from($item),
             (array) $response->data,
-        ), static::OPERATION_META['getCorporationsCorporationIdCustomsOffices'] ?? null);
+        ), GetCorporationsCorporationIdCustomsOffices::meta());
     }
 
     /**
@@ -73,7 +106,7 @@ class PlanetaryInteractionResource extends AbstractResource
         $dto = UniverseSchematicsSchematicIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getUniverseSchematicsSchematicId'] ?? null;
+        $dto->operationMeta = GetUniverseSchematicsSchematicId::meta();
         return $dto;
     }
 }

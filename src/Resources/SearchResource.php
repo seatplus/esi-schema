@@ -2,7 +2,9 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdSearchGet;
+use Seatplus\EsiSchema\Operations\Search\GetCharactersCharacterIdSearch;
 
 /**
  * ESI tag: Search
@@ -12,9 +14,19 @@ use Seatplus\EsiSchema\Responses\CharactersCharacterIdSearchGet;
  */
 class SearchResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getCharactersCharacterIdSearch' => ['cacheAge' => 3600, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => 'esi-search.search_structures.v1'],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getCharactersCharacterIdSearch' => GetCharactersCharacterIdSearch::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getCharactersCharacterIdSearch. Equivalent to GetCharactersCharacterIdSearch::meta(). */
+    public static function getCharactersCharacterIdSearchMeta(): OperationMeta
+    {
+        return GetCharactersCharacterIdSearch::meta();
+    }
 
     /**
      * @return CharactersCharacterIdSearchGet
@@ -26,7 +38,7 @@ class SearchResource extends AbstractResource
         $dto = CharactersCharacterIdSearchGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getCharactersCharacterIdSearch'] ?? null;
+        $dto->operationMeta = GetCharactersCharacterIdSearch::meta();
         return $dto;
     }
 }

@@ -20,16 +20,16 @@ readonly class EsiResult
     use HasOperationMeta;
 
     /**
-     * @param  T          $data           Typed response body (array of DTOs or primitives).
-     * @param  int        $pages          Total pages reported by X-Pages (1 when not paginated).
-     * @param  bool       $isCachedLoad   Whether the response was served from RFC 7234 cache.
-     * @param  array<string, mixed>|null  $operationMeta  ESI spec metadata baked in at generation time.
+     * @param  T                $data         Typed response body (array of DTOs or primitives).
+     * @param  int              $pages        Total pages reported by X-Pages (1 when not paginated).
+     * @param  bool             $isCachedLoad Whether the response was served from RFC 7234 cache.
+     * @param  ?OperationMeta   $operationMeta ESI spec metadata from the operation class.
      */
     public function __construct(
         public mixed $data,
         public int $pages = 1,
         public bool $isCachedLoad = false,
-        public ?array $operationMeta = null,
+        public ?OperationMeta $operationMeta = null,
     ) {
     }
 
@@ -38,11 +38,11 @@ readonly class EsiResult
      *
      * @template TData
      *
-     * @param  TData                      $typedData
-     * @param  array<string, mixed>|null  $meta       OPERATION_META entry for this operation.
+     * @param  TData            $typedData
+     * @param  ?OperationMeta   $meta       OperationMeta from the calling Operation class.
      * @return EsiResult<TData>
      */
-    public static function fromRaw(EsiRawResponse $response, mixed $typedData, ?array $meta = null): self
+    public static function fromRaw(EsiRawResponse $response, mixed $typedData, ?OperationMeta $meta = null): self
     {
         return new self(
             data: $typedData,

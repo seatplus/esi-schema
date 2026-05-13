@@ -27,7 +27,7 @@ interface EsiOperationInterface
      *
      * @example
      *   GetCharactersCharacterIdAssets::meta()->requiredScope()
-     *   GetCharactersCharacterIdAssets::meta()->tokenSatisfies($token->scopes)
+     *   GetCharactersCharacterIdAssets::meta()->requiredScope
      */
     public static function meta(): OperationMeta;
 }

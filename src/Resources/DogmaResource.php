@@ -2,10 +2,16 @@
 
 namespace Seatplus\EsiSchema\Resources;
 
+use Seatplus\EsiSchema\OperationMeta;
 use Seatplus\EsiSchema\EsiResult;
+use Seatplus\EsiSchema\Operations\Dogma\GetDogmaAttributes;
 use Seatplus\EsiSchema\Responses\DogmaAttributesAttributeIdGet;
+use Seatplus\EsiSchema\Operations\Dogma\GetDogmaAttributesAttributeId;
 use Seatplus\EsiSchema\Responses\DogmaDynamicItemsTypeIdItemIdGet;
+use Seatplus\EsiSchema\Operations\Dogma\GetDogmaDynamicItemsTypeIdItemId;
+use Seatplus\EsiSchema\Operations\Dogma\GetDogmaEffects;
 use Seatplus\EsiSchema\Responses\DogmaEffectsEffectIdGet;
+use Seatplus\EsiSchema\Operations\Dogma\GetDogmaEffectsEffectId;
 
 /**
  * ESI tag: Dogma
@@ -15,13 +21,47 @@ use Seatplus\EsiSchema\Responses\DogmaEffectsEffectIdGet;
  */
 class DogmaResource extends AbstractResource
 {
-    protected const array OPERATION_META = [
-        'getDogmaAttributes' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getDogmaAttributesAttributeId' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getDogmaDynamicItemsTypeIdItemId' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getDogmaEffects' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-        'getDogmaEffectsEffectId' => ['cacheAge' => null, 'rateLimit' => null, 'requiredRoles' => [], 'cursor' => false, 'requiredScope' => null],
-    ];
+    public static function metaFor(string $operationId): OperationMeta
+    {
+        return match ($operationId) {
+            'getDogmaAttributes' => GetDogmaAttributes::meta(),
+            'getDogmaAttributesAttributeId' => GetDogmaAttributesAttributeId::meta(),
+            'getDogmaDynamicItemsTypeIdItemId' => GetDogmaDynamicItemsTypeIdItemId::meta(),
+            'getDogmaEffects' => GetDogmaEffects::meta(),
+            'getDogmaEffectsEffectId' => GetDogmaEffectsEffectId::meta(),
+            default => new OperationMeta(),
+        };
+    }
+
+    /** Pre-call metadata for getDogmaAttributes. Equivalent to GetDogmaAttributes::meta(). */
+    public static function getDogmaAttributesMeta(): OperationMeta
+    {
+        return GetDogmaAttributes::meta();
+    }
+
+    /** Pre-call metadata for getDogmaAttributesAttributeId. Equivalent to GetDogmaAttributesAttributeId::meta(). */
+    public static function getDogmaAttributesAttributeIdMeta(): OperationMeta
+    {
+        return GetDogmaAttributesAttributeId::meta();
+    }
+
+    /** Pre-call metadata for getDogmaDynamicItemsTypeIdItemId. Equivalent to GetDogmaDynamicItemsTypeIdItemId::meta(). */
+    public static function getDogmaDynamicItemsTypeIdItemIdMeta(): OperationMeta
+    {
+        return GetDogmaDynamicItemsTypeIdItemId::meta();
+    }
+
+    /** Pre-call metadata for getDogmaEffects. Equivalent to GetDogmaEffects::meta(). */
+    public static function getDogmaEffectsMeta(): OperationMeta
+    {
+        return GetDogmaEffects::meta();
+    }
+
+    /** Pre-call metadata for getDogmaEffectsEffectId. Equivalent to GetDogmaEffectsEffectId::meta(). */
+    public static function getDogmaEffectsEffectIdMeta(): OperationMeta
+    {
+        return GetDogmaEffectsEffectId::meta();
+    }
 
     /**
      * @return EsiResult<array<int>>
@@ -31,7 +71,7 @@ class DogmaResource extends AbstractResource
         $response = $this->transport->invoke('get', '/dogma/attributes', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, static::OPERATION_META['getDogmaAttributes'] ?? null);
+        return EsiResult::fromRaw($response, $data, GetDogmaAttributes::meta());
     }
 
     /**
@@ -43,7 +83,7 @@ class DogmaResource extends AbstractResource
         $dto = DogmaAttributesAttributeIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getDogmaAttributesAttributeId'] ?? null;
+        $dto->operationMeta = GetDogmaAttributesAttributeId::meta();
         return $dto;
     }
 
@@ -56,7 +96,7 @@ class DogmaResource extends AbstractResource
         $dto = DogmaDynamicItemsTypeIdItemIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getDogmaDynamicItemsTypeIdItemId'] ?? null;
+        $dto->operationMeta = GetDogmaDynamicItemsTypeIdItemId::meta();
         return $dto;
     }
 
@@ -68,7 +108,7 @@ class DogmaResource extends AbstractResource
         $response = $this->transport->invoke('get', '/dogma/effects', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
-        return EsiResult::fromRaw($response, $data, static::OPERATION_META['getDogmaEffects'] ?? null);
+        return EsiResult::fromRaw($response, $data, GetDogmaEffects::meta());
     }
 
     /**
@@ -80,7 +120,7 @@ class DogmaResource extends AbstractResource
         $dto = DogmaEffectsEffectIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = static::OPERATION_META['getDogmaEffectsEffectId'] ?? null;
+        $dto->operationMeta = GetDogmaEffectsEffectId::meta();
         return $dto;
     }
 }
