@@ -4,7 +4,8 @@
 
 `seatplus/esi-schema` is a **code-generated PHP library** that wraps the EVE Online ESI (Swagger/OpenAPI) API. It provides:
 
-- **208 Resource classes** (`src/Resources/{Tag}/`) — one static class per ESI endpoint, with typed constants, `meta()`, and `execute()`.
+- **208 per-route Resource classes** (`src/Resources/{Tag}/`) — one static class per ESI endpoint, with typed constants, `meta()`, and `execute()`.
+- **33 tag-group wrapper classes** (`src/Resources/{Tag}Resource.php`) — one per ESI tag; store the transport and delegate to the per-route statics. Entry points for the fluent API.
 - **~218 DTO classes** (`src/Responses/`) — typed value objects for every ESI response schema.
 - **Zero runtime dependencies** — pure PHP 8.3, no Guzzle, no HTTP client, no framework.
 
@@ -16,7 +17,7 @@ The following directories contain **only generated code**:
 
 ```
 src/Responses/        ← ~218 DTO classes, one per ESI schema object
-src/Resources/        ← 208 resource classes in 33 tag subfolders
+src/Resources/        ← 33 flat tag wrapper classes + 208 per-route classes in 33 subfolders
 ```
 
 If you need to change generated output, **edit `bin/generate.php`**, then re-run:
@@ -48,7 +49,11 @@ src/
   OperationMeta.php            # Pre-call metadata DTO (from Resource::meta())
 
   Responses/                   # GENERATED — ~218 typed DTO classes
-  Resources/                   # GENERATED — 208 resource classes in 33 tag subfolders
+  Resources/                   # GENERATED — 33 flat tag wrappers + 208 per-route classes
+    AssetsResource.php           # tag wrapper — fluent entry: new AssetsResource($transport)
+    CharacterResource.php        # tag wrapper
+    MarketResource.php           # tag wrapper
+    …  (33 flat files total)
     Assets/
       GetCharactersCharacterIdAssets.php
       GetCorporationsCorporationIdAssets.php
@@ -132,18 +137,26 @@ GetCharactersCharacterIdAssets::USES_CURSOR;           // false
 
 ---
 
-## Resource class namespace pattern
+## Resource class namespace patterns
 
+**Per-route static classes:**
 ```
 Seatplus\EsiSchema\Resources\{Tag}\{PascalCaseOperationId}
 ```
 
-Tags with spaces become PascalCase:
-- `Assets` → `Resources\Assets\`
-- `Faction Warfare` → `Resources\FactionWarfare\`
-- `Corporation` → `Resources\Corporation\`
+**Tag-group wrapper classes (fluent API):**
+```
+Seatplus\EsiSchema\Resources\{Tag}Resource
+```
 
-Usage example:
+Tags with spaces become PascalCase:
+- `Assets` → `Resources\Assets\` + `Resources\AssetsResource`
+- `Faction Warfare` → `Resources\FactionWarfare\` + `Resources\FactionWarfareResource`
+- `Corporation` → `Resources\Corporation\` + `Resources\CorporationResource`
+
+Usage examples:
+
+**Static API (preferred for jobs and services — no allocation):**
 ```php
 use Seatplus\EsiSchema\Resources\Assets\GetCharactersCharacterIdAssets;
 
@@ -159,6 +172,19 @@ foreach ($result->data as $item) {
     echo $item->type_id;   // typed int
 }
 ```
+
+**Fluent API (convenient when transport is already held):**
+```php
+use Seatplus\EsiSchema\Resources\AssetsResource;
+
+$assets = new AssetsResource($transport);
+$result = $assets->getCharactersCharacterIdAssets(characterId: 12345, page: 1);
+
+// With esi-client's EsiClient (implements EsiTransportInterface):
+$result = $esiClient->withToken($accessToken)->assets()->getCharactersCharacterIdAssets(12345);
+```
+
+Tag wrapper methods are **pure delegation** — they call the per-route static's `execute()` and return its result unchanged. All metadata (constants, `meta()`) remains on the per-route class.
 
 ---
 
@@ -205,6 +231,7 @@ php bin/generate.php --compatibility-date=YYYY-MM-DD
 | Access `OperationMeta` properties directly (`$meta->requiredScope`) | Call `$meta->requiredScope()` — there are no accessor methods on `OperationMeta` |
 | Write tests in `tests/` | Introduce framework-specific code (no Laravel, no Symfony) |
 | Run `vendor/bin/pint` after regenerating | Skip the `composer test` check before committing |
+| Use the fluent API via `{Tag}Resource` when injecting transport once | Embed transport-call logic in tag wrapper methods — they must only delegate to the static |
 
 ---
 

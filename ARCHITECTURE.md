@@ -256,26 +256,45 @@ The library's major version tracks the `compatibility_date` in use:
 
 ---
 
-## Decision 9 — Tag-grouped Resource classes removed
+## Decision 9 — Tag-grouped Resource classes as fluent delegation wrappers
 
 ### Context
-The original API was tag-based Resource instances: `new AssetsResource($transport)` with instance methods like `getCharactersCharacterIdAssets(...)`. A subsequent refactor added per-route Operation classes as a new preferred API, with Resources as a "backwards-compatible" wrapper.
+The original API was tag-based Resource instances: `new AssetsResource($transport)` with instance methods like `getCharactersCharacterIdAssets(...)`. Each method called `$this->transport->invoke(...)` directly. A subsequent refactor introduced per-route Operation classes (now called Resource classes in `src/Resources/{Tag}/`) with `static execute()` methods.
+
+At one point the tag-grouped classes were removed entirely. However, `seatplus/esi-client` (and consumers that use its `$esiClient->assets()->getCharactersCharacterIdAssets(...)` fluent interface) depend on them. They were restored as thin delegation wrappers.
 
 ### Decision
-The tag-grouped Resource classes (`AssetsResource`, `AllianceResource`, etc.) were **deleted**. The 33 `{Tag}Resource.php` files and `AbstractResource.php` no longer exist.
+The 33 flat `{Tag}Resource.php` files exist at `src/Resources/` alongside the per-route subdirectories. Each method delegates to its per-route static class:
 
-The per-route classes in `src/Resources/{Tag}/` are the **only** API.
+```php
+// src/Resources/AssetsResource.php
+final class AssetsResource
+{
+    public function __construct(private readonly EsiTransportInterface $transport) {}
+
+    public function getCharactersCharacterIdAssets(int $characterId, int $page = 1): EsiResult
+    {
+        return GetCharactersCharacterIdAssets::execute($this->transport, $characterId, $page);
+    }
+    // ...
+}
+```
+
+These classes are **fully generated** — `bin/generate.php` groups all operations by ESI tag and emits one wrapper class per tag (33 total).
 
 ### Rationale
-- **Two APIs doing the same thing** — both called `$transport->invoke()` through the same generated code path. The Resource layer added no unique value.
-- **String-based `metaFor()`** — `AssetsResource::metaFor('getCharactersCharacterIdAssets')` was exactly the "magic string lookup" the per-route class design was meant to eliminate.
-- **Maintenance surface** — two generated layers doubled the files to maintain and the places that could drift out of sync.
-- **Clean naming** — `src/Resources/{Tag}/GetCharactersCharacterIdAssets` is now the only thing called a "Resource", and it is self-contained.
+- **Single source of truth** — the per-route statics hold all metadata and call logic. Tag wrappers add zero logic; they are just delegation glue.
+- **Transport injected once** — callers that pass `$transport` to many endpoints can hold one `AssetsResource` instance rather than threading `$transport` through every call.
+- **esi-client compatibility** — `EsiClient` implements `EsiTransportInterface` and exposes factory methods (`assets()`, `characters()`, etc.) that return these tag wrapper instances.
+- **No duplication** — previously both layers called `invoke()` directly. Now only the per-route static does; the tag wrapper is a pure forwarder.
 
 ### Alternatives considered
-- Keeping Resources for users who want to pass `$transport` once — rejected: not enough value to justify two APIs. Users can hold `$transport` themselves.
-- Deprecating instead of deleting — rejected at `1.x` pre-release stage; no existing consumers to protect.
+- Removing tag wrappers and updating esi-client to use static calls everywhere — possible, but breaks the fluent API that existing eveapi jobs rely on.
+- Generating tag wrappers inside esi-client rather than esi-schema — pushed the responsibility into the wrong package; esi-schema should define the full API surface.
 
 ### Consequences
-- Code using `new AssetsResource($transport)->getCharactersCharacterIdAssets(...)` must migrate to `GetCharactersCharacterIdAssets::execute($transport, ...)`.
-- `bin/generate.php` emits only DTOs and per-route Resource classes — 218 + 208 files.
+- `src/Resources/` contains both flat `{Tag}Resource.php` files **and** tag subdirectories (`Assets/`, `Character/`, …).
+- Tag class namespaces: `Seatplus\EsiSchema\Resources\AssetsResource` (no sub-namespace).
+- Per-route class namespaces: `Seatplus\EsiSchema\Resources\Assets\GetCharactersCharacterIdAssets` (tag sub-namespace).
+- PSR-4 autoloading handles both correctly.
+- Fluent API: `new AssetsResource($transport)->getCharactersCharacterIdAssets($id)` or via esi-client: `$esi->withToken($tok)->assets()->getCharactersCharacterIdAssets($id)`.

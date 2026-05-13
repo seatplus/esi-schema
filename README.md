@@ -18,7 +18,11 @@ composer require seatplus/esi-schema
 
 ## Quick Start
 
-Each ESI endpoint has its own generated class under `src/Resources/{Tag}/`. Classes expose typed public constants, a `meta()` factory, and a static `execute()` method:
+Two call styles are available. Choose based on context.
+
+### Option A — Direct static call (recommended for jobs and services)
+
+Each ESI endpoint has its own generated class under `src/Resources/{Tag}/`:
 
 ```php
 use Seatplus\EsiSchema\Resources\Assets\GetCharactersCharacterIdAssets;
@@ -59,24 +63,47 @@ $prices = GetMarketsPrices::execute($transport);
 GetMarketsPrices::REQUIRED_SCOPE; // null
 ```
 
+### Option B — Fluent API (convenient for interactive use and esi-client)
+
+A generated `{Tag}Resource` wrapper class exists for every tag. Inject the transport once and call methods fluently:
+
+```php
+use Seatplus\EsiSchema\Resources\AssetsResource;
+use Seatplus\EsiSchema\Resources\CharacterResource;
+
+// Construct with any EsiTransportInterface
+$assets     = new AssetsResource($transport);
+$characters = new CharacterResource($transport);
+
+// Same parameters, same return types as the static API
+$result = $assets->getCharactersCharacterIdAssets(characterId: 12345, page: 1);
+$dto    = $characters->getCharactersCharacterId(characterId: 12345);
+
+// With esi-client (EsiClient implements EsiTransportInterface):
+$result = $esiClient->withToken($accessToken)->assets()->getCharactersCharacterIdAssets(12345, page: 1);
+```
+
+Each `{Tag}Resource` method is a thin wrapper — it simply calls `{OperationClass}::execute($this->transport, ...)`. Pre-call metadata and typed constants remain on the per-route class.
+
 ### Namespace table
 
-Resource classes are grouped by ESI tag into 33 subfolders:
+Resource classes are grouped by ESI tag into 33 subfolders, each with a corresponding tag-group wrapper:
 
-| Namespace | Example class |
-|---|---|
-| `Resources\Alliance` | `GetAlliancesAllianceId` |
-| `Resources\Assets` | `GetCharactersCharacterIdAssets` |
-| `Resources\Character` | `GetCharactersCharacterId` |
-| `Resources\Corporation` | `GetCorporationsCorporationId` |
-| `Resources\FactionWarfare` | `GetFwStats` |
-| `Resources\Market` | `GetMarketsPrices` |
-| `Resources\Universe` | `GetUniverseTypesTypeId` |
-| `Resources\Wallet` | `GetCharactersCharacterIdWallet` |
-| `Resources\Skills` | `GetCharactersCharacterIdSkills` |
-| … (33 total) | |
+| Subfolder | Example class | Tag wrapper |
+|---|---|---|
+| `Resources\Alliance` | `GetAlliancesAllianceId` | `AllianceResource` |
+| `Resources\Assets` | `GetCharactersCharacterIdAssets` | `AssetsResource` |
+| `Resources\Character` | `GetCharactersCharacterId` | `CharacterResource` |
+| `Resources\Corporation` | `GetCorporationsCorporationId` | `CorporationResource` |
+| `Resources\FactionWarfare` | `GetFwStats` | `FactionWarfareResource` |
+| `Resources\Market` | `GetMarketsPrices` | `MarketResource` |
+| `Resources\Universe` | `GetUniverseTypesTypeId` | `UniverseResource` |
+| `Resources\Wallet` | `GetCharactersCharacterIdWallet` | `WalletResource` |
+| `Resources\Skills` | `GetCharactersCharacterIdSkills` | `SkillsResource` |
+| … (33 total) | | |
 
-Full class names follow the pattern `Seatplus\EsiSchema\Resources\{Tag}\{PascalCaseOperationId}`.
+Per-route classes: `Seatplus\EsiSchema\Resources\{Tag}\{PascalCaseOperationId}`  
+Tag wrappers: `Seatplus\EsiSchema\Resources\{Tag}Resource` (e.g. `Seatplus\EsiSchema\Resources\AssetsResource`)
 
 ### eveapi integration pattern
 
@@ -147,7 +174,12 @@ The reference implementation is [seatplus/esi-client](https://github.com/seatplu
 ```
 EsiTransportInterface              # Contract: any transport implements this
        │
-       └── Resources/{Tag}/        # 208 generated classes — one per ESI endpoint
+       ├── Resources/{Tag}Resource  # 33 generated tag wrappers — fluent API entry points
+       │    └── AssetsResource
+       │         ├── __construct(EsiTransportInterface $transport)
+       │         └── getCharactersCharacterIdAssets($id, $page)  # delegates to ↓
+       │
+       └── Resources/{Tag}/         # 208 generated classes — one per ESI endpoint
             └── Assets/
                  └── GetCharactersCharacterIdAssets
                       ├── REQUIRED_SCOPE = 'esi-assets.read_assets.v1'  (typed const)
@@ -168,6 +200,7 @@ EsiTransportInterface              # Contract: any transport implements this
 | `OperationMeta` | Typed pre-call DTO: 7 readonly properties (no methods) |
 | `AbstractEsiDto` | Base DTO for single-object responses: `$isCachedLoad`, `$pages` |
 | `EsiResult<T>` | Typed wrapper for array/paginated endpoints |
+| `{Tag}Resource` | Fluent wrapper — stores transport, methods delegate to per-route statics |
 
 ---
 
@@ -247,7 +280,8 @@ The generator reads the live OAS3 spec from `https://esi.evetech.net/meta/openap
 
 It emits:
 - `src/Responses/*.php` — ~218 typed DTO classes (one per ESI schema object)
-- `src/Resources/{Tag}/*.php` — 208 resource classes grouped by ESI tag (33 subfolders)
+- `src/Resources/{Tag}/*.php` — 208 per-route static classes grouped by ESI tag (33 subfolders)
+- `src/Resources/{Tag}Resource.php` — 33 flat tag-group wrapper classes for the fluent API
 
 **Do not manually edit generated files.** Changes are overwritten on next regeneration. To change generated output, edit `bin/generate.php`.
 
