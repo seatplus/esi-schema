@@ -71,7 +71,6 @@ final class GetCorporationCorporationIdMiningObserversObserverId implements EsiO
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: self::meta(),
         );
     }
 }

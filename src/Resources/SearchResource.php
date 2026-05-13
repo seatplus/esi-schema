@@ -38,7 +38,6 @@ class SearchResource extends AbstractResource
         $dto = CharactersCharacterIdSearchGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetCharactersCharacterIdSearch::meta();
         return $dto;
     }
 }

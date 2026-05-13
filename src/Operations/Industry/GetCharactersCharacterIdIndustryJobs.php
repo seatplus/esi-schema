@@ -70,7 +70,6 @@ final class GetCharactersCharacterIdIndustryJobs implements EsiOperationInterfac
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: self::meta(),
         );
     }
 }

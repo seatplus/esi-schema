@@ -60,7 +60,6 @@ class SovereigntyResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetSovereigntyCampaigns::meta(),
         );
     }
 
@@ -77,7 +76,6 @@ class SovereigntyResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetSovereigntyMap::meta(),
         );
     }
 
@@ -94,7 +92,6 @@ class SovereigntyResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetSovereigntyStructures::meta(),
         );
     }
 }

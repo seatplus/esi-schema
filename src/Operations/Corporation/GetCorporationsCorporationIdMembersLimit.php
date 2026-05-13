@@ -68,7 +68,6 @@ final class GetCorporationsCorporationIdMembersLimit implements EsiOperationInte
             data: $scalar,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: self::meta(),
         );
     }
 }

@@ -64,7 +64,6 @@ final class GetUniverseCategoriesCategoryId implements EsiOperationInterface
         $dto = UniverseCategoriesCategoryIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = self::meta();
         return $dto;
     }
 }

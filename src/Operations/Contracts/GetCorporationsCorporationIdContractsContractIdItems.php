@@ -70,7 +70,6 @@ final class GetCorporationsCorporationIdContractsContractIdItems implements EsiO
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: self::meta(),
         );
     }
 }

@@ -59,7 +59,6 @@ class FittingsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdFittings::meta(),
         );
     }
 
@@ -74,7 +73,6 @@ class FittingsResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PostCharactersCharacterIdFittings::meta(),
         );
     }
 
@@ -89,7 +87,6 @@ class FittingsResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: DeleteCharactersCharacterIdFittingsFittingId::meta(),
         );
     }
 }

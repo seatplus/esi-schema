@@ -146,7 +146,6 @@ class FleetsResource extends AbstractResource
         $dto = CharactersCharacterIdFleetGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetCharactersCharacterIdFleet::meta();
         return $dto;
     }
 
@@ -160,7 +159,6 @@ class FleetsResource extends AbstractResource
         $dto = FleetsFleetIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetFleetsFleetId::meta();
         return $dto;
     }
 
@@ -175,7 +173,6 @@ class FleetsResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PutFleetsFleetId::meta(),
         );
     }
 
@@ -193,7 +190,6 @@ class FleetsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetFleetsFleetIdMembers::meta(),
         );
     }
 
@@ -208,7 +204,6 @@ class FleetsResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PostFleetsFleetIdMembers::meta(),
         );
     }
 
@@ -223,7 +218,6 @@ class FleetsResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: DeleteFleetsFleetIdMembersMemberId::meta(),
         );
     }
 
@@ -238,7 +232,6 @@ class FleetsResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PutFleetsFleetIdMembersMemberId::meta(),
         );
     }
 
@@ -253,7 +246,6 @@ class FleetsResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: DeleteFleetsFleetIdSquadsSquadId::meta(),
         );
     }
 
@@ -268,7 +260,6 @@ class FleetsResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PutFleetsFleetIdSquadsSquadId::meta(),
         );
     }
 
@@ -286,7 +277,6 @@ class FleetsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetFleetsFleetIdWings::meta(),
         );
     }
 
@@ -301,7 +291,6 @@ class FleetsResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PostFleetsFleetIdWings::meta(),
         );
     }
 
@@ -316,7 +305,6 @@ class FleetsResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: DeleteFleetsFleetIdWingsWingId::meta(),
         );
     }
 
@@ -331,7 +319,6 @@ class FleetsResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PutFleetsFleetIdWingsWingId::meta(),
         );
     }
 
@@ -346,7 +333,6 @@ class FleetsResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PostFleetsFleetIdWingsWingIdSquads::meta(),
         );
     }
 }

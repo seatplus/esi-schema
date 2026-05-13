@@ -70,7 +70,6 @@ final class GetContractsPublicItemsContractId implements EsiOperationInterface
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: self::meta(),
         );
     }
 }

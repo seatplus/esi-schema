@@ -47,7 +47,6 @@ class ClonesResource extends AbstractResource
         $dto = CharactersCharacterIdClonesGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetCharactersCharacterIdClones::meta();
         return $dto;
     }
 
@@ -64,7 +63,6 @@ class ClonesResource extends AbstractResource
             data: $data,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdImplants::meta(),
         );
     }
 }

@@ -70,7 +70,6 @@ final class GetAlliancesAllianceIdContactsLabels implements EsiOperationInterfac
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: self::meta(),
         );
     }
 }

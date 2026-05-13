@@ -116,7 +116,6 @@ class ContractsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdContracts::meta(),
         );
     }
 
@@ -134,7 +133,6 @@ class ContractsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdContractsContractIdBids::meta(),
         );
     }
 
@@ -152,7 +150,6 @@ class ContractsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdContractsContractIdItems::meta(),
         );
     }
 
@@ -170,7 +167,6 @@ class ContractsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetContractsPublicBidsContractId::meta(),
         );
     }
 
@@ -188,7 +184,6 @@ class ContractsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetContractsPublicItemsContractId::meta(),
         );
     }
 
@@ -206,7 +201,6 @@ class ContractsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetContractsPublicRegionId::meta(),
         );
     }
 
@@ -225,7 +219,6 @@ class ContractsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdContracts::meta(),
         );
     }
 
@@ -244,7 +237,6 @@ class ContractsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdContractsContractIdBids::meta(),
         );
     }
 
@@ -262,7 +254,6 @@ class ContractsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdContractsContractIdItems::meta(),
         );
     }
 }

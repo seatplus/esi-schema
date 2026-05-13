@@ -65,7 +65,6 @@ final class GetCharactersCharacterIdSkills implements EsiOperationInterface
         $dto = CharactersSkills::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = self::meta();
         return $dto;
     }
 }

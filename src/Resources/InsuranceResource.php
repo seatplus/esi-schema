@@ -42,7 +42,6 @@ class InsuranceResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetInsurancePrices::meta(),
         );
     }
 }

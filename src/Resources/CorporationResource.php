@@ -227,7 +227,6 @@ class CorporationResource extends AbstractResource
             data: $data,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsNpccorps::meta(),
         );
     }
 
@@ -240,7 +239,6 @@ class CorporationResource extends AbstractResource
         $dto = CorporationsDetail::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetCorporationsCorporationId::meta();
         return $dto;
     }
 
@@ -257,7 +255,6 @@ class CorporationResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdAlliancehistory::meta(),
         );
     }
 
@@ -276,7 +273,6 @@ class CorporationResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdBlueprints::meta(),
         );
     }
 
@@ -295,7 +291,6 @@ class CorporationResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdContainersLogs::meta(),
         );
     }
 
@@ -309,7 +304,6 @@ class CorporationResource extends AbstractResource
         $dto = CorporationsCorporationIdDivisionsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetCorporationsCorporationIdDivisions::meta();
         return $dto;
     }
 
@@ -327,7 +321,6 @@ class CorporationResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdFacilities::meta(),
         );
     }
 
@@ -340,7 +333,6 @@ class CorporationResource extends AbstractResource
         $dto = CorporationsCorporationIdIconsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetCorporationsCorporationIdIcons::meta();
         return $dto;
     }
 
@@ -359,7 +351,6 @@ class CorporationResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdMedals::meta(),
         );
     }
 
@@ -378,7 +369,6 @@ class CorporationResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdMedalsIssued::meta(),
         );
     }
 
@@ -395,7 +385,6 @@ class CorporationResource extends AbstractResource
             data: $data,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdMembers::meta(),
         );
     }
 
@@ -412,7 +401,6 @@ class CorporationResource extends AbstractResource
             data: $scalar,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdMembersLimit::meta(),
         );
     }
 
@@ -430,7 +418,6 @@ class CorporationResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdMembersTitles::meta(),
         );
     }
 
@@ -448,7 +435,6 @@ class CorporationResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdMembertracking::meta(),
         );
     }
 
@@ -466,7 +452,6 @@ class CorporationResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdRoles::meta(),
         );
     }
 
@@ -485,7 +470,6 @@ class CorporationResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdRolesHistory::meta(),
         );
     }
 
@@ -504,7 +488,6 @@ class CorporationResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdShareholders::meta(),
         );
     }
 
@@ -523,7 +506,6 @@ class CorporationResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdStandings::meta(),
         );
     }
 
@@ -542,7 +524,6 @@ class CorporationResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdStarbases::meta(),
         );
     }
 
@@ -556,7 +537,6 @@ class CorporationResource extends AbstractResource
         $dto = CorporationsCorporationIdStarbasesStarbaseIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetCorporationsCorporationIdStarbasesStarbaseId::meta();
         return $dto;
     }
 
@@ -575,7 +555,6 @@ class CorporationResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdStructures::meta(),
         );
     }
 
@@ -593,7 +572,6 @@ class CorporationResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdTitles::meta(),
         );
     }
 }

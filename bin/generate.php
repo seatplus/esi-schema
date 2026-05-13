@@ -294,7 +294,6 @@ function buildReturn(array $op): string
                 \$dto = {$dto}::from((object) \$response->data);
                 \$dto->isCachedLoad = \$response->isCachedLoad;
                 \$dto->pages = \$response->pages;
-                \$dto->operationMeta = __OPERATION_META__;
                 return \$dto;
         PHP,
 
@@ -307,7 +306,6 @@ function buildReturn(array $op): string
                     ),
                     pages: \$response->pages,
                     isCachedLoad: \$response->isCachedLoad,
-                    operationMeta: __OPERATION_META__,
                 );
         PHP,
 
@@ -319,7 +317,6 @@ function buildReturn(array $op): string
                     data: \$data,
                     pages: \$response->pages,
                     isCachedLoad: \$response->isCachedLoad,
-                    operationMeta: __OPERATION_META__,
                 );
         PHP,
 
@@ -331,7 +328,6 @@ function buildReturn(array $op): string
                     data: \$scalar,
                     pages: \$response->pages,
                     isCachedLoad: \$response->isCachedLoad,
-                    operationMeta: __OPERATION_META__,
                 );
         PHP,
 
@@ -341,7 +337,6 @@ function buildReturn(array $op): string
                     data: null,
                     pages: \$response->pages,
                     isCachedLoad: \$response->isCachedLoad,
-                    operationMeta: __OPERATION_META__,
                 );
         PHP,
     };
@@ -417,8 +412,8 @@ function generateResourceFile(string $tag, array $ops): string
             $usesEsiResult = true;
         }
 
-        // Replace __OPERATION_META__ placeholder with the Operation class meta() call
-        $resolvedBody = str_replace('__OPERATION_META__', "{$className}::meta()", $body);
+        // No __OPERATION_META__ placeholder needed — meta is not injected into results
+        $resolvedBody = $body;
 
         $methods[] = <<<PHP
             /**
@@ -520,9 +515,7 @@ function generateOperationClass(array $op): string
     }
 
     // Replace $this->transport with $transport (operation classes are static)
-    // Replace __OPERATION_META__ placeholder with self::meta()
     $staticBody = str_replace('$this->transport->invoke', '$transport->invoke', $body);
-    $staticBody = str_replace('__OPERATION_META__', 'self::meta()', $staticBody);
 
     $useBlock = implode("\n", array_unique($useStatements));
 

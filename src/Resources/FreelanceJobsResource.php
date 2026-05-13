@@ -83,7 +83,6 @@ class FreelanceJobsResource extends AbstractResource
         $dto = CharactersFreelanceJobsListing::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetCharactersFreelanceJobsListing::meta();
         return $dto;
     }
 
@@ -97,7 +96,6 @@ class FreelanceJobsResource extends AbstractResource
         $dto = CharactersFreelanceJobsParticipation::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetCharactersFreelanceJobsParticipation::meta();
         return $dto;
     }
 
@@ -111,7 +109,6 @@ class FreelanceJobsResource extends AbstractResource
         $dto = CorporationsFreelanceJobsListing::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetCorporationsFreelanceJobsListing::meta();
         return $dto;
     }
 
@@ -125,7 +122,6 @@ class FreelanceJobsResource extends AbstractResource
         $dto = CorporationsFreelanceJobsParticipants::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetCorporationsFreelanceJobsParticipants::meta();
         return $dto;
     }
 
@@ -138,7 +134,6 @@ class FreelanceJobsResource extends AbstractResource
         $dto = FreelanceJobsListing::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetFreelanceJobsListing::meta();
         return $dto;
     }
 
@@ -151,7 +146,6 @@ class FreelanceJobsResource extends AbstractResource
         $dto = FreelanceJobsDetail::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetFreelanceJobsDetail::meta();
         return $dto;
     }
 }

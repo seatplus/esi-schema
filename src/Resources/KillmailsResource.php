@@ -62,7 +62,6 @@ class KillmailsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdKillmailsRecent::meta(),
         );
     }
 
@@ -81,7 +80,6 @@ class KillmailsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdKillmailsRecent::meta(),
         );
     }
 
@@ -94,7 +92,6 @@ class KillmailsResource extends AbstractResource
         $dto = KillmailsKillmailIdKillmailHashGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetKillmailsKillmailIdKillmailHash::meta();
         return $dto;
     }
 }

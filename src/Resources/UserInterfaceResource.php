@@ -71,7 +71,6 @@ class UserInterfaceResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PostUiAutopilotWaypoint::meta(),
         );
     }
 
@@ -86,7 +85,6 @@ class UserInterfaceResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PostUiOpenwindowContract::meta(),
         );
     }
 
@@ -101,7 +99,6 @@ class UserInterfaceResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PostUiOpenwindowInformation::meta(),
         );
     }
 
@@ -116,7 +113,6 @@ class UserInterfaceResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PostUiOpenwindowMarketdetails::meta(),
         );
     }
 
@@ -131,7 +127,6 @@ class UserInterfaceResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PostUiOpenwindowNewmail::meta(),
         );
     }
 }

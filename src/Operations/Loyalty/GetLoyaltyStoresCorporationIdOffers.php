@@ -69,7 +69,6 @@ final class GetLoyaltyStoresCorporationIdOffers implements EsiOperationInterface
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: self::meta(),
         );
     }
 }

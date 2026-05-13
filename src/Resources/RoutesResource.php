@@ -37,7 +37,6 @@ class RoutesResource extends AbstractResource
         $dto = Route::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = PostRoute::meta();
         return $dto;
     }
 }

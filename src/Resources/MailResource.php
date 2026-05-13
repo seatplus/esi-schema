@@ -110,7 +110,6 @@ class MailResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdMail::meta(),
         );
     }
 
@@ -125,7 +124,6 @@ class MailResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PostCharactersCharacterIdMail::meta(),
         );
     }
 
@@ -139,7 +137,6 @@ class MailResource extends AbstractResource
         $dto = CharactersCharacterIdMailLabelsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetCharactersCharacterIdMailLabels::meta();
         return $dto;
     }
 
@@ -154,7 +151,6 @@ class MailResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PostCharactersCharacterIdMailLabels::meta(),
         );
     }
 
@@ -169,7 +165,6 @@ class MailResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: DeleteCharactersCharacterIdMailLabelsLabelId::meta(),
         );
     }
 
@@ -187,7 +182,6 @@ class MailResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdMailLists::meta(),
         );
     }
 
@@ -202,7 +196,6 @@ class MailResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: DeleteCharactersCharacterIdMailMailId::meta(),
         );
     }
 
@@ -216,7 +209,6 @@ class MailResource extends AbstractResource
         $dto = CharactersCharacterIdMailMailIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetCharactersCharacterIdMailMailId::meta();
         return $dto;
     }
 
@@ -231,7 +223,6 @@ class MailResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PutCharactersCharacterIdMailMailId::meta(),
         );
     }
 }

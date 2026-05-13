@@ -67,7 +67,6 @@ final class GetAlliances implements EsiOperationInterface
             data: $data,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: self::meta(),
         );
     }
 }

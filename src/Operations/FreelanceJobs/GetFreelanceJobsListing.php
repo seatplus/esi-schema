@@ -64,7 +64,6 @@ final class GetFreelanceJobsListing implements EsiOperationInterface
         $dto = FreelanceJobsListing::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = self::meta();
         return $dto;
     }
 }

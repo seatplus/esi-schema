@@ -71,7 +71,6 @@ final class GetCorporationsCorporationIdContacts implements EsiOperationInterfac
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: self::meta(),
         );
     }
 }

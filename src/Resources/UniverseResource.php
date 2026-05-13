@@ -295,7 +295,6 @@ class UniverseResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetUniverseAncestries::meta(),
         );
     }
 
@@ -308,7 +307,6 @@ class UniverseResource extends AbstractResource
         $dto = UniverseAsteroidBeltsAsteroidBeltIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetUniverseAsteroidBeltsAsteroidBeltId::meta();
         return $dto;
     }
 
@@ -325,7 +323,6 @@ class UniverseResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetUniverseBloodlines::meta(),
         );
     }
 
@@ -341,7 +338,6 @@ class UniverseResource extends AbstractResource
             data: $data,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetUniverseCategories::meta(),
         );
     }
 
@@ -354,7 +350,6 @@ class UniverseResource extends AbstractResource
         $dto = UniverseCategoriesCategoryIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetUniverseCategoriesCategoryId::meta();
         return $dto;
     }
 
@@ -370,7 +365,6 @@ class UniverseResource extends AbstractResource
             data: $data,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetUniverseConstellations::meta(),
         );
     }
 
@@ -383,7 +377,6 @@ class UniverseResource extends AbstractResource
         $dto = UniverseConstellationsConstellationIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetUniverseConstellationsConstellationId::meta();
         return $dto;
     }
 
@@ -400,7 +393,6 @@ class UniverseResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetUniverseFactions::meta(),
         );
     }
 
@@ -416,7 +408,6 @@ class UniverseResource extends AbstractResource
             data: $data,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetUniverseGraphics::meta(),
         );
     }
 
@@ -429,7 +420,6 @@ class UniverseResource extends AbstractResource
         $dto = UniverseGraphicsGraphicIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetUniverseGraphicsGraphicId::meta();
         return $dto;
     }
 
@@ -446,7 +436,6 @@ class UniverseResource extends AbstractResource
             data: $data,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetUniverseGroups::meta(),
         );
     }
 
@@ -459,7 +448,6 @@ class UniverseResource extends AbstractResource
         $dto = UniverseGroupsGroupIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetUniverseGroupsGroupId::meta();
         return $dto;
     }
 
@@ -472,7 +460,6 @@ class UniverseResource extends AbstractResource
         $dto = UniverseIdsPost::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = PostUniverseIds::meta();
         return $dto;
     }
 
@@ -485,7 +472,6 @@ class UniverseResource extends AbstractResource
         $dto = UniverseMoonsMoonIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetUniverseMoonsMoonId::meta();
         return $dto;
     }
 
@@ -502,7 +488,6 @@ class UniverseResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PostUniverseNames::meta(),
         );
     }
 
@@ -515,7 +500,6 @@ class UniverseResource extends AbstractResource
         $dto = UniversePlanetsPlanetIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetUniversePlanetsPlanetId::meta();
         return $dto;
     }
 
@@ -532,7 +516,6 @@ class UniverseResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetUniverseRaces::meta(),
         );
     }
 
@@ -548,7 +531,6 @@ class UniverseResource extends AbstractResource
             data: $data,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetUniverseRegions::meta(),
         );
     }
 
@@ -561,7 +543,6 @@ class UniverseResource extends AbstractResource
         $dto = UniverseRegionsRegionIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetUniverseRegionsRegionId::meta();
         return $dto;
     }
 
@@ -574,7 +555,6 @@ class UniverseResource extends AbstractResource
         $dto = UniverseStargatesStargateIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetUniverseStargatesStargateId::meta();
         return $dto;
     }
 
@@ -587,7 +567,6 @@ class UniverseResource extends AbstractResource
         $dto = UniverseStarsStarIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetUniverseStarsStarId::meta();
         return $dto;
     }
 
@@ -600,7 +579,6 @@ class UniverseResource extends AbstractResource
         $dto = UniverseStationsStationIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetUniverseStationsStationId::meta();
         return $dto;
     }
 
@@ -616,7 +594,6 @@ class UniverseResource extends AbstractResource
             data: $data,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetUniverseStructures::meta(),
         );
     }
 
@@ -630,7 +607,6 @@ class UniverseResource extends AbstractResource
         $dto = UniverseStructuresStructureIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetUniverseStructuresStructureId::meta();
         return $dto;
     }
 
@@ -647,7 +623,6 @@ class UniverseResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetUniverseSystemJumps::meta(),
         );
     }
 
@@ -664,7 +639,6 @@ class UniverseResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetUniverseSystemKills::meta(),
         );
     }
 
@@ -680,7 +654,6 @@ class UniverseResource extends AbstractResource
             data: $data,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetUniverseSystems::meta(),
         );
     }
 
@@ -693,7 +666,6 @@ class UniverseResource extends AbstractResource
         $dto = UniverseSystemsSystemIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetUniverseSystemsSystemId::meta();
         return $dto;
     }
 
@@ -710,7 +682,6 @@ class UniverseResource extends AbstractResource
             data: $data,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetUniverseTypes::meta(),
         );
     }
 
@@ -723,7 +694,6 @@ class UniverseResource extends AbstractResource
         $dto = UniverseTypesTypeIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetUniverseTypesTypeId::meta();
         return $dto;
     }
 }

@@ -66,7 +66,6 @@ final class DeleteCharactersCharacterIdMailMailId implements EsiOperationInterfa
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: self::meta(),
         );
     }
 }

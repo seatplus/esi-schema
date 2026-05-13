@@ -71,7 +71,6 @@ final class GetCorporationsCorporationIdWalletsDivisionJournal implements EsiOpe
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: self::meta(),
         );
     }
 }

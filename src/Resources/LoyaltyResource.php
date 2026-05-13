@@ -52,7 +52,6 @@ class LoyaltyResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdLoyaltyPoints::meta(),
         );
     }
 
@@ -69,7 +68,6 @@ class LoyaltyResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetLoyaltyStoresCorporationIdOffers::meta(),
         );
     }
 }

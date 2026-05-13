@@ -102,7 +102,6 @@ class FactionWarfareResource extends AbstractResource
         $dto = CharactersCharacterIdFwStatsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetCharactersCharacterIdFwStats::meta();
         return $dto;
     }
 
@@ -116,7 +115,6 @@ class FactionWarfareResource extends AbstractResource
         $dto = CorporationsCorporationIdFwStatsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetCorporationsCorporationIdFwStats::meta();
         return $dto;
     }
 
@@ -129,7 +127,6 @@ class FactionWarfareResource extends AbstractResource
         $dto = FwLeaderboardsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetFwLeaderboards::meta();
         return $dto;
     }
 
@@ -142,7 +139,6 @@ class FactionWarfareResource extends AbstractResource
         $dto = FwLeaderboardsCharactersGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetFwLeaderboardsCharacters::meta();
         return $dto;
     }
 
@@ -155,7 +151,6 @@ class FactionWarfareResource extends AbstractResource
         $dto = FwLeaderboardsCorporationsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetFwLeaderboardsCorporations::meta();
         return $dto;
     }
 
@@ -172,7 +167,6 @@ class FactionWarfareResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetFwStats::meta(),
         );
     }
 
@@ -189,7 +183,6 @@ class FactionWarfareResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetFwSystems::meta(),
         );
     }
 
@@ -206,7 +199,6 @@ class FactionWarfareResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetFwWars::meta(),
         );
     }
 }

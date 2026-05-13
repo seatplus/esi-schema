@@ -69,7 +69,6 @@ class CalendarResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdCalendar::meta(),
         );
     }
 
@@ -83,7 +82,6 @@ class CalendarResource extends AbstractResource
         $dto = CharactersCharacterIdCalendarEventIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetCharactersCharacterIdCalendarEventId::meta();
         return $dto;
     }
 
@@ -98,7 +96,6 @@ class CalendarResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PutCharactersCharacterIdCalendarEventId::meta(),
         );
     }
 
@@ -116,7 +113,6 @@ class CalendarResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdCalendarEventIdAttendees::meta(),
         );
     }
 }

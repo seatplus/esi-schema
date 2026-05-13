@@ -113,7 +113,6 @@ class ContactsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetAlliancesAllianceIdContacts::meta(),
         );
     }
 
@@ -131,7 +130,6 @@ class ContactsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetAlliancesAllianceIdContactsLabels::meta(),
         );
     }
 
@@ -146,7 +144,6 @@ class ContactsResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: DeleteCharactersCharacterIdContacts::meta(),
         );
     }
 
@@ -165,7 +162,6 @@ class ContactsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdContacts::meta(),
         );
     }
 
@@ -180,7 +176,6 @@ class ContactsResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PostCharactersCharacterIdContacts::meta(),
         );
     }
 
@@ -195,7 +190,6 @@ class ContactsResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PutCharactersCharacterIdContacts::meta(),
         );
     }
 
@@ -213,7 +207,6 @@ class ContactsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdContactsLabels::meta(),
         );
     }
 
@@ -232,7 +225,6 @@ class ContactsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdContacts::meta(),
         );
     }
 
@@ -250,7 +242,6 @@ class ContactsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdContactsLabels::meta(),
         );
     }
 }

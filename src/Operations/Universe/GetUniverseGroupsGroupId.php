@@ -64,7 +64,6 @@ final class GetUniverseGroupsGroupId implements EsiOperationInterface
         $dto = UniverseGroupsGroupIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = self::meta();
         return $dto;
     }
 }

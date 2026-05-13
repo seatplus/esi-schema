@@ -79,9 +79,7 @@ it('GetCharactersCharacterIdAssets::execute returns EsiResult with typed items',
 
     expect($result)->toBeInstanceOf(EsiResult::class)
         ->and($result->isCachedLoad)->toBeFalse()
-        ->and($result->data)->toHaveCount(1)
-        ->and($result->requiredScope())->toBe('esi-assets.read_assets.v1')
-        ->and($result->rateLimitGroup())->toBe('char-asset');
+        ->and($result->data)->toHaveCount(1);
 });
 
 it('GetCharactersCharacterIdAssets::execute passes page parameter', function (): void {

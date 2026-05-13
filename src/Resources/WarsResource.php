@@ -58,7 +58,6 @@ class WarsResource extends AbstractResource
             data: $data,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetWars::meta(),
         );
     }
 
@@ -71,7 +70,6 @@ class WarsResource extends AbstractResource
         $dto = WarsWarIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetWarsWarId::meta();
         return $dto;
     }
 
@@ -89,7 +87,6 @@ class WarsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetWarsWarIdKillmails::meta(),
         );
     }
 }

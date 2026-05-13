@@ -70,7 +70,6 @@ final class GetCharactersCharacterIdNotificationsContacts implements EsiOperatio
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: self::meta(),
         );
     }
 }

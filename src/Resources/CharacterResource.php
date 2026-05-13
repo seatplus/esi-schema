@@ -158,7 +158,6 @@ class CharacterResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PostCharactersAffiliation::meta(),
         );
     }
 
@@ -171,7 +170,6 @@ class CharacterResource extends AbstractResource
         $dto = CharactersDetail::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetCharactersCharacterId::meta();
         return $dto;
     }
 
@@ -189,7 +187,6 @@ class CharacterResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdAgentsResearch::meta(),
         );
     }
 
@@ -208,7 +205,6 @@ class CharacterResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdBlueprints::meta(),
         );
     }
 
@@ -225,7 +221,6 @@ class CharacterResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdCorporationhistory::meta(),
         );
     }
 
@@ -240,7 +235,6 @@ class CharacterResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PostCharactersCharacterIdCspa::meta(),
         );
     }
 
@@ -254,7 +248,6 @@ class CharacterResource extends AbstractResource
         $dto = CharactersCharacterIdFatigueGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetCharactersCharacterIdFatigue::meta();
         return $dto;
     }
 
@@ -272,7 +265,6 @@ class CharacterResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdMedals::meta(),
         );
     }
 
@@ -290,7 +282,6 @@ class CharacterResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdNotifications::meta(),
         );
     }
 
@@ -308,7 +299,6 @@ class CharacterResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdNotificationsContacts::meta(),
         );
     }
 
@@ -321,7 +311,6 @@ class CharacterResource extends AbstractResource
         $dto = CharactersCharacterIdPortraitGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetCharactersCharacterIdPortrait::meta();
         return $dto;
     }
 
@@ -335,7 +324,6 @@ class CharacterResource extends AbstractResource
         $dto = CharactersCharacterIdRolesGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetCharactersCharacterIdRoles::meta();
         return $dto;
     }
 
@@ -353,7 +341,6 @@ class CharacterResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdStandings::meta(),
         );
     }
 
@@ -371,7 +358,6 @@ class CharacterResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdTitles::meta(),
         );
     }
 }

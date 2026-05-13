@@ -131,7 +131,6 @@ class MarketResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdOrders::meta(),
         );
     }
 
@@ -150,7 +149,6 @@ class MarketResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdOrdersHistory::meta(),
         );
     }
 
@@ -169,7 +167,6 @@ class MarketResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdOrders::meta(),
         );
     }
 
@@ -188,7 +185,6 @@ class MarketResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdOrdersHistory::meta(),
         );
     }
 
@@ -204,7 +200,6 @@ class MarketResource extends AbstractResource
             data: $data,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetMarketsGroups::meta(),
         );
     }
 
@@ -217,7 +212,6 @@ class MarketResource extends AbstractResource
         $dto = MarketsGroupsMarketGroupIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetMarketsGroupsMarketGroupId::meta();
         return $dto;
     }
 
@@ -234,7 +228,6 @@ class MarketResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetMarketsPrices::meta(),
         );
     }
 
@@ -253,7 +246,6 @@ class MarketResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetMarketsStructuresStructureId::meta(),
         );
     }
 
@@ -270,7 +262,6 @@ class MarketResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetMarketsRegionIdHistory::meta(),
         );
     }
 
@@ -288,7 +279,6 @@ class MarketResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetMarketsRegionIdOrders::meta(),
         );
     }
 
@@ -305,7 +295,6 @@ class MarketResource extends AbstractResource
             data: $data,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetMarketsRegionIdTypes::meta(),
         );
     }
 }

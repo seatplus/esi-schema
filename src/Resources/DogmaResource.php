@@ -75,7 +75,6 @@ class DogmaResource extends AbstractResource
             data: $data,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetDogmaAttributes::meta(),
         );
     }
 
@@ -88,7 +87,6 @@ class DogmaResource extends AbstractResource
         $dto = DogmaAttributesAttributeIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetDogmaAttributesAttributeId::meta();
         return $dto;
     }
 
@@ -101,7 +99,6 @@ class DogmaResource extends AbstractResource
         $dto = DogmaDynamicItemsTypeIdItemIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetDogmaDynamicItemsTypeIdItemId::meta();
         return $dto;
     }
 
@@ -117,7 +114,6 @@ class DogmaResource extends AbstractResource
             data: $data,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetDogmaEffects::meta(),
         );
     }
 
@@ -130,7 +126,6 @@ class DogmaResource extends AbstractResource
         $dto = DogmaEffectsEffectIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetDogmaEffectsEffectId::meta();
         return $dto;
     }
 }

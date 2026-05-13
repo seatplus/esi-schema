@@ -70,7 +70,6 @@ final class PostCharactersCharacterIdAssetsLocations implements EsiOperationInte
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: self::meta(),
         );
     }
 }

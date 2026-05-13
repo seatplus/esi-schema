@@ -68,7 +68,6 @@ final class GetUniverseTypes implements EsiOperationInterface
             data: $data,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: self::meta(),
         );
     }
 }

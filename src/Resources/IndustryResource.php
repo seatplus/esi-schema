@@ -106,7 +106,6 @@ class IndustryResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdIndustryJobs::meta(),
         );
     }
 
@@ -125,7 +124,6 @@ class IndustryResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdMining::meta(),
         );
     }
 
@@ -144,7 +142,6 @@ class IndustryResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationCorporationIdMiningExtractions::meta(),
         );
     }
 
@@ -163,7 +160,6 @@ class IndustryResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationCorporationIdMiningObservers::meta(),
         );
     }
 
@@ -182,7 +178,6 @@ class IndustryResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationCorporationIdMiningObserversObserverId::meta(),
         );
     }
 
@@ -201,7 +196,6 @@ class IndustryResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdIndustryJobs::meta(),
         );
     }
 
@@ -218,7 +212,6 @@ class IndustryResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetIndustryFacilities::meta(),
         );
     }
 
@@ -235,7 +228,6 @@ class IndustryResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetIndustrySystems::meta(),
         );
     }
 }

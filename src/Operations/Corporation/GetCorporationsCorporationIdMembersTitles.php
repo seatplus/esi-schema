@@ -70,7 +70,6 @@ final class GetCorporationsCorporationIdMembersTitles implements EsiOperationInt
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: self::meta(),
         );
     }
 }

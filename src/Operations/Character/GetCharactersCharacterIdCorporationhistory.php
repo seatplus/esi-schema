@@ -69,7 +69,6 @@ final class GetCharactersCharacterIdCorporationhistory implements EsiOperationIn
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: self::meta(),
         );
     }
 }

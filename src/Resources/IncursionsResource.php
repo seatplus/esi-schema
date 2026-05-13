@@ -42,7 +42,6 @@ class IncursionsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetIncursions::meta(),
         );
     }
 }

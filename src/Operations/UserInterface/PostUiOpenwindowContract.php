@@ -66,7 +66,6 @@ final class PostUiOpenwindowContract implements EsiOperationInterface
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: self::meta(),
         );
     }
 }

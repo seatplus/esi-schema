@@ -71,7 +71,6 @@ final class GetCorporationsCorporationIdStructures implements EsiOperationInterf
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: self::meta(),
         );
     }
 }

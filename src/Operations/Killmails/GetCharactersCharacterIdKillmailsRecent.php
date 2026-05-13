@@ -71,7 +71,6 @@ final class GetCharactersCharacterIdKillmailsRecent implements EsiOperationInter
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: self::meta(),
         );
     }
 }

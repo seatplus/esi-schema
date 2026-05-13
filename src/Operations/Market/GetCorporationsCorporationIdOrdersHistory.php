@@ -71,7 +71,6 @@ final class GetCorporationsCorporationIdOrdersHistory implements EsiOperationInt
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: self::meta(),
         );
     }
 }

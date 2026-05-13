@@ -89,7 +89,6 @@ class AssetsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdAssets::meta(),
         );
     }
 
@@ -107,7 +106,6 @@ class AssetsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PostCharactersCharacterIdAssetsLocations::meta(),
         );
     }
 
@@ -125,7 +123,6 @@ class AssetsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PostCharactersCharacterIdAssetsNames::meta(),
         );
     }
 
@@ -144,7 +141,6 @@ class AssetsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdAssets::meta(),
         );
     }
 
@@ -162,7 +158,6 @@ class AssetsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PostCorporationsCorporationIdAssetsLocations::meta(),
         );
     }
 
@@ -180,7 +175,6 @@ class AssetsResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: PostCorporationsCorporationIdAssetsNames::meta(),
         );
     }
 }

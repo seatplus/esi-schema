@@ -70,7 +70,6 @@ final class GetCorporationsCorporationIdWalletsDivisionTransactions implements E
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: self::meta(),
         );
     }
 }

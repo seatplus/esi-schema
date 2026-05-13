@@ -70,7 +70,6 @@ class PlanetaryInteractionResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdPlanets::meta(),
         );
     }
 
@@ -84,7 +83,6 @@ class PlanetaryInteractionResource extends AbstractResource
         $dto = CharactersCharacterIdPlanetsPlanetIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetCharactersCharacterIdPlanetsPlanetId::meta();
         return $dto;
     }
 
@@ -103,7 +101,6 @@ class PlanetaryInteractionResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdCustomsOffices::meta(),
         );
     }
 
@@ -116,7 +113,6 @@ class PlanetaryInteractionResource extends AbstractResource
         $dto = UniverseSchematicsSchematicIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetUniverseSchematicsSchematicId::meta();
         return $dto;
     }
 }

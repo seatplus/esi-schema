@@ -71,7 +71,6 @@ final class GetCorporationsCorporationIdStarbases implements EsiOperationInterfa
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: self::meta(),
         );
     }
 }

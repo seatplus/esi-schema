@@ -86,7 +86,6 @@ class WalletResource extends AbstractResource
             data: $scalar,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdWallet::meta(),
         );
     }
 
@@ -105,7 +104,6 @@ class WalletResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdWalletJournal::meta(),
         );
     }
 
@@ -123,7 +121,6 @@ class WalletResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdWalletTransactions::meta(),
         );
     }
 
@@ -141,7 +138,6 @@ class WalletResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdWallets::meta(),
         );
     }
 
@@ -160,7 +156,6 @@ class WalletResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdWalletsDivisionJournal::meta(),
         );
     }
 
@@ -178,7 +173,6 @@ class WalletResource extends AbstractResource
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCorporationsCorporationIdWalletsDivisionTransactions::meta(),
         );
     }
 }

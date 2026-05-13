@@ -56,7 +56,6 @@ class SkillsResource extends AbstractResource
         $dto = CharactersCharacterIdAttributesGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetCharactersCharacterIdAttributes::meta();
         return $dto;
     }
 
@@ -71,7 +70,6 @@ class SkillsResource extends AbstractResource
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetCharactersCharacterIdSkillqueue::meta(),
         );
     }
 
@@ -85,7 +83,6 @@ class SkillsResource extends AbstractResource
         $dto = CharactersSkills::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetCharactersCharacterIdSkills::meta();
         return $dto;
     }
 }

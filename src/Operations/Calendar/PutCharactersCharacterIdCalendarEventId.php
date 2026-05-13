@@ -66,7 +66,6 @@ final class PutCharactersCharacterIdCalendarEventId implements EsiOperationInter
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: self::meta(),
         );
     }
 }

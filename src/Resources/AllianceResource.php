@@ -66,7 +66,6 @@ class AllianceResource extends AbstractResource
             data: $data,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetAlliances::meta(),
         );
     }
 
@@ -79,7 +78,6 @@ class AllianceResource extends AbstractResource
         $dto = AllianceDetail::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetAlliancesAllianceId::meta();
         return $dto;
     }
 
@@ -95,7 +93,6 @@ class AllianceResource extends AbstractResource
             data: $data,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: GetAlliancesAllianceIdCorporations::meta(),
         );
     }
 
@@ -108,7 +105,6 @@ class AllianceResource extends AbstractResource
         $dto = AlliancesAllianceIdIconsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
-        $dto->operationMeta = GetAlliancesAllianceIdIcons::meta();
         return $dto;
     }
 }

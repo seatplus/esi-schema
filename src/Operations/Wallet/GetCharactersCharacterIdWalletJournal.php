@@ -71,7 +71,6 @@ final class GetCharactersCharacterIdWalletJournal implements EsiOperationInterfa
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
-            operationMeta: self::meta(),
         );
     }
 }
