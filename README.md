@@ -1,6 +1,6 @@
 # seatplus/esi-schema
 
-**Typed ESI SDK for PHP.** Every EVE Online ESI endpoint has a strongly-typed resource method that returns a fully-typed DTO or paginated result — no string parsing, no `array` guesswork.
+**Typed ESI schema for PHP.** Every EVE Online ESI endpoint has its own generated class with typed pre-call metadata (`meta()`) and a typed call method (`execute()`) — no magic strings, no `array` guesswork.
 
 Generated from the ESI OpenAPI spec (`compatibility_date=2025-12-16`). Zero runtime dependencies.
 
@@ -16,72 +16,105 @@ composer require seatplus/esi-schema
 
 ---
 
-## Quick Start
+## Quick Start — Operation Classes
 
-Wire up a transport (provided by [seatplus/esi-client](https://github.com/seatplus/esi-client)) and you're done:
+Each ESI endpoint has its own generated class under `src/Operations/`. Classes implement `EsiOperationInterface` and expose two static methods:
 
 ```php
-use Seatplus\EsiSchema\Resources\AllianceResource;
-use Seatplus\EsiSchema\Resources\AssetsResource;
+use Seatplus\EsiSchema\Operations\GetCharactersCharacterIdAssets;
+use Seatplus\EsiSchema\Operations\GetMarketsPrices;
 
-// Inject any EsiTransportInterface implementation
-$alliance  = new AllianceResource($transport);
-$assets    = new AssetsResource($transport);
+// 1. Pre-call introspection — no transport needed
+$meta = GetCharactersCharacterIdAssets::meta();
+$meta->requiredScope();       // 'esi-assets.read_assets.v1'
+$meta->rateLimitGroup();      // 'char-asset'
+$meta->rateLimitMaxTokens();  // 1800
+$meta->rateLimitWindow();     // '15m'
+$meta->cacheAge();            // 3600
+$meta->requiredRoles();       // []  (['Director'] for corp endpoints)
+$meta->usesCursor();          // false
 
-// Single-object endpoints — returns a typed DTO directly
-$info = $alliance->getAlliancesAllianceId(99000006);
-echo $info->name;    // 'Goonswarm Federation'  (typed string)
-echo $info->ticker;  // 'CONDI'
+// Check a token before dispatching a job
+if (!$meta->tokenSatisfies($token->scopes)) {
+    throw new InsufficientScopeException($meta->requiredScope());
+}
 
-// Paginated endpoints — returns EsiResult<T>
-$page = $assets->getCharactersCharacterIdAssets(characterId: 12345, page: 1);
-foreach ($page->data as $item) {
+// 2. Typed call — inject any EsiTransportInterface
+$result = GetCharactersCharacterIdAssets::execute($transport, characterId: 12345, page: 1);
+foreach ($result->data as $item) {
     echo $item->type_id;    // typed int
     echo $item->quantity;   // typed int
 }
-echo $page->pages;         // total pages from X-Pages header
-echo $page->isCachedLoad;  // true when served from RFC 7234 cache
+echo $result->pages;         // total pages from X-Pages header
+echo $result->isCachedLoad;  // true when served from RFC 7234 cache
+
+// Result carries the same metadata as meta()
+$result->rateLimitGroup();   // 'char-asset'
+$result->requiredScope();    // 'esi-assets.read_assets.v1'
+
+// Public endpoint — requiredScope() is null, tokenSatisfies() always true
+$prices = GetMarketsPrices::execute($transport);
+GetMarketsPrices::meta()->requiredScope(); // null
+```
+
+### eveapi pattern
+
+The intended use in queue jobs:
+
+```php
+class CharacterAssetJob extends EsiJob
+{
+    public function __construct(
+        public readonly int $characterId,
+        public readonly RefreshToken $token,
+    ) {}
+
+    // EsiJob base reads this automatically: scope check, rate-limit group, etc.
+    protected const string OPERATION = GetCharactersCharacterIdAssets::class;
+
+    protected function executeJob(EsiTransportInterface $transport): void
+    {
+        $result = GetCharactersCharacterIdAssets::execute(
+            $transport, $this->characterId
+        );
+        if ($result->isCachedLoad) return;
+        Asset::upsert(/* ... */);
+    }
+}
 ```
 
 ---
 
-## Result-Level Metadata
+## Tag-Based Resources (legacy API)
 
-Every result object carries ESI spec metadata baked in at generation time — no extra calls, no string operationIds:
-
-```php
-$result = $assets->getCharactersCharacterIdAssets(12345);
-
-$result->rateLimitGroup();     // 'char-asset'
-$result->rateLimitMaxTokens(); // 1800
-$result->rateLimitWindow();    // '15m'
-$result->cacheAge();           // 3600  (null for no-cache endpoints)
-$result->requiredRoles();      // []    (['Director'] for corp endpoints)
-$result->usesCursor();         // false (true for cursor-paginated endpoints)
-
-// Corporation endpoint — different rate-limit group, requires Director role
-$corpAssets = $assets->getCorporationsCorporationIdAssets(98000001);
-$corpAssets->rateLimitGroup(); // 'corp-asset'
-$corpAssets->requiredRoles();  // ['Director']
-```
-
-Object endpoints (single-DTO returns) carry the same accessors:
-
-```php
-$info = $alliance->getAlliancesAllianceId(99000006);
-$info->cacheAge();       // 3600
-$info->rateLimitGroup(); // null (alliance endpoints have no rate-limit group)
-```
-
-### Pre-call introspection
-
-Use `AbstractResource::metaFor()` when you need metadata *before* making a call (e.g. to check required roles before dispatching a job):
+The 33 tag-based Resource classes (`AssetsResource`, `AllianceResource`, …) are retained for backwards compatibility. They group endpoint methods by ESI tag:
 
 ```php
 use Seatplus\EsiSchema\Resources\AssetsResource;
 
+$assets = new AssetsResource($transport);
+
+// Instance method — paginated call
+$page = $assets->getCharactersCharacterIdAssets(characterId: 12345, page: 1);
+foreach ($page->data as $item) { /* ... */ }
+
+// Static companion — pre-call metadata, no transport needed
+$meta = AssetsResource::getCharactersCharacterIdAssetsMeta();
+// equivalent to GetCharactersCharacterIdAssets::meta()
+
+// Dynamic lookup by operationId (for logging, middleware)
 $meta = AssetsResource::metaFor('getCharactersCharacterIdAssets');
-// ['cacheAge' => 3600, 'rateLimit' => ['group' => 'char-asset', 'max-tokens' => 1800, 'window-size' => '15m'], 'requiredRoles' => [], 'cursor' => false]
+```
+
+Every result/DTO carries the same metadata accessors as the `OperationMeta` DTO:
+
+```php
+$result = $assets->getCharactersCharacterIdAssets(12345);
+$result->rateLimitGroup();     // 'char-asset'
+$result->rateLimitMaxTokens(); // 1800
+$result->cacheAge();           // 3600
+$result->requiredRoles();      // []
+$result->usesCursor();         // false
 ```
 
 ---
@@ -125,31 +158,39 @@ The reference implementation is [seatplus/esi-client](https://github.com/seatplu
 ```
 EsiTransportInterface          # Contract: any transport implements this
        │
-       ▼
-AbstractResource               # Base for all 33 generated Resource classes
- ├── OPERATION_META[]          # Per-operationId spec metadata (rate-limit, cache, roles, cursor)
- ├── metaFor(string): array    # Pre-call introspection
- └── getX() / postX() / ...   # Typed endpoint methods
+       ├── Operations/         # 208 generated classes — one per ESI endpoint
+       │    └── GetCharactersCharacterIdAssets
+       │         ├── static meta(): OperationMeta   # pre-call typed metadata
+       │         └── static execute($transport, ...$args): EsiResult
+       │
+       └── Resources/          # 33 generated tag-based resource classes (legacy)
+            └── AssetsResource($transport)
+                 ├── getCharactersCharacterIdAssets(...): EsiResult
+                 ├── static getCharactersCharacterIdAssetsMeta(): OperationMeta
+                 └── static metaFor(string $operationId): OperationMeta
 
-       │ returns
+       both return
        ▼
 EsiResult<T>                   # Paginated/array endpoints
 AbstractEsiDto subclass        # Single-object endpoints (e.g. AllianceDetail)
-       │ both carry
+OperationMeta                  # Pre-call DTO (from meta() or metaFor())
+       │ all three carry
        ▼
-HasOperationMeta trait         # rateLimitGroup(), cacheAge(), requiredRoles(), ...
+HasOperationMeta trait         # rateLimitGroup(), cacheAge(), requiredScope(), ...
 ```
 
 **Key contracts:**
 
-| Class | Purpose |
+| Class / Interface | Purpose |
 |---|---|
-| `EsiTransportInterface` | Contract for HTTP transport (invoke → EsiRawResponse) |
+| `EsiOperationInterface` | Contract for operation classes: `static meta(): OperationMeta` |
+| `EsiTransportInterface` | Contract for HTTP transport: `invoke() → EsiRawResponse` |
 | `EsiRawResponse` | Raw transport response: data + HTTP metadata + rate-limit state |
 | `EsiCursor` | Cursor pagination tokens (`$before`, `$after`) |
+| `OperationMeta` | Typed pre-call DTO: all spec metadata + `tokenSatisfies()` |
 | `AbstractEsiDto` | Base DTO: `$isCachedLoad`, `$pages`, `$operationMeta` |
-| `EsiResult<T>` | Typed wrapper for array endpoints |
-| `HasOperationMeta` | Trait giving result/DTO objects 6 metadata accessors |
+| `EsiResult<T>` | Typed wrapper for array/paginated endpoints |
+| `HasOperationMeta` | Trait: 7 metadata accessors on result objects and `OperationMeta` |
 
 ---
 
@@ -168,11 +209,16 @@ When CCP publishes a new compatibility date with breaking schema changes, a new 
 ## Regenerating
 
 ```bash
-php bin/generate.php    # fetches latest spec, regenerates all DTOs + Resources
+php bin/generate.php    # fetches latest spec, regenerates all DTOs + Resources + Operations
 vendor/bin/pint         # auto-format generated output
 ```
 
 The generator reads the live OAS3 spec from `https://esi.evetech.net/meta/openapi.yaml?compatibility_date=2025-12-16`.
+
+It emits:
+- `src/Responses/*.php` — ~218 typed DTO classes (one per ESI schema object)
+- `src/Resources/*.php` — 33 tag-based resource classes
+- `src/Operations/*.php` — 208 operation classes (one per ESI endpoint)
 
 ---
 
