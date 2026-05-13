@@ -10,7 +10,7 @@ use Seatplus\EsiSchema\OperationMeta;
  * Contract for generated per-route ESI operation classes.
  *
  * Each ESI endpoint is represented by a single generated class in
- * src/Operations/ that implements this interface. The class name is the
+ * src/Resources/ that implements this interface. The class name is the
  * PascalCase operationId (e.g. GetCharactersCharacterIdAssets).
  *
  * Implementing classes also provide a typed static execute() method whose

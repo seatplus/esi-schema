@@ -5,12 +5,10 @@
  * ESI Schema Generator — OpenAPI 3.1.0 edition
  *
  * Fetches the ESI OpenAPI YAML spec and generates:
- *   - src/Responses/{SchemaName}.php     (item DTOs, one per object schema)
- *   - src/Resources/{Tag}Resource.php    (one resource per ESI tag group)
- *   - src/Operations/{Tag}/{OperationId}.php  (one class per ESI route, grouped by tag)
+ *   - src/Responses/{SchemaName}.php             (item DTOs, one per object schema)
+ *   - src/Resources/{Tag}/{OperationId}.php       (one class per ESI route, grouped by tag)
  *
  * All DTOs extend AbstractEsiDto which carries $isCachedLoad and $pages.
- * All Resources extend AbstractResource which holds EsiTransportInterface.
  *
  * Usage:
  *   php bin/generate.php [--compatibility-date=2025-12-16] [--spec=/path/to/openapi.yaml] [--dry-run]
@@ -74,7 +72,7 @@ define('ESI_COMPATIBILITY_DATE', $compatDate);
 // ---------------------------------------------------------------------------
 
 $responsesDir   = __DIR__ . '/../src/Responses';
-$operationsDir  = __DIR__ . '/../src/Operations';
+$resourcesDir   = __DIR__ . '/../src/Resources';
 
 // ---------------------------------------------------------------------------
 // Helper: convert OAS3 type/format to PHP type
@@ -419,7 +417,7 @@ function generateOperationClass(array $op): string
 
     declare(strict_types=1);
 
-    namespace Seatplus\\EsiSchema\\Operations\\{$subNs};
+    namespace Seatplus\\EsiSchema\\Resources\\{$subNs};
 
     {$useBlock}
 
@@ -621,7 +619,7 @@ foreach ($schemas as $name => $schema) {
 // ---------------------------------------------------------------------------
 
 $writtenDtos       = 0;
-$writtenOperations = 0;
+$writtenResources = 0;
 
 if (! $dryRun) {
     // --- DTOs ---
@@ -634,21 +632,21 @@ if (! $dryRun) {
         $writtenDtos++;
     }
 
-    // --- Operations ---
-    if (! is_dir($operationsDir)) {
-        mkdir($operationsDir, 0755, true);
+    // --- Resources ---
+    if (! is_dir($resourcesDir)) {
+        mkdir($resourcesDir, 0755, true);
     }
     foreach ($allOps as $op) {
         $subNs     = str_replace(' ', '', $op['tag']);
-        $subDir    = "{$operationsDir}/{$subNs}";
+        $subDir    = "{$resourcesDir}/{$subNs}";
         if (! is_dir($subDir)) {
             mkdir($subDir, 0755, true);
         }
         $source    = generateOperationClass($op);
         $className = ucfirst($op['methodName']);
         file_put_contents("{$subDir}/{$className}.php", $source);
-        echo "  [operation] src/Operations/{$subNs}/{$className}.php\n";
-        $writtenOperations++;
+        echo "  [resource] src/Resources/{$subNs}/{$className}.php\n";
+        $writtenResources++;
     }
 } else {
     foreach ($dtoFiles as $className => $_) {
@@ -657,11 +655,11 @@ if (! $dryRun) {
     }
     foreach ($allOps as $op) {
         $subNs = str_replace(' ', '', $op['tag']);
-        echo "  [dry-run][operation] src/Operations/{$subNs}/" . ucfirst($op['methodName']) . ".php\n";
-        $writtenOperations++;
+        echo "  [dry-run][resource] src/Resources/{$subNs}/" . ucfirst($op['methodName']) . ".php\n";
+        $writtenResources++;
     }
 }
 
 echo "\nDone.\n";
 echo "  DTOs:       {$writtenDtos} files\n";
-echo "  Operations: {$writtenOperations} files\n";
+echo "  Resources:  {$writtenResources} files\n";

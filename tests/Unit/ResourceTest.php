@@ -3,10 +3,10 @@
 use Seatplus\EsiSchema\Contracts\EsiRawResponse;
 use Seatplus\EsiSchema\Contracts\EsiTransportInterface;
 use Seatplus\EsiSchema\EsiResult;
-use Seatplus\EsiSchema\Operations\Alliance\GetAlliancesAllianceId;
-use Seatplus\EsiSchema\Operations\Assets\GetCharactersCharacterIdAssets;
-use Seatplus\EsiSchema\Operations\Assets\GetCorporationsCorporationIdAssets;
-use Seatplus\EsiSchema\Operations\FreelanceJobs\GetFreelanceJobsListing;
+use Seatplus\EsiSchema\Resources\Alliance\GetAlliancesAllianceId;
+use Seatplus\EsiSchema\Resources\Assets\GetCharactersCharacterIdAssets;
+use Seatplus\EsiSchema\Resources\Assets\GetCorporationsCorporationIdAssets;
+use Seatplus\EsiSchema\Resources\FreelanceJobs\GetFreelanceJobsListing;
 use Seatplus\EsiSchema\Responses\AllianceDetail;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdAssetsGetItem;
 

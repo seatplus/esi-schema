@@ -4,12 +4,12 @@
 
 `seatplus/esi-schema` is a **code-generated PHP library** that wraps the EVE Online ESI (Swagger/OpenAPI) API. It provides:
 
-- **208 Operation classes** (`src/Operations/{Tag}/`) — one static class per ESI endpoint, with typed `meta()` and `execute()` methods.
+- **208 Operation classes** (`src/Resources/{Tag}/`) — one static class per ESI endpoint, with typed `meta()` and `execute()` methods.
 - **33 Resource classes** (`src/Resources/`) — legacy tag-grouped instance API (backwards-compatible).
 - **~218 DTO classes** (`src/Responses/`) — typed value objects for every ESI response schema.
 - **Zero runtime dependencies** — pure PHP 8.3, no Guzzle, no HTTP client, no framework.
 
-All files under `src/Responses/`, `src/Resources/`, and `src/Operations/` are **generated**. Do not edit them directly.
+All files under `src/Responses/`, `src/Resources/`, and `src/Resources/` are **generated**. Do not edit them directly.
 
 ---
 
@@ -20,7 +20,7 @@ The following directories contain **only generated code**:
 ```
 src/Responses/        ← ~218 DTO classes, one per ESI schema object
 src/Resources/        ← 33 tag Resource classes
-src/Operations/       ← 208 operation classes in 33 tag subfolders
+src/Resources/       ← 208 operation classes in 33 tag subfolders
 ```
 
 If you need to change generated output, **edit `bin/generate.php`**, then re-run:
@@ -54,7 +54,7 @@ src/
 
   Responses/                   # GENERATED — ~218 typed DTO classes
   Resources/                   # GENERATED — 33 tag-based resource classes
-  Operations/                  # GENERATED — 208 operation classes in 33 subfolders
+  Resources/                  # GENERATED — 208 operation classes in 33 subfolders
     Assets/
       GetCharactersCharacterIdAssets.php
       GetCorporationsCorporationIdAssets.php
@@ -104,17 +104,17 @@ Mixed into `EsiResult<T>`, `AbstractEsiDto`, and `OperationMeta`. Provides the s
 ## Operation class namespace pattern
 
 ```
-Seatplus\EsiSchema\Operations\{Tag}\{PascalCaseOperationId}
+Seatplus\EsiSchema\Resources\{Tag}\{PascalCaseOperationId}
 ```
 
 Tag names map from ESI tags with spaces stripped in PascalCase:
-- `Assets` → `Operations\Assets\`
-- `Faction Warfare` → `Operations\FactionWarfare\`
-- `Corporation` → `Operations\Corporation\`
+- `Assets` → `Resources\Assets\`
+- `Faction Warfare` → `Resources\FactionWarfare\`
+- `Corporation` → `Resources\Corporation\`
 
 Usage example:
 ```php
-use Seatplus\EsiSchema\Operations\Assets\GetCharactersCharacterIdAssets;
+use Seatplus\EsiSchema\Resources\Assets\GetCharactersCharacterIdAssets;
 
 // Pre-call check (no transport needed)
 $meta = GetCharactersCharacterIdAssets::meta();
@@ -185,7 +185,7 @@ php bin/generate.php --compatibility-date=YYYY-MM-DD
 
 | ✅ Do | ❌ Don't |
 |---|---|
-| Edit `bin/generate.php` to change generated output | Edit files in `src/Responses/`, `src/Resources/`, `src/Operations/` directly |
+| Edit `bin/generate.php` to change generated output | Edit files in `src/Responses/`, `src/Resources/`, `src/Resources/` directly |
 | Edit handwritten files in `src/Contracts/`, `src/Concerns/`, `src/AbstractEsiDto.php`, `src/EsiResult.php`, `src/OperationMeta.php` | Add runtime dependencies to `composer.json` `require` |
 | Write tests in `tests/` | Introduce framework-specific code (no Laravel, no Symfony) |
 | Run `vendor/bin/pint` after regenerating | Skip the `composer test` check before committing |

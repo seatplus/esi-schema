@@ -18,11 +18,11 @@ composer require seatplus/esi-schema
 
 ## Quick Start — Operation Classes
 
-Each ESI endpoint has its own generated class under `src/Operations/{Tag}/`. Classes implement `EsiOperationInterface` and expose two static methods:
+Each ESI endpoint has its own generated class under `src/Resources/{Tag}/`. Classes implement `EsiOperationInterface` and expose two static methods:
 
 ```php
-use Seatplus\EsiSchema\Operations\Assets\GetCharactersCharacterIdAssets;
-use Seatplus\EsiSchema\Operations\Market\GetMarketsPrices;
+use Seatplus\EsiSchema\Resources\Assets\GetCharactersCharacterIdAssets;
+use Seatplus\EsiSchema\Resources\Market\GetMarketsPrices;
 
 // 1. Pre-call introspection — no transport needed
 $meta = GetCharactersCharacterIdAssets::meta();
@@ -59,29 +59,29 @@ GetMarketsPrices::meta()->requiredScope(); // null
 
 ### Operation class namespaces
 
-Operations are grouped by ESI tag into 33 subfolders:
+Resource classes are grouped by ESI tag into 33 subfolders:
 
 | Namespace | Example class |
 |---|---|
-| `Operations\Alliance` | `GetAlliancesAllianceId` |
-| `Operations\Assets` | `GetCharactersCharacterIdAssets` |
-| `Operations\Character` | `GetCharactersCharacterId` |
-| `Operations\Corporation` | `GetCorporationsCorporationId` |
-| `Operations\FactionWarfare` | `GetFwStats` |
-| `Operations\Market` | `GetMarketsPrices` |
-| `Operations\Universe` | `GetUniverseTypesTypeId` |
-| `Operations\Wallet` | `GetCharactersCharacterIdWallet` |
-| `Operations\Skills` | `GetCharactersCharacterIdSkills` |
+| `Resources\Alliance` | `GetAlliancesAllianceId` |
+| `Resources\Assets` | `GetCharactersCharacterIdAssets` |
+| `Resources\Character` | `GetCharactersCharacterId` |
+| `Resources\Corporation` | `GetCorporationsCorporationId` |
+| `Resources\FactionWarfare` | `GetFwStats` |
+| `Resources\Market` | `GetMarketsPrices` |
+| `Resources\Universe` | `GetUniverseTypesTypeId` |
+| `Resources\Wallet` | `GetCharactersCharacterIdWallet` |
+| `Resources\Skills` | `GetCharactersCharacterIdSkills` |
 | … (33 total) | |
 
-Full class names follow the pattern `Seatplus\EsiSchema\Operations\{Tag}\{PascalCaseOperationId}`.
+Full class names follow the pattern `Seatplus\EsiSchema\Resources\{Tag}\{PascalCaseOperationId}`.
 
 ### eveapi integration pattern
 
 The intended use in queue jobs:
 
 ```php
-use Seatplus\EsiSchema\Operations\Assets\GetCharactersCharacterIdAssets;
+use Seatplus\EsiSchema\Resources\Assets\GetCharactersCharacterIdAssets;
 
 class CharacterAssetJob extends EsiJob
 {
@@ -142,7 +142,7 @@ $result->usesCursor();         // false
 
 ## Implementing a Transport
 
-All Resources and Operations depend only on `EsiTransportInterface`. Implement it to connect any HTTP client:
+All resource classes depend only on `EsiTransportInterface`. Implement it to connect any HTTP client:
 
 ```php
 use Seatplus\EsiSchema\Contracts\EsiTransportInterface;
@@ -179,7 +179,7 @@ The reference implementation is [seatplus/esi-client](https://github.com/seatplu
 ```
 EsiTransportInterface          # Contract: any transport implements this
        │
-       ├── Operations/         # 208 generated classes — one per ESI endpoint
+       ├── Resources/         # 208 generated classes — one per ESI endpoint
        │    └── Assets/
        │         └── GetCharactersCharacterIdAssets
        │              ├── static meta(): OperationMeta   # pre-call typed metadata
@@ -241,11 +241,11 @@ private const array OPERATION_META = [
 
 There is no runtime spec fetch, no file read, no I/O. The trade-off: when CCP changes the spec, you must **regenerate and release a new version**. This is intentional — spec drift is a deploy-time concern, not a runtime concern.
 
-### 3. Tag-based subfolders for Operations
+### 3. Tag-based subfolders for Resources
 
-The 208 operation classes live in `src/Operations/{Tag}/` (33 subfolders), matching the ESI API tag taxonomy. This means:
+The 208 operation classes live in `src/Resources/{Tag}/` (33 subfolders), matching the ESI API tag taxonomy. This means:
 
-- **Group imports** are idiomatic: `use Seatplus\EsiSchema\Operations\Assets\{GetCharactersCharacterIdAssets, GetCorporationsCorporationIdAssets}`.
+- **Group imports** are idiomatic: `use Seatplus\EsiSchema\Resources\Assets\{GetCharactersCharacterIdAssets, GetCorporationsCorporationIdAssets}`.
 - The folder structure mirrors the `Resources/` layer, making it easy to locate related classes.
 - Tag names with spaces become PascalCase: `Faction Warfare` → `FactionWarfare`.
 
@@ -300,7 +300,7 @@ When CCP publishes a new compatibility date with breaking schema changes, a new 
 ## Regenerating
 
 ```bash
-php bin/generate.php    # fetches latest spec, regenerates all DTOs + Resources + Operations
+php bin/generate.php    # fetches latest spec, regenerates all DTOs + Resources
 vendor/bin/pint         # auto-format generated output (run after generate if needed)
 ```
 
@@ -309,7 +309,7 @@ The generator reads the live OAS3 spec from `https://esi.evetech.net/meta/openap
 It emits:
 - `src/Responses/*.php` — ~218 typed DTO classes (one per ESI schema object)
 - `src/Resources/*.php` — 33 tag-based resource classes
-- `src/Operations/{Tag}/*.php` — 208 operation classes grouped by ESI tag
+- `src/Resources/{Tag}/*.php` — 208 operation classes grouped by ESI tag
 
 **Do not manually edit generated files.** Changes are overwritten on next regeneration. To change generated output, edit `bin/generate.php`.
 

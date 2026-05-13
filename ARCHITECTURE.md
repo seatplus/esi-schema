@@ -10,10 +10,10 @@ This document records the key design decisions made for `seatplus/esi-schema`, w
 ESI has ~208 endpoints. The original design used 33 tag-based Resource classes (e.g. `AssetsResource`) with one instance method per endpoint. Pre-call introspection required string-based lookups like `AssetsResource::metaFor('getCharactersCharacterIdAssets')`.
 
 ### Decision
-Each ESI endpoint gets its own static class under `src/Operations/{Tag}/`. Class name = PascalCase operationId.
+Each ESI endpoint gets its own static class under `src/Resources/{Tag}/`. Class name = PascalCase operationId.
 
 ```php
-use Seatplus\EsiSchema\Operations\Assets\GetCharactersCharacterIdAssets;
+use Seatplus\EsiSchema\Resources\Assets\GetCharactersCharacterIdAssets;
 
 $meta   = GetCharactersCharacterIdAssets::meta();    // pre-call
 $result = GetCharactersCharacterIdAssets::execute($transport, $characterId);
@@ -30,7 +30,7 @@ $result = GetCharactersCharacterIdAssets::execute($transport, $characterId);
 - **String-keyed registry** — `EsiSchema::operation('getCharactersCharacterIdAssets')` — rejected because it requires runtime string-to-class resolution, is not statically analysable, and hides the return type.
 
 ### Consequences
-- 208 files in `src/Operations/`. This is intentional and by design — each file is tiny (~30 lines).
+- 208 files in `src/Resources/`. This is intentional and by design — each file is tiny (~30 lines).
 - Adding a new ESI endpoint means regenerating, not adding a method to an existing class.
 
 ---
@@ -146,13 +146,13 @@ public function rateLimitGroup(): ?string
 ## Decision 5 — Tag-based subfolders for Operation classes
 
 ### Context
-With 208 operation classes, a flat `src/Operations/` directory is hard to navigate.
+With 208 operation classes, a flat `src/Resources/` directory is hard to navigate.
 
 ### Decision
-Operations are grouped into 33 tag subfolders matching ESI's tag taxonomy:
+Resource classes are grouped into 33 tag subfolders matching ESI's tag taxonomy:
 
 ```
-src/Operations/
+src/Resources/
 ├── Assets/         (6 classes)
 ├── Character/      (14 classes)
 ├── Corporation/    (22 classes)
@@ -162,12 +162,12 @@ src/Operations/
 ...
 ```
 
-Namespace: `Seatplus\EsiSchema\Operations\{Tag}\{OperationId}`.  
+Namespace: `Seatplus\EsiSchema\Resources\{Tag}\{OperationId}`.  
 Tags with spaces become PascalCase: `Faction Warfare` → `FactionWarfare`.
 
 ### Rationale
-- **Mirrors the Resource layer** — `Operations\Assets\` maps directly to `AssetsResource`. Consistent mental model.
-- **Group imports** — `use Seatplus\EsiSchema\Operations\Assets\{GetCharactersCharacterIdAssets, PostCharactersCharacterIdAssetsLocations}` is idiomatic PHP.
+- **Mirrors the Resource layer** — `Resources\Assets\` maps directly to `AssetsResource`. Consistent mental model.
+- **Group imports** — `use Seatplus\EsiSchema\Resources\Assets\{GetCharactersCharacterIdAssets, PostCharactersCharacterIdAssetsLocations}` is idiomatic PHP.
 - **IDE folder navigation** — 33 folders of ~6 files each vs 208 files flat.
 
 ### Alternatives considered
@@ -175,7 +175,7 @@ Tags with spaces become PascalCase: `Faction Warfare` → `FactionWarfare`.
 - HTTP-method grouping (GET/, POST/) — doesn't match how ESI is documented or how consumers think about endpoints.
 
 ### Consequences
-- Import paths are one level deeper: `Operations\Assets\GetCharactersCharacterIdAssets` vs `Operations\GetCharactersCharacterIdAssets`.
+- Import paths are one level deeper: `Resources\Assets\GetCharactersCharacterIdAssets` vs `Resources\GetCharactersCharacterIdAssets`.
 - Composer PSR-4 autoloading covers all subnamespaces automatically — no `composer.json` change needed.
 
 ---
