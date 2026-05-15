@@ -434,6 +434,10 @@ function generateOperationClass(array $op): string
     // Replace $this->transport with $transport (operation classes are static)
     $staticBody = str_replace('$this->transport->invoke', '$transport->invoke', $body);
 
+    // Prepend assertScope call so every execute() enforces its own scope requirement.
+    // This is the first statement so it throws before any HTTP call is made.
+    $staticBody = "        \$transport->assertScope(self::REQUIRED_SCOPE);\n" . $staticBody;
+
     $useBlock = implode("\n", array_unique($useStatements));
 
     return <<<PHP

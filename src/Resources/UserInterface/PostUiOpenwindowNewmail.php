@@ -61,6 +61,7 @@ final class PostUiOpenwindowNewmail implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, mixed $requestBody): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('post', '/ui/openwindow/newmail', [], [], (array) $requestBody);
         return new EsiResult(
             data: null,

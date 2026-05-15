@@ -60,6 +60,7 @@ final class GetUniverseStarsStarId implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, int $starId): UniverseStarsStarIdGet
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/universe/stars/{star_id}', ['star_id' => $starId], []);
         $dto = UniverseStarsStarIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;

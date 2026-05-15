@@ -61,6 +61,7 @@ final class GetCorporationsProjectsContributors implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, int $corporationId, string $projectId, ?string $after = null, ?string $before = null, ?int $limit = null): CorporationsProjectsContributors
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/corporations/{corporation_id}/projects/{project_id}/contributors', ['corporation_id' => $corporationId, 'project_id' => $projectId], ['after' => $after, 'before' => $before, 'limit' => $limit]);
         $dto = CorporationsProjectsContributors::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;

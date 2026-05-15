@@ -60,6 +60,7 @@ final class GetAlliancesAllianceId implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, int $allianceId): AllianceDetail
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/alliances/{alliance_id}', ['alliance_id' => $allianceId], []);
         $dto = AllianceDetail::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;

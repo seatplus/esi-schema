@@ -26,4 +26,14 @@ interface EsiTransportInterface
         array $queryParams = [],
         array $requestBody = [],
     ): EsiRawResponse;
+
+    /**
+     * Assert that the current authentication context possesses the given OAuth2 scope.
+     *
+     * Pass null for public (unauthenticated) endpoints — implementations MUST treat
+     * null as a no-op and return without throwing.
+     *
+     * @throws ScopeAccessDeniedException When $scope is non-null and the token lacks it.
+     */
+    public function assertScope(?string $scope): void;
 }

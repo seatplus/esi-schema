@@ -61,6 +61,7 @@ final class DeleteCharactersCharacterIdMailLabelsLabelId implements EsiOperation
      */
     public static function execute(EsiTransportInterface $transport, int $characterId, int $labelId): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('delete', '/characters/{character_id}/mail/labels/{label_id}', ['character_id' => $characterId, 'label_id' => $labelId], [], []);
         return new EsiResult(
             data: null,

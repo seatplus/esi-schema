@@ -61,6 +61,7 @@ final class PutCharactersCharacterIdCalendarEventId implements EsiOperationInter
      */
     public static function execute(EsiTransportInterface $transport, mixed $requestBody, int $characterId, int $eventId): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('put', '/characters/{character_id}/calendar/{event_id}', ['character_id' => $characterId, 'event_id' => $eventId], [], (array) $requestBody);
         return new EsiResult(
             data: null,

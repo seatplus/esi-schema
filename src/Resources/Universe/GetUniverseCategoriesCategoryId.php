@@ -60,6 +60,7 @@ final class GetUniverseCategoriesCategoryId implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, int $categoryId): UniverseCategoriesCategoryIdGet
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/universe/categories/{category_id}', ['category_id' => $categoryId], []);
         $dto = UniverseCategoriesCategoryIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;

@@ -61,6 +61,7 @@ final class GetCharactersCharacterIdWallet implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, int $characterId): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/characters/{character_id}/wallet', ['character_id' => $characterId], []);
         /** @var float $scalar */
         $scalar = (float) $response->data;

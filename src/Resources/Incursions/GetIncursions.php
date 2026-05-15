@@ -61,6 +61,7 @@ final class GetIncursions implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/incursions', [], []);
         return new EsiResult(
             data: array_map(

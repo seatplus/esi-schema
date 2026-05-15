@@ -60,6 +60,7 @@ final class GetFwLeaderboardsCharacters implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport): FwLeaderboardsCharactersGet
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/fw/leaderboards/characters', [], []);
         $dto = FwLeaderboardsCharactersGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;

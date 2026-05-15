@@ -60,6 +60,7 @@ final class GetUniverseRegionsRegionId implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, int $regionId): UniverseRegionsRegionIdGet
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/universe/regions/{region_id}', ['region_id' => $regionId], []);
         $dto = UniverseRegionsRegionIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;

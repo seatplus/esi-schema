@@ -62,6 +62,7 @@ final class GetCorporationsCorporationIdContractsContractIdItems implements EsiO
      */
     public static function execute(EsiTransportInterface $transport, int $contractId, int $corporationId): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/corporations/{corporation_id}/contracts/{contract_id}/items', ['contract_id' => $contractId, 'corporation_id' => $corporationId], []);
         return new EsiResult(
             data: array_map(

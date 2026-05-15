@@ -63,6 +63,7 @@ final class GetCorporationsCorporationIdIndustryJobs implements EsiOperationInte
      */
     public static function execute(EsiTransportInterface $transport, int $corporationId, ?bool $includeCompleted = null, int $page = 1): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/corporations/{corporation_id}/industry/jobs', ['corporation_id' => $corporationId], ['include_completed' => $includeCompleted, 'page' => $page]);
         return new EsiResult(
             data: array_map(

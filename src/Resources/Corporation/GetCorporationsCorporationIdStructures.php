@@ -63,6 +63,7 @@ final class GetCorporationsCorporationIdStructures implements EsiOperationInterf
      */
     public static function execute(EsiTransportInterface $transport, int $corporationId, int $page = 1): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/corporations/{corporation_id}/structures', ['corporation_id' => $corporationId], ['page' => $page]);
         return new EsiResult(
             data: array_map(

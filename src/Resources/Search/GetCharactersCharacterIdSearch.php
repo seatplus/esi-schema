@@ -61,6 +61,7 @@ final class GetCharactersCharacterIdSearch implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, array $categories, int $characterId, string $search, ?bool $strict = null): CharactersCharacterIdSearchGet
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/characters/{character_id}/search', ['character_id' => $characterId], ['categories' => $categories, 'search' => $search, 'strict' => $strict]);
         $dto = CharactersCharacterIdSearchGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;

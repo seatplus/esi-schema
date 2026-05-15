@@ -62,6 +62,7 @@ final class GetCharactersCharacterIdCalendarEventIdAttendees implements EsiOpera
      */
     public static function execute(EsiTransportInterface $transport, int $characterId, int $eventId): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/characters/{character_id}/calendar/{event_id}/attendees', ['character_id' => $characterId, 'event_id' => $eventId], []);
         return new EsiResult(
             data: array_map(

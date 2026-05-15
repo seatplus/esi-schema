@@ -61,6 +61,7 @@ final class GetUniverseGroups implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, int $page = 1): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/universe/groups', [], ['page' => $page]);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);

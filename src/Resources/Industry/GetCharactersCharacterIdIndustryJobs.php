@@ -62,6 +62,7 @@ final class GetCharactersCharacterIdIndustryJobs implements EsiOperationInterfac
      */
     public static function execute(EsiTransportInterface $transport, int $characterId, ?bool $includeCompleted = null): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/characters/{character_id}/industry/jobs', ['character_id' => $characterId], ['include_completed' => $includeCompleted]);
         return new EsiResult(
             data: array_map(

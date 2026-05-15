@@ -24,6 +24,10 @@ function mockTransport(mixed $data, bool $isCachedLoad = false, int $pages = 1):
         ) {
         }
 
+        public function assertScope(?string $scope): void
+        {
+        }
+
         public function invoke(
             string $method,
             string $path,

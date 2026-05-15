@@ -60,6 +60,7 @@ final class GetWarsWarId implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, int $warId): WarsWarIdGet
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/wars/{war_id}', ['war_id' => $warId], []);
         $dto = WarsWarIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;

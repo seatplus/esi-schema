@@ -61,6 +61,7 @@ final class DeleteCharactersCharacterIdFittingsFittingId implements EsiOperation
      */
     public static function execute(EsiTransportInterface $transport, int $characterId, int $fittingId): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('delete', '/characters/{character_id}/fittings/{fitting_id}', ['character_id' => $characterId, 'fitting_id' => $fittingId], [], []);
         return new EsiResult(
             data: null,

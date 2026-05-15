@@ -61,6 +61,7 @@ final class PostUniverseNames implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, mixed $requestBody): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('post', '/universe/names', [], [], (array) $requestBody);
         return new EsiResult(
             data: array_map(

@@ -61,6 +61,7 @@ final class GetCorporationsCorporationIdDivisions implements EsiOperationInterfa
      */
     public static function execute(EsiTransportInterface $transport, int $corporationId): CorporationsCorporationIdDivisionsGet
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/corporations/{corporation_id}/divisions', ['corporation_id' => $corporationId], []);
         $dto = CorporationsCorporationIdDivisionsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;

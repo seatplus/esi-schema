@@ -60,6 +60,7 @@ final class GetUniverseSystemsSystemId implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, int $systemId): UniverseSystemsSystemIdGet
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/universe/systems/{system_id}', ['system_id' => $systemId], []);
         $dto = UniverseSystemsSystemIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;

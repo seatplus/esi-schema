@@ -61,6 +61,7 @@ final class GetCharactersCharacterIdCalendarEventId implements EsiOperationInter
      */
     public static function execute(EsiTransportInterface $transport, int $characterId, int $eventId): CharactersCharacterIdCalendarEventIdGet
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/characters/{character_id}/calendar/{event_id}', ['character_id' => $characterId, 'event_id' => $eventId], []);
         $dto = CharactersCharacterIdCalendarEventIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;

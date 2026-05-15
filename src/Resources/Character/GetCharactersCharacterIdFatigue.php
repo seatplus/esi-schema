@@ -61,6 +61,7 @@ final class GetCharactersCharacterIdFatigue implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, int $characterId): CharactersCharacterIdFatigueGet
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/characters/{character_id}/fatigue', ['character_id' => $characterId], []);
         $dto = CharactersCharacterIdFatigueGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
