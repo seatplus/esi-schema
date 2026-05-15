@@ -61,6 +61,7 @@ final class GetCharactersCharacterIdSkillqueue implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, int $characterId): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/characters/{character_id}/skillqueue', ['character_id' => $characterId], []);
         return new EsiResult(
             data: null,

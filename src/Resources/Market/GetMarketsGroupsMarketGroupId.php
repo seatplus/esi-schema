@@ -60,6 +60,7 @@ final class GetMarketsGroupsMarketGroupId implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, int $marketGroupId): MarketsGroupsMarketGroupIdGet
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/markets/groups/{market_group_id}', ['market_group_id' => $marketGroupId], []);
         $dto = MarketsGroupsMarketGroupIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;

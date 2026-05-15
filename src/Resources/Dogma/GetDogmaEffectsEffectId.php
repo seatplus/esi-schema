@@ -60,6 +60,7 @@ final class GetDogmaEffectsEffectId implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, int $effectId): DogmaEffectsEffectIdGet
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/dogma/effects/{effect_id}', ['effect_id' => $effectId], []);
         $dto = DogmaEffectsEffectIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;

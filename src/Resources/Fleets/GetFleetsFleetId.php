@@ -61,6 +61,7 @@ final class GetFleetsFleetId implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, int $fleetId): FleetsFleetIdGet
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/fleets/{fleet_id}', ['fleet_id' => $fleetId], []);
         $dto = FleetsFleetIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;

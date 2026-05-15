@@ -60,6 +60,7 @@ final class GetMetaCompatibilityDates implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport): MetaCompatibilityDates
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/meta/compatibility-dates', [], []);
         $dto = MetaCompatibilityDates::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;

@@ -62,6 +62,7 @@ final class GetCharactersCharacterIdCalendar implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, int $characterId, ?int $fromEvent = null): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/characters/{character_id}/calendar', ['character_id' => $characterId], ['from_event' => $fromEvent]);
         return new EsiResult(
             data: array_map(

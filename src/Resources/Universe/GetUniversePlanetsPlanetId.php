@@ -60,6 +60,7 @@ final class GetUniversePlanetsPlanetId implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, int $planetId): UniversePlanetsPlanetIdGet
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/universe/planets/{planet_id}', ['planet_id' => $planetId], []);
         $dto = UniversePlanetsPlanetIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;

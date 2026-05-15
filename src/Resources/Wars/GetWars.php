@@ -60,6 +60,7 @@ final class GetWars implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, ?int $maxWarId = null): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/wars', [], ['max_war_id' => $maxWarId]);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);

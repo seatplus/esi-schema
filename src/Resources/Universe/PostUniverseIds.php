@@ -60,6 +60,7 @@ final class PostUniverseIds implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, mixed $requestBody): UniverseIdsPost
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('post', '/universe/ids', [], [], (array) $requestBody);
         $dto = UniverseIdsPost::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;

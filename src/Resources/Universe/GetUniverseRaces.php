@@ -61,6 +61,7 @@ final class GetUniverseRaces implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/universe/races', [], []);
         return new EsiResult(
             data: array_map(

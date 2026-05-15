@@ -61,6 +61,7 @@ final class GetCorporationsCorporationIdMembersLimit implements EsiOperationInte
      */
     public static function execute(EsiTransportInterface $transport, int $corporationId): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/corporations/{corporation_id}/members/limit', ['corporation_id' => $corporationId], []);
         /** @var int $scalar */
         $scalar = (int) $response->data;

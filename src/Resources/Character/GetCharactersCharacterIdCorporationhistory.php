@@ -61,6 +61,7 @@ final class GetCharactersCharacterIdCorporationhistory implements EsiOperationIn
      */
     public static function execute(EsiTransportInterface $transport, int $characterId): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/characters/{character_id}/corporationhistory', ['character_id' => $characterId], []);
         return new EsiResult(
             data: array_map(

@@ -63,6 +63,7 @@ final class GetCorporationsCorporationIdWalletsDivisionJournal implements EsiOpe
      */
     public static function execute(EsiTransportInterface $transport, int $corporationId, int $division, int $page = 1): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/corporations/{corporation_id}/wallets/{division}/journal', ['corporation_id' => $corporationId, 'division' => $division], ['page' => $page]);
         return new EsiResult(
             data: array_map(

@@ -62,6 +62,7 @@ final class GetCharactersCharacterIdWalletTransactions implements EsiOperationIn
      */
     public static function execute(EsiTransportInterface $transport, int $characterId, ?int $fromId = null): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/characters/{character_id}/wallet/transactions', ['character_id' => $characterId], ['from_id' => $fromId]);
         return new EsiResult(
             data: array_map(

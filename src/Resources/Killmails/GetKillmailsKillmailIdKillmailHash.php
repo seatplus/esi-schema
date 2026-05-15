@@ -60,6 +60,7 @@ final class GetKillmailsKillmailIdKillmailHash implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, string $killmailHash, int $killmailId): KillmailsKillmailIdKillmailHashGet
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/killmails/{killmail_id}/{killmail_hash}', ['killmail_hash' => $killmailHash, 'killmail_id' => $killmailId], []);
         $dto = KillmailsKillmailIdKillmailHashGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;

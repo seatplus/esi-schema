@@ -60,6 +60,7 @@ final class PostRoute implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, mixed $requestBody, int $originSystemId, int $destinationSystemId): Route
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('post', '/route/{origin_system_id}/{destination_system_id}', ['origin_system_id' => $originSystemId, 'destination_system_id' => $destinationSystemId], [], (array) $requestBody);
         $dto = Route::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;

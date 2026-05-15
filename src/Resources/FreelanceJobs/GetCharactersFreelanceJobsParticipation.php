@@ -61,6 +61,7 @@ final class GetCharactersFreelanceJobsParticipation implements EsiOperationInter
      */
     public static function execute(EsiTransportInterface $transport, int $characterId, string $jobId): CharactersFreelanceJobsParticipation
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/characters/{character_id}/freelance-jobs/{job_id}/participation', ['character_id' => $characterId, 'job_id' => $jobId], []);
         $dto = CharactersFreelanceJobsParticipation::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;

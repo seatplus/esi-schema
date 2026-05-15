@@ -63,6 +63,7 @@ final class GetMarketsStructuresStructureId implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, int $structureId, int $page = 1): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/markets/structures/{structure_id}', ['structure_id' => $structureId], ['page' => $page]);
         return new EsiResult(
             data: array_map(

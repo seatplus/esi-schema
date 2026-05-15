@@ -63,6 +63,7 @@ final class GetCharactersCharacterIdKillmailsRecent implements EsiOperationInter
      */
     public static function execute(EsiTransportInterface $transport, int $characterId, int $page = 1): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/characters/{character_id}/killmails/recent', ['character_id' => $characterId], ['page' => $page]);
         return new EsiResult(
             data: array_map(

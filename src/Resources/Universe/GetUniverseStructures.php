@@ -60,6 +60,7 @@ final class GetUniverseStructures implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, ?string $filter = null): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/universe/structures', [], ['filter' => $filter]);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);

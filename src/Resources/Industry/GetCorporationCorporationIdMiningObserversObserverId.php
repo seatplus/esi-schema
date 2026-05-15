@@ -63,6 +63,7 @@ final class GetCorporationCorporationIdMiningObserversObserverId implements EsiO
      */
     public static function execute(EsiTransportInterface $transport, int $corporationId, int $observerId, int $page = 1): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/corporation/{corporation_id}/mining/observers/{observer_id}', ['corporation_id' => $corporationId, 'observer_id' => $observerId], ['page' => $page]);
         return new EsiResult(
             data: array_map(

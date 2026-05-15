@@ -61,6 +61,7 @@ final class PostUiOpenwindowContract implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, int $contractId): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('post', '/ui/openwindow/contract', [], ['contract_id' => $contractId], []);
         return new EsiResult(
             data: null,

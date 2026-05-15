@@ -60,6 +60,7 @@ final class GetCorporationsCorporationIdIcons implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, int $corporationId): CorporationsCorporationIdIconsGet
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/corporations/{corporation_id}/icons', ['corporation_id' => $corporationId], []);
         $dto = CorporationsCorporationIdIconsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;

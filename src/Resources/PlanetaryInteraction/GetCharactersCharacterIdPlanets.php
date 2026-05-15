@@ -62,6 +62,7 @@ final class GetCharactersCharacterIdPlanets implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, int $characterId): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/characters/{character_id}/planets', ['character_id' => $characterId], []);
         return new EsiResult(
             data: array_map(

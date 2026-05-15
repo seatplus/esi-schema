@@ -61,6 +61,7 @@ final class GetLoyaltyStoresCorporationIdOffers implements EsiOperationInterface
      */
     public static function execute(EsiTransportInterface $transport, int $corporationId): EsiResult
     {
+        $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/loyalty/stores/{corporation_id}/offers', ['corporation_id' => $corporationId], []);
         return new EsiResult(
             data: array_map(
