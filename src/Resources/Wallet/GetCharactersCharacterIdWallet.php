@@ -69,6 +69,7 @@ final class GetCharactersCharacterIdWallet implements EsiOperationInterface
             data: $scalar,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
+            rateLimitRemaining: $response->rateLimitRemaining,
         );
     }
 }

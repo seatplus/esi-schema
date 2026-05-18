@@ -66,6 +66,7 @@ final class GetCharactersCharacterIdCalendarEventId implements EsiOperationInter
         $dto = CharactersCharacterIdCalendarEventIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->rateLimitRemaining = $response->rateLimitRemaining;
         return $dto;
     }
 }

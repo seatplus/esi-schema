@@ -65,6 +65,7 @@ final class GetCorporationsCorporationIdIcons implements EsiOperationInterface
         $dto = CorporationsCorporationIdIconsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->rateLimitRemaining = $response->rateLimitRemaining;
         return $dto;
     }
 }

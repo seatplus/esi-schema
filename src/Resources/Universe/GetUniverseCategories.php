@@ -68,6 +68,7 @@ final class GetUniverseCategories implements EsiOperationInterface
             data: $data,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
+            rateLimitRemaining: $response->rateLimitRemaining,
         );
     }
 }

@@ -19,4 +19,7 @@ abstract class AbstractEsiDto
 
     /** Total pages reported by X-Pages header. 1 for non-paginated endpoints. */
     public int $pages = 1;
+
+    /** Tokens remaining in the current ESI rate-limit window (X-Ratelimit-Remaining). */
+    public ?int $rateLimitRemaining = null;
 }

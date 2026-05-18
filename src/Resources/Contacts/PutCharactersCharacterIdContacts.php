@@ -67,6 +67,7 @@ final class PutCharactersCharacterIdContacts implements EsiOperationInterface
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
+            rateLimitRemaining: $response->rateLimitRemaining,
         );
     }
 }

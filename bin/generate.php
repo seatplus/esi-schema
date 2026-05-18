@@ -288,6 +288,7 @@ function buildReturn(array $op): string
                 \$dto = {$dto}::from((object) \$response->data);
                 \$dto->isCachedLoad = \$response->isCachedLoad;
                 \$dto->pages = \$response->pages;
+                \$dto->rateLimitRemaining = \$response->rateLimitRemaining;
                 return \$dto;
         PHP,
 
@@ -300,6 +301,7 @@ function buildReturn(array $op): string
                     ),
                     pages: \$response->pages,
                     isCachedLoad: \$response->isCachedLoad,
+                    rateLimitRemaining: \$response->rateLimitRemaining,
                 );
         PHP,
 
@@ -311,6 +313,7 @@ function buildReturn(array $op): string
                     data: \$data,
                     pages: \$response->pages,
                     isCachedLoad: \$response->isCachedLoad,
+                    rateLimitRemaining: \$response->rateLimitRemaining,
                 );
         PHP,
 
@@ -322,6 +325,7 @@ function buildReturn(array $op): string
                     data: \$scalar,
                     pages: \$response->pages,
                     isCachedLoad: \$response->isCachedLoad,
+                    rateLimitRemaining: \$response->rateLimitRemaining,
                 );
         PHP,
 
@@ -331,6 +335,7 @@ function buildReturn(array $op): string
                     data: null,
                     pages: \$response->pages,
                     isCachedLoad: \$response->isCachedLoad,
+                    rateLimitRemaining: \$response->rateLimitRemaining,
                 );
         PHP,
     };

@@ -70,6 +70,7 @@ final class GetCorporationsCorporationIdAlliancehistory implements EsiOperationI
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
+            rateLimitRemaining: $response->rateLimitRemaining,
         );
     }
 }

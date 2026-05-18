@@ -70,6 +70,7 @@ final class PostUniverseNames implements EsiOperationInterface
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
+            rateLimitRemaining: $response->rateLimitRemaining,
         );
     }
 }

@@ -71,6 +71,7 @@ final class GetCharactersCharacterIdContractsContractIdBids implements EsiOperat
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
+            rateLimitRemaining: $response->rateLimitRemaining,
         );
     }
 }

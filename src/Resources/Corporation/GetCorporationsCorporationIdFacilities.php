@@ -22,13 +22,13 @@ final class GetCorporationsCorporationIdFacilities implements EsiOperationInterf
     public const ?string REQUIRED_SCOPE = 'esi-corporations.read_facilities.v1';
 
     /** Rate-limit group name (e.g. 'char-asset'). Null when not rate-limited. */
-    public const ?string RATE_LIMIT_GROUP = null;
+    public const ?string RATE_LIMIT_GROUP = 'corp-structure';
 
     /** Maximum token bucket size for this rate-limit group. */
-    public const ?int RATE_LIMIT_MAX_TOKENS = null;
+    public const ?int RATE_LIMIT_MAX_TOKENS = 300;
 
     /** Rate-limit window duration (e.g. '15m'). */
-    public const ?string RATE_LIMIT_WINDOW = null;
+    public const ?string RATE_LIMIT_WINDOW = '15m';
 
     /** Cache TTL in seconds. Null for non-cached endpoints. */
     public const ?int CACHE_AGE = 3600;
@@ -71,6 +71,7 @@ final class GetCorporationsCorporationIdFacilities implements EsiOperationInterf
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
+            rateLimitRemaining: $response->rateLimitRemaining,
         );
     }
 }

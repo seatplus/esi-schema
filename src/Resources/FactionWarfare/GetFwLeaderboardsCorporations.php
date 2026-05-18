@@ -65,6 +65,7 @@ final class GetFwLeaderboardsCorporations implements EsiOperationInterface
         $dto = FwLeaderboardsCorporationsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->rateLimitRemaining = $response->rateLimitRemaining;
         return $dto;
     }
 }

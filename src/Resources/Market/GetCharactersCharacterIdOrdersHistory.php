@@ -72,6 +72,7 @@ final class GetCharactersCharacterIdOrdersHistory implements EsiOperationInterfa
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
+            rateLimitRemaining: $response->rateLimitRemaining,
         );
     }
 }

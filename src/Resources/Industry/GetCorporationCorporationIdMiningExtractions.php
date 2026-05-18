@@ -72,6 +72,7 @@ final class GetCorporationCorporationIdMiningExtractions implements EsiOperation
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
+            rateLimitRemaining: $response->rateLimitRemaining,
         );
     }
 }

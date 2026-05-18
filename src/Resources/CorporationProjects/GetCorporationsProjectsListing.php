@@ -66,6 +66,7 @@ final class GetCorporationsProjectsListing implements EsiOperationInterface
         $dto = CorporationsProjectsListing::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->rateLimitRemaining = $response->rateLimitRemaining;
         return $dto;
     }
 }

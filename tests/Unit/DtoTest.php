@@ -29,7 +29,8 @@ it('AbstractEsiDto metadata defaults are sane', function () {
     ]);
 
     expect($dto->isCachedLoad)->toBeFalse()
-        ->and($dto->pages)->toBe(1);
+        ->and($dto->pages)->toBe(1)
+        ->and($dto->rateLimitRemaining)->toBeNull();
 });
 
 it('AbstractEsiDto metadata is mutable after construction', function () {
