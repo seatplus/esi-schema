@@ -71,6 +71,7 @@ final class GetCorporationsCorporationIdWalletsDivisionTransactions implements E
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
+            rateLimitRemaining: $response->rateLimitRemaining,
         );
     }
 }

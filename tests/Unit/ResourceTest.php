@@ -14,13 +14,14 @@ use Seatplus\EsiSchema\Responses\CharactersCharacterIdAssetsGetItem;
 // Helper
 // ---------------------------------------------------------------------------
 
-function mockTransport(mixed $data, bool $isCachedLoad = false, int $pages = 1): EsiTransportInterface
+function mockTransport(mixed $data, bool $isCachedLoad = false, int $pages = 1, ?int $rateLimitRemaining = null): EsiTransportInterface
 {
-    return new class ($data, $isCachedLoad, $pages) implements EsiTransportInterface {
+    return new class ($data, $isCachedLoad, $pages, $rateLimitRemaining) implements EsiTransportInterface {
         public function __construct(
             private readonly mixed $data,
             private readonly bool $isCachedLoad,
             private readonly int $pages,
+            private readonly ?int $rateLimitRemaining,
         ) {
         }
 
@@ -39,6 +40,7 @@ function mockTransport(mixed $data, bool $isCachedLoad = false, int $pages = 1):
                 data: $this->data,
                 isCachedLoad: $this->isCachedLoad,
                 pages: $this->pages,
+                rateLimitRemaining: $this->rateLimitRemaining,
             );
         }
     };
@@ -128,6 +130,47 @@ it('EsiResult::fromRaw carries isCachedLoad', function (): void {
 
     expect($result->isCachedLoad)->toBeTrue()
         ->and($result->pages)->toBe(5);
+});
+
+it('EsiResult::fromRaw carries rateLimitRemaining', function (): void {
+    $raw    = new EsiRawResponse(data: [], rateLimitRemaining: 750);
+    $result = EsiResult::fromRaw($raw, []);
+
+    expect($result->rateLimitRemaining)->toBe(750);
+});
+
+it('EsiResult rateLimitRemaining defaults to null', function (): void {
+    $result = new EsiResult(data: []);
+
+    expect($result->rateLimitRemaining)->toBeNull();
+});
+
+it('rateLimitRemaining is propagated for array endpoints', function (): void {
+    $payload = [
+        (object) ['item_id' => 1, 'type_id' => 35, 'location_id' => 60003760, 'location_type' => 'station', 'location_flag' => 'Hangar', 'is_singleton' => false, 'quantity' => 1],
+    ];
+    $result = GetCharactersCharacterIdAssets::execute(
+        mockTransport($payload, rateLimitRemaining: 1200),
+        12345
+    );
+
+    expect($result->rateLimitRemaining)->toBe(1200);
+});
+
+it('rateLimitRemaining is propagated for single-object DTO endpoints', function (): void {
+    $payload = (object) [
+        'name' => 'Test Alliance',
+        'ticker' => 'TEST',
+        'creator_id' => 1,
+        'creator_corporation_id' => 2,
+        'date_founded' => '2010-01-01T00:00:00Z',
+    ];
+    $dto = GetAlliancesAllianceId::execute(
+        mockTransport($payload, rateLimitRemaining: 500),
+        99000001
+    );
+
+    expect($dto->rateLimitRemaining)->toBe(500);
 });
 
 // ---------------------------------------------------------------------------

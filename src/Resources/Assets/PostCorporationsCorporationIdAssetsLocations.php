@@ -71,6 +71,7 @@ final class PostCorporationsCorporationIdAssetsLocations implements EsiOperation
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
+            rateLimitRemaining: $response->rateLimitRemaining,
         );
     }
 }

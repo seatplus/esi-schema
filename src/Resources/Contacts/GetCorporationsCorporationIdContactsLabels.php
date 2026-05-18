@@ -71,6 +71,7 @@ final class GetCorporationsCorporationIdContactsLabels implements EsiOperationIn
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
+            rateLimitRemaining: $response->rateLimitRemaining,
         );
     }
 }

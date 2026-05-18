@@ -66,6 +66,7 @@ final class GetCharactersCharacterIdPlanetsPlanetId implements EsiOperationInter
         $dto = CharactersCharacterIdPlanetsPlanetIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->rateLimitRemaining = $response->rateLimitRemaining;
         return $dto;
     }
 }

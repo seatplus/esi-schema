@@ -71,6 +71,7 @@ final class GetWarsWarIdKillmails implements EsiOperationInterface
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
+            rateLimitRemaining: $response->rateLimitRemaining,
         );
     }
 }

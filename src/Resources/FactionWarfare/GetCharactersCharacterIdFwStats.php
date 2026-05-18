@@ -66,6 +66,7 @@ final class GetCharactersCharacterIdFwStats implements EsiOperationInterface
         $dto = CharactersCharacterIdFwStatsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->rateLimitRemaining = $response->rateLimitRemaining;
         return $dto;
     }
 }

@@ -67,6 +67,7 @@ final class DeleteFleetsFleetIdMembersMemberId implements EsiOperationInterface
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
+            rateLimitRemaining: $response->rateLimitRemaining,
         );
     }
 }

@@ -71,6 +71,7 @@ final class PostCharactersCharacterIdAssetsLocations implements EsiOperationInte
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
+            rateLimitRemaining: $response->rateLimitRemaining,
         );
     }
 }

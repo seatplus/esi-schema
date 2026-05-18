@@ -71,6 +71,7 @@ final class GetCharactersCharacterIdPlanets implements EsiOperationInterface
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
+            rateLimitRemaining: $response->rateLimitRemaining,
         );
     }
 }

@@ -67,6 +67,7 @@ final class DeleteCharactersCharacterIdMailLabelsLabelId implements EsiOperation
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
+            rateLimitRemaining: $response->rateLimitRemaining,
         );
     }
 }

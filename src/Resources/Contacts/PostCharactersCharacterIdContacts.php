@@ -67,6 +67,7 @@ final class PostCharactersCharacterIdContacts implements EsiOperationInterface
             data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
+            rateLimitRemaining: $response->rateLimitRemaining,
         );
     }
 }

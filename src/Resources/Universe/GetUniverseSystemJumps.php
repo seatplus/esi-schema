@@ -70,6 +70,7 @@ final class GetUniverseSystemJumps implements EsiOperationInterface
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
+            rateLimitRemaining: $response->rateLimitRemaining,
         );
     }
 }

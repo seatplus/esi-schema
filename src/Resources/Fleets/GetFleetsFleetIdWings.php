@@ -71,6 +71,7 @@ final class GetFleetsFleetIdWings implements EsiOperationInterface
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
+            rateLimitRemaining: $response->rateLimitRemaining,
         );
     }
 }

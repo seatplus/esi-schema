@@ -71,6 +71,7 @@ final class GetCharactersCharacterIdCalendarEventIdAttendees implements EsiOpera
             ),
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
+            rateLimitRemaining: $response->rateLimitRemaining,
         );
     }
 }

@@ -66,6 +66,7 @@ final class GetCharactersCharacterIdFleet implements EsiOperationInterface
         $dto = CharactersCharacterIdFleetGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->rateLimitRemaining = $response->rateLimitRemaining;
         return $dto;
     }
 }

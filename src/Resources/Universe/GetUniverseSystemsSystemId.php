@@ -65,6 +65,7 @@ final class GetUniverseSystemsSystemId implements EsiOperationInterface
         $dto = UniverseSystemsSystemIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
+        $dto->rateLimitRemaining = $response->rateLimitRemaining;
         return $dto;
     }
 }
