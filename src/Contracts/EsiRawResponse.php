@@ -25,6 +25,10 @@ final readonly class EsiRawResponse
         public readonly ?int $rateLimitUsed = null,
         /** Retry-After seconds — only set on 429 responses. */
         public readonly ?int $retryAfter = null,
+        /** X-ESI-Error-Limit-Remain — errors left in this time frame. */
+        public readonly ?int $errorLimitRemaining = null,
+        /** X-ESI-Error-Limit-Reset — seconds left until next time frame and errors reset to zero. */
+        public readonly ?int $errorLimitReset = null,
     ) {
     }
 }

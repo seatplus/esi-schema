@@ -22,4 +22,10 @@ abstract class AbstractEsiDto
 
     /** Tokens remaining in the current ESI rate-limit window (X-Ratelimit-Remaining). */
     public ?int $rateLimitRemaining = null;
+
+    /** X-ESI-Error-Limit-Remain — errors left in this time frame. */
+    public ?int $errorLimitRemaining = null;
+
+    /** X-ESI-Error-Limit-Reset — seconds left until next time frame and errors reset to zero. */
+    public ?int $errorLimitReset = null;
 }
