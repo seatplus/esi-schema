@@ -1,0 +1,30 @@
+<?php
+
+namespace Seatplus\EsiSchema\Responses;
+
+use Seatplus\EsiSchema\AbstractEsiDto;
+
+/**
+ * Generated from ESI OpenAPI spec (compatibility date: 2026-05-19).
+ * Do not edit manually — run bin/generate.php instead.
+ */
+final class SovereigntySystemsDevelopment extends AbstractEsiDto
+{
+    public function __construct(
+        public readonly float $activity_defense_multiplier,
+        public readonly int $industrial_level,
+        public readonly int $military_level,
+        public readonly int $strategic_level,
+    ) {
+    }
+
+    public static function from(object $data): static
+    {
+        return new static(
+            activity_defense_multiplier: (float) ($data->activity_defense_multiplier ?? 0.0),
+            industrial_level: (int) ($data->industrial_level ?? 0),
+            military_level: (int) ($data->military_level ?? 0),
+            strategic_level: (int) ($data->strategic_level ?? 0),
+        );
+    }
+}

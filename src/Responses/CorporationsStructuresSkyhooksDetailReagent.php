@@ -1,0 +1,30 @@
+<?php
+
+namespace Seatplus\EsiSchema\Responses;
+
+use Seatplus\EsiSchema\AbstractEsiDto;
+
+/**
+ * Generated from ESI OpenAPI spec (compatibility date: 2026-05-19).
+ * Do not edit manually — run bin/generate.php instead.
+ */
+final class CorporationsStructuresSkyhooksDetailReagent extends AbstractEsiDto
+{
+    public function __construct(
+        public readonly string $last_cycle,
+        public readonly int $secured_stock,
+        public readonly int $type_id,
+        public readonly int $unsecured_stock,
+    ) {
+    }
+
+    public static function from(object $data): static
+    {
+        return new static(
+            last_cycle: (string) ($data->last_cycle ?? ''),
+            secured_stock: (int) ($data->secured_stock ?? 0),
+            type_id: (int) ($data->type_id ?? 0),
+            unsecured_stock: (int) ($data->unsecured_stock ?? 0),
+        );
+    }
+}

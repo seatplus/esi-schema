@@ -13,7 +13,7 @@ use Seatplus\EsiSchema\Responses\CharactersCharacterIdIndustryJobsGetItem;
 /**
  * ESI operation: getCharactersCharacterIdIndustryJobs
  *
- * Generated from ESI OpenAPI spec (compatibility date: 2025-12-16).
+ * Generated from ESI OpenAPI spec (compatibility date: 2026-05-19).
  * Do not edit manually — run bin/generate.php instead.
  */
 final class GetCharactersCharacterIdIndustryJobs implements EsiOperationInterface

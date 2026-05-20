@@ -8,12 +8,11 @@ use Seatplus\EsiSchema\Contracts\EsiOperationInterface;
 use Seatplus\EsiSchema\Contracts\EsiTransportInterface;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\OperationMeta;
-use Seatplus\EsiSchema\Responses\CharactersSkillqueueSkill;
 
 /**
  * ESI operation: getCharactersCharacterIdSkillqueue
  *
- * Generated from ESI OpenAPI spec (compatibility date: 2025-12-16).
+ * Generated from ESI OpenAPI spec (compatibility date: 2026-05-19).
  * Do not edit manually — run bin/generate.php instead.
  */
 final class GetCharactersCharacterIdSkillqueue implements EsiOperationInterface
@@ -57,19 +56,15 @@ final class GetCharactersCharacterIdSkillqueue implements EsiOperationInterface
     }
 
     /**
-     * @return EsiResult<array<CharactersSkillqueueSkill>>
+     * @return EsiResult<null>
      * @scope esi-skills.read_skillqueue.v1
      */
     public static function execute(EsiTransportInterface $transport, int $characterId): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('get', '/characters/{character_id}/skillqueue', ['character_id' => $characterId], []);
-
         return new EsiResult(
-            data: array_map(
-                fn (object $item) => CharactersSkillqueueSkill::from($item),
-                (array) $response->data,
-            ),
+            data: null,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
             rateLimitRemaining: $response->rateLimitRemaining,

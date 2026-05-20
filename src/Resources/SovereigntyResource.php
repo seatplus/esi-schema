@@ -7,13 +7,13 @@ namespace Seatplus\EsiSchema\Resources;
 use Seatplus\EsiSchema\Contracts\EsiTransportInterface;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\Resources\Sovereignty\GetSovereigntyCampaigns;
-use Seatplus\EsiSchema\Resources\Sovereignty\GetSovereigntyMap;
-use Seatplus\EsiSchema\Resources\Sovereignty\GetSovereigntyStructures;
+use Seatplus\EsiSchema\Resources\Sovereignty\GetSovereigntySystems;
+use Seatplus\EsiSchema\Responses\SovereigntySystems;
 
 /**
  * ESI Sovereignty resource — fluent wrapper around per-route static classes.
  *
- * Generated from ESI OpenAPI spec (compatibility date: 2025-12-16).
+ * Generated from ESI OpenAPI spec (compatibility date: 2026-05-19).
  * Do not edit manually — run bin/generate.php instead.
  */
 final class SovereigntyResource
@@ -31,18 +31,10 @@ final class SovereigntyResource
     }
 
     /**
-     * @return EsiResult
+     * @return SovereigntySystems
      */
-    public function getSovereigntyMap(): EsiResult
+    public function getSovereigntySystems(): SovereigntySystems
     {
-        return GetSovereigntyMap::execute($this->transport);
-    }
-
-    /**
-     * @return EsiResult
-     */
-    public function getSovereigntyStructures(): EsiResult
-    {
-        return GetSovereigntyStructures::execute($this->transport);
+        return GetSovereigntySystems::execute($this->transport);
     }
 }
