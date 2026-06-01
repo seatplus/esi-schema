@@ -135,18 +135,32 @@ jobs:
           git push origin "$NEW_BRANCH"
 
           # PR body
+          MAJOR_VERSION="${NEW_BRANCH%%.*}"
           if [ "$DATE_IS_NEW" = "true" ]; then
-            PR_BODY="CCP published a new ESI compatibility date: \`${NEW_DATE}\`
+            # Major version bump — PR is for REVIEW ONLY, not for merging
+            PR_TITLE="[REVIEW ONLY] ${TITLE}"
+            PR_BODY="⚠️ **DO NOT MERGE this PR.** It exists purely for diff review.
+
+          CCP published a new ESI compatibility date: \`${NEW_DATE}\`
+
+          A new compatibility date may include **renamed fields, changed types, or deprecated endpoints**,
+          which is why this generates a new major version branch (\`${NEW_BRANCH}\`) rather than updating \`${BASE_BRANCH}\`.
 
           ## What changed
           All response DTOs and Resource classes have been regenerated from the updated OpenAPI spec.
-          Review the diff to see which schemas changed.
+          Review the diff carefully for breaking changes before adopting \`${NEW_BRANCH}\`.
 
-          ## Checklist
-          - [ ] Review changed DTOs/Resources for breaking changes
-          - [ ] Update \`CHANGELOG.md\` if needed
-          - [ ] Merge and tag \`${NEW_BRANCH:0:1}.0.0\` once satisfied"
+          ## How to adopt this release
+          - [ ] Review all changed DTOs/Resources in this diff
+          - [ ] Update \`CHANGELOG.md\` on \`${NEW_BRANCH}\` if needed
+          - [ ] **Close this PR** (do not merge)
+          - [ ] Tag \`${MAJOR_VERSION}.0.0\` on the \`${NEW_BRANCH}\` branch
+          - [ ] Update the repository default branch to \`${NEW_BRANCH}\`
+          - [ ] Update consuming packages to \`require \"seatplus/esi-schema\": \"^${MAJOR_VERSION}.0\"\`
+
+          > \`${BASE_BRANCH}\` remains open for patch releases for consumers not yet on \`${NEW_BRANCH}\`."
           else
+            PR_TITLE="${TITLE}"
             PR_BODY="The ESI OpenAPI spec changed **without** a new compatibility date.
 
           Spec hash: \`${SPEC_HASH:0:12}…\` (compatibility date remains \`${NEW_DATE}\`)
@@ -165,7 +179,7 @@ jobs:
           gh pr create \
             --base "$BASE_BRANCH" \
             --head "$NEW_BRANCH" \
-            --title "${TITLE}" \
+            --title "${PR_TITLE}" \
             --body "${PR_BODY}
 
           ---
