@@ -45,16 +45,21 @@ jobs:
           CURRENT_HASH=$(sha256sum /tmp/current-spec.json | awk '{print $1}')
           echo "spec_hash=$CURRENT_HASH" >> "$GITHUB_OUTPUT"
 
+          # Resolve the latest X.x branch — this is what future regeneration will be based on.
+          # We compare against IT, not the default branch, so we don't re-detect already-processed dates.
+          BASE_BRANCH=$(git branch -r | grep -oP '(?<=origin/)\d+\.x$' | sort -V | tail -1)
+          echo "Comparing against $BASE_BRANCH"
+
           # Compare: new compatibility date?
           DATE_IS_NEW=false
-          if ! grep -qx "$LATEST" compatibility-dates.txt 2>/dev/null; then
+          if ! git show "origin/${BASE_BRANCH}:compatibility-dates.txt" 2>/dev/null | grep -qx "$LATEST"; then
             DATE_IS_NEW=true
-            echo "New compatibility date found: $LATEST"
+            echo "New compatibility date found: $LATEST (not in origin/$BASE_BRANCH)"
           fi
 
           # Compare: spec content changed since last generation?
           SPEC_IS_NEW=false
-          STORED_HASH=$(cat .spec-hash 2>/dev/null || echo "")
+          STORED_HASH=$(git show "origin/${BASE_BRANCH}:.spec-hash" 2>/dev/null || echo "")
           if [ "$CURRENT_HASH" != "$STORED_HASH" ]; then
             SPEC_IS_NEW=true
             echo "Spec content changed (hash: $CURRENT_HASH, stored: $STORED_HASH)"
@@ -125,6 +130,14 @@ jobs:
           fi
 
           git add -A
+
+          # Safety guard: if nothing actually changed after regeneration (e.g., the latest
+          # .x branch already contains the result), skip commit/PR and exit cleanly.
+          if git diff --staged --quiet; then
+            echo "No changes after regeneration — $NEW_BRANCH is already up to date. Skipping."
+            exit 0
+          fi
+
           git commit -m "${TITLE}
 
           ${CHANGE_REASON} All response DTOs and Resource classes regenerated
