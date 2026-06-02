@@ -2,7 +2,7 @@
 
 **Typed ESI schema for PHP.** Every EVE Online ESI endpoint has its own generated class with typed pre-call metadata and a typed call method — no magic strings, no `array` guesswork.
 
-Generated from the ESI OpenAPI spec (`compatibility_date=2025-12-16`). Zero runtime dependencies.
+Generated from the ESI OpenAPI spec (`compatibility_date=2026-05-19`). Zero runtime dependencies.
 
 ---
 
@@ -253,11 +253,13 @@ All network I/O is delegated to a single `invoke()` method. The library knows no
 
 ### 7. Versioning tied to ESI compatibility_date
 
-| Library major | ESI compatibility_date | Composer |
-|---|---|---|
-| `1.x` | `2025-12-16` | `^1.0` |
+| Branch / Major | ESI compatibility_date | Composer | Notes |
+|---|---|---|---|
+| `main` | `2026-05-19` | `dev-main` | Always the latest — updated automatically |
+| `2.x` | `2026-05-19` | `^2.0` | Stable freeze |
+| `1.x` | `2025-12-16` | `^1.0` | Stable freeze |
 
-When CCP introduces a new breaking date and generated types change incompatibly, a new major (`2.x`) is released.
+When CCP introduces a new breaking compatibility date, the action regenerates on a new `N.x` branch, opens a `[REVIEW ONLY]` PR to `main`, and after merging both `main` and `N.x` point to the same commit.
 
 ---
 
@@ -265,6 +267,8 @@ When CCP introduces a new breaking date and generated types change incompatibly,
 
 | Branch / Major | ESI Compatibility Date | Composer constraint |
 |---|---|---|
+| `main` | `2026-05-19` | `dev-main` |
+| `2.x` | `2026-05-19` | `^2.0` |
 | `1.x` | `2025-12-16` | `^1.0` |
 
 ---
@@ -276,7 +280,7 @@ php bin/generate.php    # fetches latest spec, regenerates all DTOs + Resources
 vendor/bin/pint         # auto-format generated output (run after generate if needed)
 ```
 
-The generator reads the live OAS3 spec from `https://esi.evetech.net/meta/openapi.yaml?compatibility_date=2025-12-16`.
+The generator reads the live OAS3 spec from `https://esi.evetech.net/meta/openapi.yaml?compatibility_date=2026-05-19`.
 
 It emits:
 - `src/Responses/*.php` — ~218 typed DTO classes (one per ESI schema object)

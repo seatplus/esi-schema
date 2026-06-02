@@ -14,10 +14,11 @@ jobs:
       pull-requests: write
 
     steps:
-      - name: Checkout latest .x branch
+      - name: Checkout main
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # need all branches to determine next major version
+          ref: main
+          fetch-depth: 0   # need all remote branches to determine next major version
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -33,7 +34,7 @@ jobs:
       - name: Detect changes (new date OR spec content change)
         id: detect
         run: |
-          # Fetch latest compatibility date
+          # Fetch latest compatibility date from ESI
           LATEST=$(curl -sf "https://esi.evetech.net/meta/compatibility-dates" \
             | python3 -c "import sys,json; d=json.load(sys.stdin)['compatibility_dates']; print(sorted(d)[-1])")
 
@@ -45,14 +46,13 @@ jobs:
           CURRENT_HASH=$(sha256sum /tmp/current-spec.json | awk '{print $1}')
           echo "spec_hash=$CURRENT_HASH" >> "$GITHUB_OUTPUT"
 
-          # Compare: new compatibility date?
+          # Compare against main (checked out) — no git show tricks needed
           DATE_IS_NEW=false
           if ! grep -qx "$LATEST" compatibility-dates.txt 2>/dev/null; then
             DATE_IS_NEW=true
             echo "New compatibility date found: $LATEST"
           fi
 
-          # Compare: spec content changed since last generation?
           SPEC_IS_NEW=false
           STORED_HASH=$(cat .spec-hash 2>/dev/null || echo "")
           if [ "$CURRENT_HASH" != "$STORED_HASH" ]; then
@@ -68,26 +68,22 @@ jobs:
             echo "No changes detected (date: $LATEST, hash: $CURRENT_HASH)"
           fi
 
-      - name: Determine next branch name
+      - name: Determine branch name
         if: steps.detect.outputs.is_new == 'true'
         id: branch
         run: |
-          LATEST_MAJOR=$(git branch -r | grep -oP '(?<=origin/)\d+(?=\.x$)' | sort -n | tail -1)
-
           if [ "${{ steps.detect.outputs.date_is_new }}" = "true" ]; then
-            # New compatibility date → bump major (e.g. 1.x → 2.x)
+            # New compat date → new N.x freeze branch (e.g. 2.x → 3.x)
+            LATEST_MAJOR=$(git branch -r | grep -oP '(?<=origin/)\d+(?=\.x$)' | sort -n | tail -1)
             NEXT_MAJOR=$((LATEST_MAJOR + 1))
             echo "branch_name=${NEXT_MAJOR}.x" >> "$GITHUB_OUTPUT"
           else
-            # Spec-only change → bump minor within same major (e.g. 1.x → 1.1, then 1.2, …)
-            LATEST_MINOR=$(git branch -r \
-              | grep -oP "(?<=origin/${LATEST_MAJOR}\.)\d+$" \
-              | sort -n | tail -1)
-            NEXT_MINOR=$(( ${LATEST_MINOR:-0} + 1 ))
-            echo "branch_name=${LATEST_MAJOR}.${NEXT_MINOR}" >> "$GITHUB_OUTPUT"
+            # Spec-only change → temp update branch
+            SPEC_HASH="${{ steps.detect.outputs.spec_hash }}"
+            echo "branch_name=update/spec-${SPEC_HASH:0:8}" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Create branch, regenerate DTOs+Resources, open PR
+      - name: Regenerate DTOs+Resources and open PR
         if: steps.detect.outputs.is_new == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -99,8 +95,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          BASE_BRANCH=$(git branch -r | grep -oP '(?<=origin/)\d+\.x$' | sort -V | tail -1)
-          git checkout -b "$NEW_BRANCH" "origin/$BASE_BRANCH"
+          # Branch off main (already checked out)
+          git checkout -b "$NEW_BRANCH"
 
           # Regenerate DTOs + Resources
           php bin/generate.php --compatibility-date="$NEW_DATE"
@@ -109,11 +105,20 @@ jobs:
           if [ "$DATE_IS_NEW" = "true" ]; then
             echo "$NEW_DATE" >> compatibility-dates.txt
             sort -u compatibility-dates.txt -o compatibility-dates.txt
+            # Keep README header in sync with the current compat date
+            sed -i "s|compatibility_date=[0-9-]*|compatibility_date=${NEW_DATE}|g" README.md
           fi
           echo "$SPEC_HASH" > .spec-hash
 
           # Fix formatting
           vendor/bin/pint
+
+          # Safety guard: exit cleanly if regeneration produced no changes
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes after regeneration — skipping commit and PR."
+            exit 0
+          fi
 
           # Compose commit message
           if [ "$DATE_IS_NEW" = "true" ]; then
@@ -124,7 +129,6 @@ jobs:
             CHANGE_REASON="ESI OpenAPI spec content changed without a new compatibility date (spec hash: \`${SPEC_HASH:0:12}\`)."
           fi
 
-          git add -A
           git commit -m "${TITLE}
 
           ${CHANGE_REASON} All response DTOs and Resource classes regenerated
@@ -134,19 +138,31 @@ jobs:
 
           git push origin "$NEW_BRANCH"
 
-          # PR body
+          # Build PR details
           if [ "$DATE_IS_NEW" = "true" ]; then
-            PR_BODY="CCP published a new ESI compatibility date: \`${NEW_DATE}\`
+            MAJOR="${NEW_BRANCH%%.*}"
+            PR_TITLE="[REVIEW ONLY] ${TITLE}"
+            PR_BODY="⚠️ **DO NOT MERGE directly.** This PR exists for diff review only.
 
-          ## What changed
-          All response DTOs and Resource classes have been regenerated from the updated OpenAPI spec.
-          Review the diff to see which schemas changed.
+          CCP published a new ESI compatibility date: \`${NEW_DATE}\`
+
+          ## Branching strategy
+          - \`main\` = always the latest compat date
+          - \`${NEW_BRANCH}\` = stable freeze branch for consumers who pin to \`^${MAJOR}.0\`
+          - After merging, both \`main\` and \`${NEW_BRANCH}\` point to the same commit
+
+          ## Steps to release
+          1. Review the diff — check which DTOs/Resources changed
+          2. Merge this PR into \`main\` (fast-forward)
+          3. Tag \`${MAJOR}.0.0\` on the merge commit
+          4. Leave \`${NEW_BRANCH}\` in place (consumers pin to it)
 
           ## Checklist
           - [ ] Review changed DTOs/Resources for breaking changes
           - [ ] Update \`CHANGELOG.md\` if needed
-          - [ ] Merge and tag \`${NEW_BRANCH:0:1}.0.0\` once satisfied"
+          - [ ] Tag \`${MAJOR}.0.0\` after merge"
           else
+            PR_TITLE="${TITLE}"
             PR_BODY="The ESI OpenAPI spec changed **without** a new compatibility date.
 
           Spec hash: \`${SPEC_HASH:0:12}…\` (compatibility date remains \`${NEW_DATE}\`)
@@ -163,11 +179,10 @@ jobs:
           fi
 
           gh pr create \
-            --base "$BASE_BRANCH" \
+            --base main \
             --head "$NEW_BRANCH" \
-            --title "${TITLE}" \
+            --title "${PR_TITLE}" \
             --body "${PR_BODY}
 
           ---
           *Opened automatically by the [check-dates workflow](../../actions/workflows/check-dates.yml).*"
-
