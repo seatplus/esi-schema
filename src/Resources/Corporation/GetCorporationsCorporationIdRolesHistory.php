@@ -13,7 +13,7 @@ use Seatplus\EsiSchema\Responses\CorporationsCorporationIdRolesHistoryGetItem;
 /**
  * ESI operation: getCorporationsCorporationIdRolesHistory
  *
- * Generated from ESI OpenAPI spec (compatibility date: 2026-05-19).
+ * Generated from ESI OpenAPI spec (compatibility date: 2026-06-09).
  * Do not edit manually — run bin/generate.php instead.
  */
 final class GetCorporationsCorporationIdRolesHistory implements EsiOperationInterface
