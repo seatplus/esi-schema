@@ -2,36 +2,35 @@
 
 declare(strict_types=1);
 
-namespace Seatplus\EsiSchema\Resources\Incursions;
+namespace Seatplus\EsiSchema\Resources\Character;
 
 use Seatplus\EsiSchema\Contracts\EsiOperationInterface;
 use Seatplus\EsiSchema\Contracts\EsiTransportInterface;
-use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\OperationMeta;
-use Seatplus\EsiSchema\Responses\IncursionsGetItem;
+use Seatplus\EsiSchema\Responses\CharactersDetail;
 
 /**
- * ESI operation: getIncursions
+ * ESI operation: getCharactersDetail
  *
  * Generated from ESI OpenAPI spec (compatibility date: 2026-06-09).
  * Do not edit manually — run bin/generate.php instead.
  */
-final class GetIncursions implements EsiOperationInterface
+final class GetCharactersDetail implements EsiOperationInterface
 {
     /** Required OAuth2 scope. Null for public endpoints. */
     public const ?string REQUIRED_SCOPE = null;
 
     /** Rate-limit group name (e.g. 'char-asset'). Null when not rate-limited. */
-    public const ?string RATE_LIMIT_GROUP = 'incursion';
+    public const ?string RATE_LIMIT_GROUP = null;
 
     /** Maximum token bucket size for this rate-limit group. */
-    public const ?int RATE_LIMIT_MAX_TOKENS = 150;
+    public const ?int RATE_LIMIT_MAX_TOKENS = null;
 
     /** Rate-limit window duration (e.g. '15m'). */
-    public const ?string RATE_LIMIT_WINDOW = '15m';
+    public const ?string RATE_LIMIT_WINDOW = null;
 
     /** Cache TTL in seconds. Null for non-cached endpoints. */
-    public const ?int CACHE_AGE = 300;
+    public const ?int CACHE_AGE = 86400;
 
     /**
      * EVE corporation roles required (e.g. ['Director']).
@@ -57,20 +56,16 @@ final class GetIncursions implements EsiOperationInterface
     }
 
     /**
-     * @return EsiResult<array<IncursionsGetItem>>
+     * @return CharactersDetail
      */
-    public static function execute(EsiTransportInterface $transport): EsiResult
+    public static function execute(EsiTransportInterface $transport, int $characterId): CharactersDetail
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/incursions', [], []);
-        return new EsiResult(
-            data: array_map(
-                fn (object $item) => IncursionsGetItem::from($item),
-                (array) $response->data,
-            ),
-            pages: $response->pages,
-            isCachedLoad: $response->isCachedLoad,
-            rateLimitRemaining: $response->rateLimitRemaining,
-        );
+        $response = $transport->invoke('get', '/characters/{character_id}', ['character_id' => $characterId], []);
+        $dto = CharactersDetail::from((object) $response->data);
+        $dto->isCachedLoad = $response->isCachedLoad;
+        $dto->pages = $response->pages;
+        $dto->rateLimitRemaining = $response->rateLimitRemaining;
+        return $dto;
     }
 }
