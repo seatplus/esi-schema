@@ -7,7 +7,7 @@ namespace Seatplus\EsiSchema\Resources;
 use Seatplus\EsiSchema\Contracts\EsiTransportInterface;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\Resources\Character\PostCharactersAffiliation;
-use Seatplus\EsiSchema\Resources\Character\GetCharactersCharacterId;
+use Seatplus\EsiSchema\Resources\Character\GetCharactersDetail;
 use Seatplus\EsiSchema\Responses\CharactersDetail;
 use Seatplus\EsiSchema\Resources\Character\GetCharactersCharacterIdAgentsResearch;
 use Seatplus\EsiSchema\Resources\Character\GetCharactersCharacterIdBlueprints;
@@ -28,7 +28,7 @@ use Seatplus\EsiSchema\Resources\Character\GetCharactersCharacterIdTitles;
 /**
  * ESI Character resource — fluent wrapper around per-route static classes.
  *
- * Generated from ESI OpenAPI spec (compatibility date: 2026-05-19).
+ * Generated from ESI OpenAPI spec (compatibility date: 2026-07-17).
  * Do not edit manually — run bin/generate.php instead.
  */
 final class CharacterResource
@@ -48,9 +48,9 @@ final class CharacterResource
     /**
      * @return CharactersDetail
      */
-    public function getCharactersCharacterId(int $characterId): CharactersDetail
+    public function getCharactersDetail(int $characterId): CharactersDetail
     {
-        return GetCharactersCharacterId::execute($this->transport, $characterId);
+        return GetCharactersDetail::execute($this->transport, $characterId);
     }
 
     /**
