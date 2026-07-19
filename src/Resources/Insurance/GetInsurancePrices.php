@@ -13,7 +13,7 @@ use Seatplus\EsiSchema\Responses\InsurancePricesGetItem;
 /**
  * ESI operation: getInsurancePrices
  *
- * Generated from ESI OpenAPI spec (compatibility date: 2026-05-19).
+ * Generated from ESI OpenAPI spec (compatibility date: 2026-07-17).
  * Do not edit manually — run bin/generate.php instead.
  */
 final class GetInsurancePrices implements EsiOperationInterface
