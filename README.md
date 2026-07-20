@@ -2,7 +2,7 @@
 
 **Typed ESI schema for PHP.** Every EVE Online ESI endpoint has its own generated class with typed pre-call metadata and a typed call method — no magic strings, no `array` guesswork.
 
-Generated from the ESI OpenAPI spec (`compatibility_date=2026-05-19`). Zero runtime dependencies.
+Generated from the ESI OpenAPI spec (`compatibility_date=2026-07-17`). Zero runtime dependencies.
 
 ---
 
@@ -280,7 +280,7 @@ php bin/generate.php    # fetches latest spec, regenerates all DTOs + Resources
 vendor/bin/pint         # auto-format generated output (run after generate if needed)
 ```
 
-The generator reads the live OAS3 spec from `https://esi.evetech.net/meta/openapi.yaml?compatibility_date=2026-05-19`.
+The generator reads the live OAS3 spec from `https://esi.evetech.net/meta/openapi.yaml?compatibility_date=2026-07-17`.
 
 It emits:
 - `src/Responses/*.php` — ~218 typed DTO classes (one per ESI schema object)
