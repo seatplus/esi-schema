@@ -13,7 +13,7 @@ use Seatplus\EsiSchema\Responses\UniverseSystemKillsGetItem;
 /**
  * ESI operation: getUniverseSystemKills
  *
- * Generated from ESI OpenAPI spec (compatibility date: 2026-05-19).
+ * Generated from ESI OpenAPI spec (compatibility date: 2026-07-17).
  * Do not edit manually — run bin/generate.php instead.
  */
 final class GetUniverseSystemKills implements EsiOperationInterface

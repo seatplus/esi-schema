@@ -13,7 +13,7 @@ use Seatplus\EsiSchema\Responses\CharactersCharacterIdAssetsNamesPostItem;
 /**
  * ESI operation: postCharactersCharacterIdAssetsNames
  *
- * Generated from ESI OpenAPI spec (compatibility date: 2026-05-19).
+ * Generated from ESI OpenAPI spec (compatibility date: 2026-07-17).
  * Do not edit manually — run bin/generate.php instead.
  */
 final class PostCharactersCharacterIdAssetsNames implements EsiOperationInterface
