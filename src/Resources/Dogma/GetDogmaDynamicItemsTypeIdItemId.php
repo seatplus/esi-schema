@@ -12,7 +12,7 @@ use Seatplus\EsiSchema\Responses\DogmaDynamicItemsTypeIdItemIdGet;
 /**
  * ESI operation: getDogmaDynamicItemsTypeIdItemId
  *
- * Generated from ESI OpenAPI spec (compatibility date: 2026-05-19).
+ * Generated from ESI OpenAPI spec (compatibility date: 2026-07-21).
  * Do not edit manually — run bin/generate.php instead.
  */
 final class GetDogmaDynamicItemsTypeIdItemId implements EsiOperationInterface
