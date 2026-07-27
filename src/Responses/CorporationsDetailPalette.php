@@ -1,0 +1,28 @@
+<?php
+
+namespace Seatplus\EsiSchema\Responses;
+
+use Seatplus\EsiSchema\AbstractEsiDto;
+
+/**
+ * Generated from ESI OpenAPI spec (compatibility date: 2026-07-21).
+ * Do not edit manually — run bin/generate.php instead.
+ */
+final class CorporationsDetailPalette extends AbstractEsiDto
+{
+    public function __construct(
+        public readonly string $main_color,
+        public readonly ?string $secondary_color = null,
+        public readonly ?string $tertiary_color = null,
+    ) {
+    }
+
+    public static function from(object $data): static
+    {
+        return new static(
+            main_color: (string) ($data->main_color ?? ''),
+            secondary_color: $data->secondary_color ?? null,
+            tertiary_color: $data->tertiary_color ?? null,
+        );
+    }
+}
