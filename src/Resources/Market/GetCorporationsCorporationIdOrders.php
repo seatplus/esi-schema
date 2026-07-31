@@ -13,7 +13,7 @@ use Seatplus\EsiSchema\Responses\CorporationsCorporationIdOrdersGetItem;
 /**
  * ESI operation: getCorporationsCorporationIdOrders
  *
- * Generated from ESI OpenAPI spec (compatibility date: 2026-05-19).
+ * Generated from ESI OpenAPI spec (compatibility date: 2026-07-21).
  * Do not edit manually — run bin/generate.php instead.
  */
 final class GetCorporationsCorporationIdOrders implements EsiOperationInterface
