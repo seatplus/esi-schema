@@ -12,7 +12,7 @@ use Seatplus\EsiSchema\Responses\CorporationsFreelanceJobsListing;
 /**
  * ESI operation: getCorporationsFreelanceJobsListing
  *
- * Generated from ESI OpenAPI spec (compatibility date: 2026-05-19).
+ * Generated from ESI OpenAPI spec (compatibility date: 2026-07-21).
  * Do not edit manually — run bin/generate.php instead.
  */
 final class GetCorporationsFreelanceJobsListing implements EsiOperationInterface
@@ -30,7 +30,7 @@ final class GetCorporationsFreelanceJobsListing implements EsiOperationInterface
     public const ?string RATE_LIMIT_WINDOW = '15m';
 
     /** Cache TTL in seconds. Null for non-cached endpoints. */
-    public const ?int CACHE_AGE = 0;
+    public const ?int CACHE_AGE = null;
 
     /**
      * EVE corporation roles required (e.g. ['Director']).
