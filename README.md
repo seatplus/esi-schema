@@ -311,11 +311,21 @@ generated types and the server's response shape from disagreeing — a
 published compatibility date and compares the resulting API surface manifest
 (`.esi/surface.json`) with the one in the newest semver tag:
 
-- **nothing changed** → no release, nothing pushed;
-- **patch or minor** → verified, committed to `main`, tagged and published, with no
-  human involved;
-- **major, or unclassifiable** → nothing is released; one issue is opened for a
-  human, who reviews the diff report and dispatches the `Release` workflow.
+- **nothing changed** → nothing happens;
+- **patch or minor** → it opens a pull request with **auto-merge enabled**. CI runs,
+  the required check passes, the PR merges itself, and `release.yml` tags it. No
+  human involved.
+- **major, or unclassifiable** → no pull request, nothing released; one issue is
+  opened for a human, who reviews the report and dispatches `release.yml` with an
+  explicit `bump=major`.
+
+`release.yml` watches `main`, so a bot-merged sync and a human-merged PR take the
+identical path to a tag. It refuses to auto-tag a major, refuses to re-tag an
+existing version, and afterwards checks the release is actually resolvable on
+Packagist.
+
+Nothing in this pipeline bypasses branch protection — the bot goes through the same
+required check as anyone else.
 
 Majors are held back deliberately. Composer never force-upgrades a `^3.0` consumer
 to `4.0.0`, but it also cannot protect anyone from a bug in the classifier

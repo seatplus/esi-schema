@@ -9,13 +9,17 @@ name: ESI sync
 #     advanced because its PRs were labelled DO NOT MERGE — so every daily run saw
 #     the current date as new.
 #   * Nothing is named after a counter. The old workflow used maxMajor+1, which
-#     increments on *attempts*, so 3 dates became 56 branches. This workflow
-#     creates no branches at all.
-#   * There is no PR to ignore. Patch and minor releases land on main and are
-#     tagged in the same job. A removal opens exactly one issue and stops.
-#   * It never uses GITHUB_TOKEN to push. GITHUB_TOKEN-authored events do not
-#     trigger workflows, which is why CI never ran on a single bot branch and
-#     main's required status check never reported.
+#     increments on *attempts*, so 3 dates became 56 branches. Branch names here
+#     are content-addressed, so an identical result reuses an identical branch.
+#   * The PR it opens is actually mergeable, and merges itself. The old PRs were
+#     titled "[REVIEW ONLY] DO NOT MERGE" and could not have been merged anyway
+#     (see below). Patch and minor syncs land via auto-merge with nobody watching;
+#     a removal opens exactly one issue and stops.
+#   * It never uses GITHUB_TOKEN. GITHUB_TOKEN-authored events do not trigger
+#     workflows, which is why CI never ran on a single bot branch and main's
+#     required status check never reported — the actual reason 55 PRs were stuck.
+#     An App token does trigger CI, which is what makes auto-merge viable and why
+#     no branch-protection bypass is needed anywhere in this design.
 
 on:
   schedule:
@@ -205,13 +209,25 @@ jobs:
         if: steps.change.outputs.todo == 'true' && steps.classify.outputs.bump != 'undecidable'
         uses: ./.github/actions/verify
 
-      # --- 7. Release, but only patch and minor --------------------------
-      # A major is not auto-released. Composer protects consumers from being
-      # force-upgraded, but it does not protect them from a *bug in the
-      # classifier* shipping a removal as a minor — and a Packagist tag cannot be
-      # withdrawn. A human dispatching release.yml every couple of months was
-      # never the disease; unactioned pull requests were.
-      - name: Tag and release
+      # --- 7. Open a mergeable PR and let auto-merge land it -------------
+      #
+      # This does NOT push to main, deliberately. main is on classic branch
+      # protection, which has no bypass-actors list for GitHub Apps — an App token
+      # is refused at `git push origin main` exactly as GITHUB_TOKEN is. Rather
+      # than migrate protection so the bot can *bypass* the required check, the bot
+      # goes through it: the PR is authored with an App token, so CI actually runs
+      # (which is the one thing GITHUB_TOKEN cannot do), the required context
+      # reports green, and auto-merge lands it unattended.
+      #
+      # This is the correction to an over-reading of the old failure. Those 55 PRs
+      # did not rot because they were PRs; they rotted because GITHUB_TOKEN never
+      # triggered CI, so the required check never reported and they were
+      # structurally unmergeable. A PR whose checks run and whose merge is
+      # automatic has neither problem.
+      #
+      # Tagging is not done here. release.yml watches main and tags whatever lands,
+      # so the bot's merge and a human's merge take the identical path.
+      - name: Open a sync pull request
         if: |
           steps.change.outputs.todo == 'true' &&
           inputs.dry_run != true &&
@@ -220,28 +236,52 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           set -euo pipefail
-          VERSION="$(php bin/next-version.php \
-            --current='${{ steps.base.outputs.tag }}' \
-            --bump='${{ steps.classify.outputs.bump }}')"
+
+          # Content-addressed branch name: identical results reuse the identical
+          # branch, so a repeated run is a no-op push rather than a new branch.
+          # This is what makes 56-of-anything arithmetically impossible — there is
+          # no counter to increment.
+          SURFACE8="$(sha256sum .esi/surface.json | cut -c1-8)"
+          BRANCH="esi/sync-${{ steps.date.outputs.date }}-${SURFACE8}"
 
           git config user.name  "seatplus-release[bot]"
           git config user.email "seatplus-release[bot]@users.noreply.github.com"
 
+          git checkout -b "$BRANCH"
           git add -A
-          git commit -m "feat: sync ESI schema for compatibility date ${{ steps.date.outputs.date }} (${VERSION})" \
+          git commit -m "feat: sync ESI schema for compatibility date ${{ steps.date.outputs.date }}" \
                      -m "$(cat "$RUNNER_TEMP/report.md")"
+          git push --force-with-lease origin "$BRANCH"
 
-          # Aborts rather than clobbering if a human pushed to main meanwhile.
-          git push --force-with-lease origin main
+          # Each regeneration is a complete state, so a newer sync PR fully
+          # supersedes any older one. Close them rather than letting them pile up.
+          for n in $(gh pr list --state open --json number,headRefName \
+                       --jq ".[] | select(.headRefName | startswith(\"esi/sync-\")) | select(.headRefName != \"${BRANCH}\") | .number"); do
+            gh pr close "$n" --delete-branch \
+              --comment "Superseded by a newer ESI sync (\`${BRANCH}\`)."
+          done
 
-          git tag -a "$VERSION" -F "$RUNNER_TEMP/report.md"
-          git push origin "refs/tags/${VERSION}"
+          if [ -n "$(gh pr list --state open --head "$BRANCH" --json number --jq '.[0].number // ""')" ]; then
+            echo "A PR for this exact state is already open — nothing further to do."
+            exit 0
+          fi
 
-          gh release create "$VERSION" \
-            --title "${VERSION} — ESI ${{ steps.date.outputs.date }}" \
-            --notes-file "$RUNNER_TEMP/report.md"
+          VERSION="$(php bin/next-version.php \
+            --current='${{ steps.base.outputs.tag }}' \
+            --bump='${{ steps.classify.outputs.bump }}')"
 
-          echo "Released $VERSION"
+          gh pr create --base main --head "$BRANCH" \
+            --title "feat: sync ESI schema — ${{ steps.date.outputs.date }} (${{ steps.classify.outputs.bump }} → ${VERSION})" \
+            --body "$(printf '%s\n\n%s\n' \
+                "Opened automatically by \`esi-sync.yml\`. Auto-merge is enabled: this lands on its own once CI is green, and \`release.yml\` then tags \`${VERSION}\`." \
+                "$(cat "$RUNNER_TEMP/report.md")")"
+
+          # Squash so main gets one commit per sync. If the required check fails,
+          # auto-merge simply never fires and the PR waits — visibly, with a red
+          # check, rather than silently.
+          gh pr merge "$BRANCH" --auto --squash --delete-branch
+
+          echo "Opened $BRANCH with auto-merge; expected version ${VERSION}"
 
       # --- 8. Escalate: one issue, created or updated --------------------
       - name: Escalate for a human
@@ -259,8 +299,9 @@ jobs:
             if [ "$BUMP" = "major" ]; then
               echo "The ESI sync for compatibility date \`${DATE}\` is **surface-breaking**."
               echo
-              echo "It has deliberately not been released. Review the report, then run the"
-              echo "\`Release\` workflow with \`bump=major\` to publish it."
+              echo "No pull request was opened and nothing was released. Review the report,"
+              echo "regenerate on a branch, and merge it; \`release.yml\` will then need an"
+              echo "explicit \`bump=major\` dispatch to tag it."
             elif [ "$BUMP" = "undecidable" ]; then
               echo "The ESI sync for compatibility date \`${DATE}\` **could not be classified**."
               echo
@@ -287,7 +328,7 @@ jobs:
               --body-file "$RUNNER_TEMP/issue.md"
           fi
 
-      - name: Close the escalation issue after a clean release
+      - name: Close the escalation issue after a clean sync
         if: success() && steps.change.outputs.todo == 'true' && inputs.dry_run != true &&
             (steps.classify.outputs.bump == 'patch' || steps.classify.outputs.bump == 'minor')
         env:

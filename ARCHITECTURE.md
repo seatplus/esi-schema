@@ -324,7 +324,15 @@ a date, pin an exact version.
   `4.0.0`.
 
 ### Consequences
-- Patch and minor releases are published unattended.
+- Patch and minor releases are published unattended, via a bot pull request with
+  auto-merge enabled. Note the correction to Decision 8's postmortem: the lesson was
+  *not* "never open a pull request". Those 55 PRs were unmergeable because
+  `GITHUB_TOKEN`-authored pushes do not trigger workflows, so the required status
+  check never reported. An App-authored PR does trigger CI, so the check passes
+  honestly and auto-merge lands it. Nothing bypasses branch protection.
+- Tagging keys off *state on `main` versus the newest tag*, not off who pushed, so a
+  bot-merged sync and a human-merged PR follow the identical path. There is no
+  separate bot release route that can drift.
 - A major is held back: `esi-sync.yml` opens one issue and a human dispatches
   `release.yml`. This is not Decision 8's gate returning — the artifact is a single
   reused issue rather than an accumulating pull request, the classifier explains
