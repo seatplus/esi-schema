@@ -10,38 +10,17 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    # DO NOT RENAME. This exact string is main's required status check
+    # (`required_status_checks.contexts`). Renaming it means the required context
+    # never reports and every pull request hangs forever "waiting for status" —
+    # which is half of why 55 bot PRs were unmergeable.
     name: PHP 8.3 — Tests + Static Analysis
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      - name: Verify
+        uses: ./.github/actions/verify
         with:
           php-version: "8.3"
-          extensions: json
-          coverage: none
-          tools: composer:v2
-
-      - name: Cache Composer packages
-        uses: actions/cache@v4
-        with:
-          path: vendor
-          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install dependencies
-        run: composer install --no-interaction --prefer-dist
-
-      - name: Pint (style)
-        run: vendor/bin/pint --test
-
-      - name: PHPStan (static analysis)
-        run: vendor/bin/phpstan analyse --no-progress
-
-      - name: Pest (unit tests)
-        run: vendor/bin/pest --no-coverage
-
-      - name: Pest (type coverage)
-        run: vendor/bin/pest --type-coverage --min=100

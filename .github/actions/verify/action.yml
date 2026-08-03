@@ -1,0 +1,69 @@
+name: Verify
+description: The single definition of "this tree is releasable"
+
+# Used by ci.yml *and* by the release path, so "CI gates before the tag" is
+# literal rather than aspirational: esi-sync runs this exact composite against the
+# exact tree it is about to push and tag.
+#
+# Both extra gates are offline and deterministic. They do not touch ESI, so a
+# release can never be blocked or corrupted by upstream availability.
+
+inputs:
+  php-version:
+    description: PHP version to verify against
+    default: "8.3"
+
+runs:
+  using: composite
+  steps:
+    - uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ inputs.php-version }}
+        extensions: json
+        coverage: none
+        tools: composer:v2
+
+    - uses: actions/cache@v4
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php${{ inputs.php-version }}-composer-${{ hashFiles('composer.lock') }}
+        restore-keys: ${{ runner.os }}-php${{ inputs.php-version }}-composer-
+
+    - name: Install dependencies
+      shell: bash
+      run: composer install --no-interaction --prefer-dist
+
+    # composer.json's `test` script is already the single definition of green:
+    # pint --test, phpstan, pest, pest --type-coverage --min=100.
+    - name: Lint, analyse, test
+      shell: bash
+      run: composer test
+
+    # Proves src/ is exactly what the committed spec produces. Catches a
+    # hand-edited generated file, a stale manifest, and a spec swapped without
+    # regenerating — none of which the test suite can see.
+    - name: Generated code is reproducible from the vendored spec
+      shell: bash
+      run: |
+        set -euo pipefail
+        php bin/generate.php \
+          --spec=.esi/openapi.yaml \
+          --compatibility-date="$(jq -r .compatibility_date .esi/state.json)"
+        vendor/bin/pint --quiet
+        if ! git diff --exit-code -- src/ .esi/surface.json .esi/state.json; then
+          echo "::error::src/ or .esi/ does not match .esi/openapi.yaml + bin/generate.php."
+          echo "Either a generated file was hand-edited, or the committed state is stale."
+          echo "Fix: php bin/generate.php --compatibility-date=<date> && vendor/bin/pint"
+          exit 1
+        fi
+
+    - name: Vendored spec matches its recorded hash
+      shell: bash
+      run: |
+        set -euo pipefail
+        recorded="$(jq -r .spec_sha256 .esi/state.json)"
+        actual="$(sha256sum .esi/openapi.yaml | cut -d' ' -f1)"
+        if [ "$recorded" != "$actual" ]; then
+          echo "::error::.esi/openapi.yaml sha256 is $actual but state.json records $recorded."
+          exit 1
+        fi
