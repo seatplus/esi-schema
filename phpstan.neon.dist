@@ -1,3 +1,7 @@
+includes:
+    # Pest-aware static analysis (understands it()/expect()/$this).
+    - vendor/pestphp/pest-plugin-phpstan/extension.neon
+
 parameters:
     editorUrl: 'phpstorm://open?file=%%file%%&line=%%line%%'
     level: 4

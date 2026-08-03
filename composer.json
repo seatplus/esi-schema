@@ -8,8 +8,9 @@
     },
     "require-dev": {
         "monolog/monolog": "^3.0",
-        "pestphp/pest": "^3.0",
-        "pestphp/pest-plugin-type-coverage": "^3.0",
+        "pestphp/pest": "^5.0",
+        "pestphp/pest-plugin-phpstan": "^5.0",
+        "pestphp/pest-plugin-type-coverage": "^5.0",
         "phpstan/phpstan": "^2.0",
         "laravel/pint": "^1.0",
         "symfony/yaml": "^7.0"
@@ -31,7 +32,7 @@
             "@test:type-coverage",
             "@test:unit"
         ],
-        "test:unit": "vendor/bin/pest --no-coverage",
+        "test:unit": "vendor/bin/pest --tia",
         "test:lint": "vendor/bin/pint --test",
         "lint": "vendor/bin/pint",
         "test:types": "vendor/bin/phpstan analyse --no-progress",
