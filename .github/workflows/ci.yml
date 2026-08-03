@@ -2,9 +2,10 @@ name: CI
 
 on:
   push:
-    branches: ["main", "1.x", "*.x"]
+    branches: ["main"]
+  # No branches filter: every PR must be tested regardless of its base, otherwise
+  # branch protection's required context never reports and the PR is unmergeable.
   pull_request:
-    branches: ["main", "1.x", "*.x"]
 
 jobs:
   test:
