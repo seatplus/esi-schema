@@ -1,0 +1,341 @@
+name: ESI sync
+
+# Replaces check-dates.yml, which created 56 major-version branches for 3
+# compatibility dates and released nothing. The differences that matter:
+#
+#   * State comes from the newest semver *tag*, read out of that tag's own tree.
+#     Tags are immutable and are exactly what a consumer can install, so the
+#     baseline cannot go stale. The old workflow's baseline was main, which never
+#     advanced because its PRs were labelled DO NOT MERGE — so every daily run saw
+#     the current date as new.
+#   * Nothing is named after a counter. The old workflow used maxMajor+1, which
+#     increments on *attempts*, so 3 dates became 56 branches. Branch names here
+#     are content-addressed, so an identical result reuses an identical branch.
+#   * The PR it opens is actually mergeable, and merges itself. The old PRs were
+#     titled "[REVIEW ONLY] DO NOT MERGE" and could not have been merged anyway
+#     (see below). Patch and minor syncs land via auto-merge with nobody watching;
+#     a removal opens exactly one issue and stops.
+#   * It never uses GITHUB_TOKEN. GITHUB_TOKEN-authored events do not trigger
+#     workflows, which is why CI never ran on a single bot branch and main's
+#     required status check never reported — the actual reason 55 PRs were stuck.
+#     An App token does trigger CI, which is what makes auto-merge viable and why
+#     no branch-protection bypass is needed anywhere in this design.
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+    inputs:
+      compatibility_date:
+        description: "Override the target date (default: newest published)"
+        required: false
+      dry_run:
+        description: "Classify and report, but do not commit or tag"
+        type: boolean
+        default: false
+
+# Serialises runs and never truncates one mid-tag.
+concurrency:
+  group: esi-sync
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      # A GitHub App token, not GITHUB_TOKEN. Required both to push to protected
+      # main and so that anything this job opens actually triggers CI.
+      #
+      # PREREQUISITE: main is currently on *classic* branch protection, which has
+      # no bypass-actors list for Apps — an App token is refused at `git push
+      # origin main` exactly as GITHUB_TOKEN is. Migrate main to a repository
+      # ruleset with this App as a bypass actor before enabling the schedule.
+      - name: Mint an App token
+        uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          fetch-tags: true
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          # Same version as ci.yml and composer.json's floor. The old workflow
+          # generated on 8.5 while CI verified on 8.3.
+          php-version: "8.3"
+          extensions: json
+          coverage: none
+          tools: composer:v2
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      # --- 1. Which date are we targeting? --------------------------------
+      - name: Resolve target compatibility date
+        id: date
+        run: |
+          set -euo pipefail
+          if [ -n "${{ inputs.compatibility_date }}" ]; then
+            DATE="${{ inputs.compatibility_date }}"
+          else
+            # Never adopt a date CCP has announced but not yet reached.
+            DATE="$(curl -sf --retry 3 --retry-all-errors --max-time 60 \
+                      https://esi.evetech.net/meta/compatibility-dates \
+                    | jq -r --arg today "$(date -u +%Y-%m-%d)" \
+                      '[.compatibility_dates[] | select(. <= $today)] | max')"
+          fi
+          if [ -z "$DATE" ] || [ "$DATE" = "null" ]; then
+            echo "::error::could not resolve a usable compatibility date"
+            exit 1
+          fi
+          echo "date=$DATE" >> "$GITHUB_OUTPUT"
+          echo "Target compatibility date: $DATE"
+
+      # --- 2. Baseline: the newest semver tag ----------------------------
+      # Deliberately no `git tag --points-at HEAD` short-circuit. The release
+      # commit is itself tagged, so such a check would make the pipeline
+      # one-shot: every later run would exit before even querying ESI.
+      - name: Read the last released state
+        id: base
+        run: |
+          set -euo pipefail
+          TAG="$(git tag -l --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -1)"
+          if [ -z "$TAG" ]; then
+            echo "::error::no semver tag found; cannot establish a baseline"
+            exit 1
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Baseline: $TAG"
+
+          # The anchored grep above also means non-semver tags (archive/*) are
+          # invisible to this pipeline.
+          git show "refs/tags/${TAG}:.esi/surface.json" > "$RUNNER_TEMP/old-surface.json" 2>/dev/null \
+            || echo "::warning::${TAG} carries no surface manifest; the classifier will escalate"
+          git show "refs/tags/${TAG}:.esi/state.json" > "$RUNNER_TEMP/old-state.json" 2>/dev/null \
+            || echo '{}' > "$RUNNER_TEMP/old-state.json"
+          echo "base_date=$(jq -r '.compatibility_date // ""' "$RUNNER_TEMP/old-state.json")" >> "$GITHUB_OUTPUT"
+
+      # --- 3. Regenerate --------------------------------------------------
+      - name: Regenerate
+        run: |
+          set -euo pipefail
+          php bin/generate.php --strict --compatibility-date="${{ steps.date.outputs.date }}"
+          vendor/bin/pint --quiet
+
+      # --- 4. Anything to do? --------------------------------------------
+      # The idempotency key is (target date, surface hash) against the last tag.
+      # This is what collapses "37 branches for one date" into one release.
+      - name: Decide whether there is anything to release
+        id: change
+        run: |
+          set -euo pipefail
+          NEW_SURFACE="$(sha256sum .esi/surface.json | cut -d' ' -f1)"
+          OLD_SURFACE="$(sha256sum "$RUNNER_TEMP/old-surface.json" 2>/dev/null | cut -d' ' -f1 || echo missing)"
+
+          if [ "${{ steps.date.outputs.date }}" = "${{ steps.base.outputs.base_date }}" ] \
+             && [ "$NEW_SURFACE" = "$OLD_SURFACE" ]; then
+            echo "Already released as ${{ steps.base.outputs.tag }} — nothing to do."
+            echo "todo=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "todo=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # --- 5. Classify ----------------------------------------------------
+      - name: Classify the change
+        if: steps.change.outputs.todo == 'true'
+        id: classify
+        run: |
+          set +e
+          php bin/api-diff.php \
+            --old="$RUNNER_TEMP/old-surface.json" \
+            --new=.esi/surface.json --format=json > "$RUNNER_TEMP/verdict.json"
+          DIFF_EXIT=$?
+          php bin/api-diff.php \
+            --old="$RUNNER_TEMP/old-surface.json" \
+            --new=.esi/surface.json --format=markdown > "$RUNNER_TEMP/report.md"
+          set -e
+
+          if [ "$DIFF_EXIT" -eq 2 ]; then
+            echo "bump=undecidable" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          BUMP="$(jq -r .bump "$RUNNER_TEMP/verdict.json")"
+
+          # Independent second opinion, by a completely different route. If the
+          # classifier saw no removals but the grep did, one of them is wrong and
+          # we must not publish either verdict.
+          CROSSCHECK_HITS=0
+          if .github/scripts/removal-crosscheck.sh > "$RUNNER_TEMP/crosscheck.txt"; then
+            CROSSCHECK_HITS=1
+          fi
+          BREAKING="$(jq -r '.counts.breaking' "$RUNNER_TEMP/verdict.json")"
+
+          if [ "$CROSSCHECK_HITS" = "1" ] && [ "$BREAKING" = "0" ]; then
+            echo "::error::removal-crosscheck found removals but api-diff reported none."
+            {
+              echo "## Classifier disagreement"
+              echo
+              echo "\`removal-crosscheck.sh\` found removed public members, but"
+              echo "\`api-diff.php\` classified the change as \`${BUMP}\` with zero breaking entries."
+              echo "One of them is wrong. Nothing has been released."
+              echo
+              echo '```'
+              cat "$RUNNER_TEMP/crosscheck.txt"
+              echo '```'
+            } > "$RUNNER_TEMP/report.md"
+            echo "bump=undecidable" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "bump=$BUMP" >> "$GITHUB_OUTPUT"
+          echo "Verdict: $BUMP"
+
+      # --- 6. Gate on the same suite CI requires -------------------------
+      - name: Verify
+        if: steps.change.outputs.todo == 'true' && steps.classify.outputs.bump != 'undecidable'
+        uses: ./.github/actions/verify
+
+      # --- 7. Open a mergeable PR and let auto-merge land it -------------
+      #
+      # This does NOT push to main, deliberately. main is on classic branch
+      # protection, which has no bypass-actors list for GitHub Apps — an App token
+      # is refused at `git push origin main` exactly as GITHUB_TOKEN is. Rather
+      # than migrate protection so the bot can *bypass* the required check, the bot
+      # goes through it: the PR is authored with an App token, so CI actually runs
+      # (which is the one thing GITHUB_TOKEN cannot do), the required context
+      # reports green, and auto-merge lands it unattended.
+      #
+      # This is the correction to an over-reading of the old failure. Those 55 PRs
+      # did not rot because they were PRs; they rotted because GITHUB_TOKEN never
+      # triggered CI, so the required check never reported and they were
+      # structurally unmergeable. A PR whose checks run and whose merge is
+      # automatic has neither problem.
+      #
+      # Tagging is not done here. release.yml watches main and tags whatever lands,
+      # so the bot's merge and a human's merge take the identical path.
+      - name: Open a sync pull request
+        if: |
+          steps.change.outputs.todo == 'true' &&
+          inputs.dry_run != true &&
+          (steps.classify.outputs.bump == 'patch' || steps.classify.outputs.bump == 'minor')
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          set -euo pipefail
+
+          # Content-addressed branch name: identical results reuse the identical
+          # branch, so a repeated run is a no-op push rather than a new branch.
+          # This is what makes 56-of-anything arithmetically impossible — there is
+          # no counter to increment.
+          SURFACE8="$(sha256sum .esi/surface.json | cut -c1-8)"
+          BRANCH="esi/sync-${{ steps.date.outputs.date }}-${SURFACE8}"
+
+          git config user.name  "seatplus-release[bot]"
+          git config user.email "seatplus-release[bot]@users.noreply.github.com"
+
+          git checkout -b "$BRANCH"
+          git add -A
+          git commit -m "feat: sync ESI schema for compatibility date ${{ steps.date.outputs.date }}" \
+                     -m "$(cat "$RUNNER_TEMP/report.md")"
+          git push --force-with-lease origin "$BRANCH"
+
+          # Each regeneration is a complete state, so a newer sync PR fully
+          # supersedes any older one. Close them rather than letting them pile up.
+          for n in $(gh pr list --state open --json number,headRefName \
+                       --jq ".[] | select(.headRefName | startswith(\"esi/sync-\")) | select(.headRefName != \"${BRANCH}\") | .number"); do
+            gh pr close "$n" --delete-branch \
+              --comment "Superseded by a newer ESI sync (\`${BRANCH}\`)."
+          done
+
+          if [ -n "$(gh pr list --state open --head "$BRANCH" --json number --jq '.[0].number // ""')" ]; then
+            echo "A PR for this exact state is already open — nothing further to do."
+            exit 0
+          fi
+
+          VERSION="$(php bin/next-version.php \
+            --current='${{ steps.base.outputs.tag }}' \
+            --bump='${{ steps.classify.outputs.bump }}')"
+
+          gh pr create --base main --head "$BRANCH" \
+            --title "feat: sync ESI schema — ${{ steps.date.outputs.date }} (${{ steps.classify.outputs.bump }} → ${VERSION})" \
+            --body "$(printf '%s\n\n%s\n' \
+                "Opened automatically by \`esi-sync.yml\`. Auto-merge is enabled: this lands on its own once CI is green, and \`release.yml\` then tags \`${VERSION}\`." \
+                "$(cat "$RUNNER_TEMP/report.md")")"
+
+          # Squash so main gets one commit per sync. If the required check fails,
+          # auto-merge simply never fires and the PR waits — visibly, with a red
+          # check, rather than silently.
+          gh pr merge "$BRANCH" --auto --squash --delete-branch
+
+          echo "Opened $BRANCH with auto-merge; expected version ${VERSION}"
+
+      # --- 8. Escalate: one issue, created or updated --------------------
+      - name: Escalate for a human
+        if: |
+          always() && steps.change.outputs.todo == 'true' && inputs.dry_run != true &&
+          (failure() || steps.classify.outputs.bump == 'major' || steps.classify.outputs.bump == 'undecidable')
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          set -euo pipefail
+          BUMP="${{ steps.classify.outputs.bump }}"
+          DATE="${{ steps.date.outputs.date }}"
+
+          {
+            if [ "$BUMP" = "major" ]; then
+              echo "The ESI sync for compatibility date \`${DATE}\` is **surface-breaking**."
+              echo
+              echo "No pull request was opened and nothing was released. Review the report,"
+              echo "regenerate on a branch, and merge it; \`release.yml\` will then need an"
+              echo "explicit \`bump=major\` dispatch to tag it."
+            elif [ "$BUMP" = "undecidable" ]; then
+              echo "The ESI sync for compatibility date \`${DATE}\` **could not be classified**."
+              echo
+              echo "Nothing was released. See the report below."
+            else
+              echo "The ESI sync for compatibility date \`${DATE}\` **failed**."
+              echo
+              echo "See the [run log](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})."
+            fi
+            echo
+            if [ -f "$RUNNER_TEMP/report.md" ]; then
+              cat "$RUNNER_TEMP/report.md"
+            fi
+          } > "$RUNNER_TEMP/issue.md"
+
+          # One issue, reused. An unactioned artifact that accumulates is the
+          # failure mode being fixed here, so this must never open a second one.
+          EXISTING="$(gh issue list --label esi-sync --state open --limit 1 --json number --jq '.[0].number // ""')"
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --body-file "$RUNNER_TEMP/issue.md"
+          else
+            gh issue create --label esi-sync \
+              --title "ESI sync needs attention (${DATE})" \
+              --body-file "$RUNNER_TEMP/issue.md"
+          fi
+
+      - name: Close the escalation issue after a clean sync
+        if: success() && steps.change.outputs.todo == 'true' && inputs.dry_run != true &&
+            (steps.classify.outputs.bump == 'patch' || steps.classify.outputs.bump == 'minor')
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          set -euo pipefail
+          EXISTING="$(gh issue list --label esi-sync --state open --limit 1 --json number --jq '.[0].number // ""')"
+          if [ -n "$EXISTING" ]; then
+            gh issue close "$EXISTING" --comment "Resolved by a clean sync of ${{ steps.date.outputs.date }}."
+          fi

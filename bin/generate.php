@@ -26,7 +26,7 @@ use Symfony\Component\Yaml\Yaml;
 // ---------------------------------------------------------------------------
 
 $args = [];
-foreach (array_slice($argv, 1) as $arg) {
+foreach (array_slice($_SERVER['argv'] ?? [], 1) as $arg) {
     if (str_starts_with($arg, '--')) {
         [$k, $v] = explode('=', ltrim($arg, '-'), 2) + [1 => 'true'];
         $args[$k] = $v;
@@ -35,6 +35,103 @@ foreach (array_slice($argv, 1) as $arg) {
 
 $dryRun   = isset($args['dry-run']);
 $specFile = $args['spec'] ?? null;
+$strict   = (isset($args['strict']) || getenv('CI') !== false) && ! isset($args['no-strict']);
+
+/**
+ * Fetch a URL with retries, asserting a 2xx status.
+ *
+ * file_get_contents() returns false on failure, which under strict_types becomes
+ * a TypeError somewhere downstream — a crash with a useless message. Fail here
+ * instead, with the URL and status in the message.
+ */
+function fetchUrl(string $url, array &$headers = [], int $attempts = 3): string
+{
+    // $http_response_header is populated in *function* scope by the HTTP stream
+    // wrapper, so it has to be handed back explicitly — a caller reading the
+    // global would never see these.
+    $headers = [];
+
+    $context = stream_context_create([
+        'http' => [
+            'method'        => 'GET',
+            'timeout'       => 60,
+            'ignore_errors' => true,
+            'header'        => "Accept: */*\r\nUser-Agent: seatplus-esi-schema-generator\r\n",
+        ],
+    ]);
+
+    $lastError = 'unknown error';
+
+    for ($attempt = 1; $attempt <= $attempts; $attempt++) {
+        $http_response_header = [];
+        $body                 = @file_get_contents($url, false, $context);
+        $headers              = $http_response_header;
+        $status               = 0;
+        foreach ($headers as $headerLine) {
+            if (preg_match('#^HTTP/\S+\s+(\d{3})#', $headerLine, $m) === 1) {
+                $status = (int) $m[1];
+            }
+        }
+
+        if ($body !== false && $status >= 200 && $status < 300) {
+            return $body;
+        }
+
+        $lastError = $body === false ? 'connection failed' : "HTTP {$status}";
+        if ($attempt < $attempts) {
+            $backoff = 2 ** ($attempt - 1);
+            fwrite(STDERR, "  fetch failed ({$lastError}), retrying in {$backoff}s...\n");
+            sleep($backoff);
+        }
+    }
+
+    fwrite(STDERR, "FATAL: could not fetch {$url}: {$lastError}\n");
+    exit(1);
+}
+
+/** Abort before writing anything if the spec looks degraded or is not the one we asked for. */
+function assertSpecSane(array $spec, string $compatDate, int $byteLength, bool $strict): void
+{
+    $problems = [];
+
+    if ($byteLength < 400_000) {
+        $problems[] = "spec body is {$byteLength} bytes, expected >= 400000 (truncated response?)";
+    }
+
+    $pathCount   = count($spec['paths'] ?? []);
+    $schemaCount = count($spec['components']['schemas'] ?? []);
+
+    if ($pathCount < 180) {
+        $problems[] = "only {$pathCount} paths, expected >= 180";
+    }
+    if ($schemaCount < 285) {
+        $problems[] = "only {$schemaCount} schemas, expected >= 285";
+    }
+
+    $infoVersion = $spec['info']['version'] ?? null;
+    if ($infoVersion !== null && $infoVersion !== $compatDate) {
+        $problems[] = "info.version is '{$infoVersion}', expected '{$compatDate}'";
+    }
+
+    $enum = $spec['components']['parameters']['CompatibilityDate']['schema']['enum'] ?? null;
+    if ($enum !== null && $enum !== [$compatDate]) {
+        $problems[] = 'CompatibilityDate.enum is ' . json_encode($enum) . ", expected [\"{$compatDate}\"]";
+    }
+
+    if ($problems === []) {
+        return;
+    }
+
+    $label = $strict ? 'FATAL' : 'WARNING';
+    foreach ($problems as $problem) {
+        fwrite(STDERR, "{$label}: {$problem}\n");
+    }
+
+    if ($strict) {
+        fwrite(STDERR, "Refusing to generate from a suspect spec. Pass --no-strict to override.\n");
+        exit(1);
+    }
+}
 
 // ---------------------------------------------------------------------------
 // Fetch compatibility dates and spec
@@ -45,28 +142,62 @@ $SPEC_BASE_URL   = 'https://esi.evetech.net/meta/openapi.yaml';
 
 if (isset($args['compatibility-date'])) {
     $compatDate = $args['compatibility-date'];
+} elseif ($strict) {
+    fwrite(STDERR, "FATAL: --compatibility-date is required in CI/strict mode.\n");
+    fwrite(STDERR, "Never let an unattended run guess which spec to generate from.\n");
+    exit(1);
 } else {
     echo "Fetching compatibility dates...\n";
-    $datesJson  = file_get_contents($COMPAT_DATE_URL);
-    $dates      = json_decode($datesJson, true)['compatibility_dates'] ?? [];
-    $compatDate = $dates[0] ?? '2025-12-16';
+    $datesJson = fetchUrl($COMPAT_DATE_URL);
+    $dates     = json_decode($datesJson, true)['compatibility_dates'] ?? [];
+    if ($dates === []) {
+        fwrite(STDERR, "FATAL: {$COMPAT_DATE_URL} returned no compatibility dates.\n");
+        exit(1);
+    }
+    // ESI happens to return these newest-first, but that ordering is undocumented.
+    $compatDate = max($dates);
     echo "Using compatibility_date: {$compatDate}\n";
 }
 
 if ($specFile) {
     echo "Loading spec from file: {$specFile}\n";
     $rawSpec = file_get_contents($specFile);
+    if ($rawSpec === false) {
+        fwrite(STDERR, "FATAL: could not read spec file {$specFile}\n");
+        exit(1);
+    }
 } else {
     $specUrl = "{$SPEC_BASE_URL}?compatibility_date={$compatDate}";
     echo "Fetching spec from {$specUrl}...\n";
-    $rawSpec = file_get_contents($specUrl);
+    $specHeaders = [];
+    $rawSpec     = fetchUrl($specUrl, $specHeaders);
+
+    // ESI echoes the date it actually served. A proxy or cache handing back a
+    // different spec is a failure no size check would notice.
+    foreach ($specHeaders as $headerLine) {
+        if (stripos($headerLine, 'x-compatibility-date:') === 0) {
+            $served = trim(substr($headerLine, strlen('x-compatibility-date:')));
+            if ($served !== $compatDate) {
+                fwrite(STDERR, "FATAL: asked for compatibility_date={$compatDate}, server served {$served}\n");
+                exit(1);
+            }
+        }
+    }
 }
+
+$specSha256 = hash('sha256', $rawSpec);
 
 $spec    = Yaml::parse($rawSpec);
 $schemas = $spec['components']['schemas'] ?? [];
 $paths   = $spec['paths'] ?? [];
 
+assertSpecSane($spec, $compatDate, strlen($rawSpec), $strict);
+
+/** Shared parameter definitions, used to resolve $ref parameters. */
+$specParameters = $spec['components']['parameters'] ?? [];
+
 define('ESI_COMPATIBILITY_DATE', $compatDate);
+define('ESI_SPEC_SHA256', $specSha256);
 
 // ---------------------------------------------------------------------------
 // Output directories
@@ -623,6 +754,19 @@ foreach ($paths as $path => $pathItem) {
                 if (in_array($paramName, $SKIP_PARAMS, true)) {
                     continue;
                 }
+                // Resolve any other $ref parameter rather than dropping it. Every
+                // $ref parameter in the spec is currently skip-listed, so this
+                // changes no output today — but the day CCP factors a real
+                // parameter into components/parameters, dropping it here would
+                // silently remove it from every execute() signature at once.
+                $resolved = $specParameters[$paramName] ?? null;
+                if ($resolved === null) {
+                    fwrite(STDERR, "WARNING: unresolvable parameter \$ref '{$param['$ref']}' on {$op['operationId']}\n");
+
+                    continue;
+                }
+                $params[] = $resolved;
+
                 continue;
             }
             $params[] = $param;
@@ -735,65 +879,308 @@ foreach ($schemas as $name => $schema) {
 }
 
 // ---------------------------------------------------------------------------
-// Write files
+// Build the complete write set in memory
+//
+// Everything is generated before a single byte is written, so a throw anywhere in
+// generation leaves src/ untouched. That is also what makes pruning safe: the
+// write set is authoritative, so anything under src/Responses or src/Resources
+// that is absent from it is genuinely gone from the spec.
+//
+// Sorted, because the emitted set feeds .esi/surface.json and the manifest hash
+// must not depend on YAML document order.
 // ---------------------------------------------------------------------------
 
-$writtenDtos       = 0;
-$writtenResources  = 0;
-$writtenTags       = 0;
+/** @var array<string, string> $writeSet absolute path → PHP source */
+$writeSet = [];
 
-if (! $dryRun) {
-    // --- DTOs ---
-    if (! is_dir($responsesDir)) {
-        mkdir($responsesDir, 0755, true);
-    }
-    foreach ($dtoFiles as $className => $source) {
-        file_put_contents("{$responsesDir}/{$className}.php", $source);
-        echo "  [dto] src/Responses/{$className}.php\n";
-        $writtenDtos++;
-    }
+ksort($dtoFiles);
+foreach ($dtoFiles as $className => $source) {
+    $writeSet["{$responsesDir}/{$className}.php"] = $source;
+}
 
-    // --- Resources ---
-    if (! is_dir($resourcesDir)) {
-        mkdir($resourcesDir, 0755, true);
-    }
-    foreach ($allOps as $op) {
-        $subNs     = str_replace(' ', '', $op['tag']);
-        $subDir    = "{$resourcesDir}/{$subNs}";
-        if (! is_dir($subDir)) {
-            mkdir($subDir, 0755, true);
+usort($allOps, static fn (array $a, array $b): int => [$a['tag'], $a['methodName']] <=> [$b['tag'], $b['methodName']]);
+foreach ($allOps as $op) {
+    $subNs     = str_replace(' ', '', $op['tag']);
+    $className = ucfirst($op['methodName']);
+    $writeSet["{$resourcesDir}/{$subNs}/{$className}.php"] = generateOperationClass($op);
+}
+
+ksort($tagOps);
+foreach ($tagOps as $tagNs => $ops) {
+    $writeSet["{$resourcesDir}/{$tagNs}Resource.php"] = generateTagClass($tagNs, $ops);
+}
+
+$writtenDtos      = count($dtoFiles);
+$writtenResources = count($allOps);
+$writtenTags      = count($tagOps);
+
+// Floor check: a degraded spec that parsed but yielded almost nothing must not be
+// allowed to delete the package. assertSpecSane() covers the input; this covers
+// the output.
+if (count($writeSet) < 400) {
+    fwrite(STDERR, 'FATAL: write set is only ' . count($writeSet) . " files, expected >= 400.\n");
+    fwrite(STDERR, "Refusing to prune src/ from a degraded generation.\n");
+    exit(1);
+}
+
+// ---------------------------------------------------------------------------
+// Existing generated files, for pruning
+// ---------------------------------------------------------------------------
+
+/** @return list<string> every generated .php file currently on disk */
+function existingGeneratedFiles(string $responsesDir, string $resourcesDir): array
+{
+    $found = [];
+
+    foreach ([$responsesDir, $resourcesDir] as $root) {
+        if (! is_dir($root)) {
+            continue;
         }
-        $source    = generateOperationClass($op);
-        $className = ucfirst($op['methodName']);
-        file_put_contents("{$subDir}/{$className}.php", $source);
-        echo "  [resource] src/Resources/{$subNs}/{$className}.php\n";
-        $writtenResources++;
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS),
+        );
+        foreach ($iterator as $fileInfo) {
+            if ($fileInfo->isFile() && $fileInfo->getExtension() === 'php') {
+                $found[] = $fileInfo->getPathname();
+            }
+        }
     }
 
-    // --- Tag classes ---
-    foreach ($tagOps as $tagNs => $ops) {
-        $source = generateTagClass($tagNs, $ops);
-        file_put_contents("{$resourcesDir}/{$tagNs}Resource.php", $source);
-        echo "  [tag] src/Resources/{$tagNs}Resource.php\n";
-        $writtenTags++;
+    sort($found);
+
+    return $found;
+}
+
+$existing = existingGeneratedFiles($responsesDir, $resourcesDir);
+$stale    = array_values(array_diff($existing, array_keys($writeSet)));
+
+// ---------------------------------------------------------------------------
+// Write, then prune
+// ---------------------------------------------------------------------------
+
+if ($dryRun) {
+    foreach (array_keys($writeSet) as $path) {
+        echo '  [dry-run][write] ' . relativeToRoot($path) . "\n";
+    }
+    foreach ($stale as $path) {
+        echo '  [dry-run][prune] ' . relativeToRoot($path) . "\n";
     }
 } else {
-    foreach ($dtoFiles as $className => $_) {
-        echo "  [dry-run][dto] src/Responses/{$className}.php\n";
-        $writtenDtos++;
+    foreach ($writeSet as $path => $source) {
+        $dir = dirname($path);
+        if (! is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+        file_put_contents($path, $source);
+        echo '  [write] ' . relativeToRoot($path) . "\n";
     }
-    foreach ($allOps as $op) {
-        $subNs = str_replace(' ', '', $op['tag']);
-        echo "  [dry-run][resource] src/Resources/{$subNs}/" . ucfirst($op['methodName']) . ".php\n";
-        $writtenResources++;
+
+    foreach ($stale as $path) {
+        unlink($path);
+        echo '  [prune] ' . relativeToRoot($path) . "\n";
     }
-    foreach ($tagOps as $tagNs => $_) {
-        echo "  [dry-run][tag] src/Resources/{$tagNs}Resource.php\n";
-        $writtenTags++;
+
+    // Remove tag directories the spec no longer has any operations for.
+    foreach (glob("{$resourcesDir}/*", GLOB_ONLYDIR) ?: [] as $dir) {
+        if ((glob("{$dir}/*.php") ?: []) === []) {
+            rmdir($dir);
+            echo '  [prune] ' . relativeToRoot($dir) . "/\n";
+        }
+    }
+}
+
+/**
+ * Extract the public API surface of one generated file as a list of symbol strings.
+ *
+ * Derived from the source this script just rendered, in-process — not by reflection.
+ * Reflection cannot see the `@return EsiResult<array<X>>` generics, which exist only
+ * in docblocks and are the declared payload type for ~200 operations; a manifest
+ * without them would call a payload retype "no change". Parsing our own freshly
+ * rendered output is safe precisely because the emission format is fixed a few
+ * hundred lines above.
+ *
+ * Each symbol embeds its type, so a retype shows up as one removal plus one
+ * addition under set difference — no separate comparison logic needed.
+ *
+ * @return list<string>
+ */
+function surfaceSymbols(string $source): array
+{
+    if (preg_match('/^namespace\s+([^;]+);/m', $source, $m) !== 1) {
+        return [];
+    }
+    $namespace = trim($m[1]);
+
+    if (preg_match('/^(?:final\s+|abstract\s+)*(?:readonly\s+)?class\s+(\w+)/m', $source, $m) !== 1) {
+        return [];
+    }
+    $fqcn = $namespace . '\\' . $m[1];
+
+    $symbols = ["class {$fqcn}"];
+
+    // Typed public constants: `public const ?int CACHE_AGE = 3600;`
+    if (preg_match_all('/^\s*public const\s+(\S+)\s+(\w+)\s*=\s*(.+?);\s*$/m', $source, $matches, PREG_SET_ORDER) > 0) {
+        foreach ($matches as $match) {
+            $symbols[] = "const {$fqcn}::{$match[2]} {$match[1]} = " . preg_replace('/\s+/', ' ', trim($match[3]));
+        }
+    }
+
+    // Promoted readonly constructor properties: `public readonly ?string $title = null,`
+    if (preg_match_all('/^\s*public readonly\s+(\S+)\s+\$(\w+)(\s*=\s*[^,]+)?,\s*$/m', $source, $matches, PREG_SET_ORDER) > 0) {
+        foreach ($matches as $match) {
+            $optional = ($match[3] ?? '') !== '' ? 'optional' : 'required';
+            $symbols[] = "prop {$fqcn}::\${$match[2]} {$match[1]} {$optional}";
+        }
+    }
+
+    // Public methods, with the preceding @return generic when there is one.
+    $lines      = explode("\n", $source);
+    $lastReturn = null;
+    foreach ($lines as $line) {
+        if (preg_match('/^\s*\*\s*@return\s+(.+?)\s*$/', $line, $match) === 1) {
+            $lastReturn = trim($match[1]);
+
+            continue;
+        }
+        if (preg_match('/^\s*public (?:static )?function\s+(\w+)\s*\((.*?)\)\s*:\s*(\S+)/', $line, $match) === 1) {
+            $params    = preg_replace('/\s+/', ' ', trim($match[2]));
+            $signature = "method {$fqcn}::{$match[1]}({$params}): {$match[3]}";
+            if ($lastReturn !== null && str_contains($lastReturn, '<')) {
+                $signature .= " [@return {$lastReturn}]";
+            }
+            $symbols[] = $signature;
+            $lastReturn = null;
+        }
+    }
+
+    return $symbols;
+}
+
+function relativeToRoot(string $path): string
+{
+    // Paths are built from __DIR__ . '/../src/...', so collapse the '..' segment
+    // before comparing — realpath() is unusable here for files not yet written.
+    $normalised = preg_replace('#/[^/]+/\.\./#', '/', $path) ?? $path;
+    $root       = dirname(__DIR__) . '/';
+
+    return str_starts_with($normalised, $root) ? substr($normalised, strlen($root)) : $normalised;
+}
+
+// ---------------------------------------------------------------------------
+// Surface manifest, state, provenance
+//
+// .esi/surface.json is the release authority: the daily sync compares it against
+// the newest tag's copy, and bin/api-diff.php classifies the difference. It is
+// therefore deliberately free of the compatibility date and the spec hash —
+// src/GeneratedSpec.php is not part of the write set and so never lands in the
+// manifest. If it did, its COMPATIBILITY_DATE and SPEC_SHA256 constants would sit
+// inside the release-authority hash, the hash would flip on every cosmetic spec
+// edit (destroying the one property the manifest is chosen for), and a date-only
+// advance could never be recognised as one.
+// ---------------------------------------------------------------------------
+
+$symbols = [];
+foreach ($writeSet as $source) {
+    foreach (surfaceSymbols($source) as $symbol) {
+        $symbols[] = $symbol;
+    }
+}
+sort($symbols);
+
+$surfaceJson = json_encode(
+    ['schemaVersion' => 1, 'symbols' => $symbols],
+    JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR,
+) . "\n";
+
+$stateJson = json_encode(
+    [
+        'schemaVersion'      => 1,
+        'compatibility_date' => $compatDate,
+        'spec_sha256'        => ESI_SPEC_SHA256,
+        'surface_sha256'     => hash('sha256', $surfaceJson),
+        'counts'             => [
+            'dtos'     => $writtenDtos,
+            'routes'   => $writtenResources,
+            'wrappers' => $writtenTags,
+            'symbols'  => count($symbols),
+        ],
+    ],
+    JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR,
+) . "\n";
+
+$generatedSpecSource = <<<PHP
+<?php
+
+declare(strict_types=1);
+
+namespace Seatplus\\EsiSchema;
+
+/**
+ * Provenance of this build of seatplus/esi-schema.
+ *
+ * Generated by bin/generate.php — do not edit manually.
+ *
+ * The ESI compatibility date is data carried by a release, not a component of the
+ * library's version number. Read it from here rather than hard-coding a literal:
+ * a transport MUST send COMPATIBILITY_DATE_HEADER: COMPATIBILITY_DATE on every
+ * request, so the generated types and the server's response shape cannot disagree.
+ */
+final class GeneratedSpec
+{
+    /** ESI compatibility date these types were generated for. */
+    public const string COMPATIBILITY_DATE = '{$compatDate}';
+
+    /** The header ESI uses to select a compatibility date. */
+    public const string COMPATIBILITY_DATE_HEADER = 'X-Compatibility-Date';
+
+    /** sha256 of the OpenAPI document consumed (.esi/openapi.yaml). */
+    public const string SPEC_SHA256 = '{$specSha256}';
+
+    /** Number of generated DTO classes under src/Responses. */
+    public const int DTO_COUNT = {$writtenDtos};
+
+    /** Number of generated per-route classes under src/Resources/{Tag}. */
+    public const int ROUTE_COUNT = {$writtenResources};
+
+    /** Number of generated tag wrapper classes under src/Resources. */
+    public const int WRAPPER_COUNT = {$writtenTags};
+
+    private function __construct() {}
+}
+
+PHP;
+
+$esiDir = dirname(__DIR__) . '/.esi';
+
+if ($dryRun) {
+    echo "  [dry-run][write] src/GeneratedSpec.php\n";
+    echo "  [dry-run][write] .esi/surface.json (" . count($symbols) . " symbols)\n";
+    echo "  [dry-run][write] .esi/state.json\n";
+} else {
+    if (! is_dir($esiDir)) {
+        mkdir($esiDir, 0755, true);
+    }
+
+    file_put_contents(dirname(__DIR__) . '/src/GeneratedSpec.php', $generatedSpecSource);
+    echo "  [write] src/GeneratedSpec.php\n";
+
+    file_put_contents("{$esiDir}/surface.json", $surfaceJson);
+    echo '  [write] .esi/surface.json (' . count($symbols) . " symbols)\n";
+
+    file_put_contents("{$esiDir}/state.json", $stateJson);
+    echo "  [write] .esi/state.json\n";
+
+    // Vendor the exact document consumed, so the tree can be reproduced offline.
+    if (! $specFile) {
+        file_put_contents("{$esiDir}/openapi.yaml", $rawSpec);
+        echo "  [write] .esi/openapi.yaml\n";
     }
 }
 
 echo "\nDone.\n";
-echo "  DTOs:       {$writtenDtos} files\n";
-echo "  Resources:  {$writtenResources} files\n";
-echo "  Tag classes:{$writtenTags} files\n";
+echo "  Compat date: {$compatDate}\n";
+echo "  DTOs:        {$writtenDtos} files\n";
+echo "  Resources:   {$writtenResources} files\n";
+echo "  Tag classes: {$writtenTags} files\n";
+echo '  Pruned:      ' . count($stale) . " files\n";
+echo '  Symbols:     ' . count($symbols) . "\n";

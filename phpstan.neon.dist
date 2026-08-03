@@ -3,4 +3,5 @@ parameters:
     level: 4
     paths:
         - src
+        - bin
     tmpDir: build/phpstan

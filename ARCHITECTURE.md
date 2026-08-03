@@ -7,7 +7,7 @@ This document records the key design decisions made for `seatplus/esi-schema`, w
 ## Decision 1 — One static class per ESI endpoint
 
 ### Context
-ESI has ~208 endpoints. The original design used 33 tag-based Resource classes (e.g. `AssetsResource`) with one instance method per endpoint. Pre-call introspection required string-based lookups like `AssetsResource::metaFor('getCharactersCharacterIdAssets')`.
+ESI has ~218 endpoints. The original design used 33 tag-based Resource classes (e.g. `AssetsResource`) with one instance method per endpoint. Pre-call introspection required string-based lookups like `AssetsResource::metaFor('getCharactersCharacterIdAssets')`.
 
 ### Decision
 Each ESI endpoint gets its own static class under `src/Resources/{Tag}/`. Class name = PascalCase operationId.
@@ -30,7 +30,7 @@ $result = GetCharactersCharacterIdAssets::execute($transport, $characterId);
 - **String-keyed registry** — `EsiSchema::operation('getCharactersCharacterIdAssets')` — rejected: requires runtime string-to-class resolution, not statically analysable, hides return type.
 
 ### Consequences
-- 208 files in `src/Resources/`. Intentional — each file is tiny (~60 lines).
+- 218 files in `src/Resources/`. Intentional — each file is tiny (~60 lines).
 - Adding a new ESI endpoint means regenerating, not adding a method to an existing class.
 
 ---
@@ -149,10 +149,10 @@ readonly class EsiResult
 ## Decision 5 — Tag-based subfolders for Resource classes
 
 ### Context
-With 208 resource classes, a flat `src/Resources/` directory is hard to navigate.
+With 218 resource classes, a flat `src/Resources/` directory is hard to navigate.
 
 ### Decision
-Resource classes are grouped into 33 tag subfolders matching ESI's tag taxonomy:
+Resource classes are grouped into 36 tag subfolders matching ESI's tag taxonomy:
 
 ```
 src/Resources/
@@ -170,10 +170,10 @@ Tags with spaces become PascalCase: `Faction Warfare` → `FactionWarfare`.
 
 ### Rationale
 - **Group imports** are idiomatic: `use Seatplus\EsiSchema\Resources\Assets\{GetCharactersCharacterIdAssets, PostCharactersCharacterIdAssetsLocations}`.
-- **IDE folder navigation** — 33 folders of ~6 files each vs 208 files flat.
+- **IDE folder navigation** — 36 folders of ~6 files each vs 218 files flat.
 
 ### Alternatives considered
-- Flat directory — simple but unnavigable at 208 files.
+- Flat directory — simple but unnavigable at 218 files.
 - HTTP-method grouping — doesn't match how ESI is documented or how consumers think.
 
 ### Consequences
@@ -235,24 +235,137 @@ All HTTP concerns (OAuth, RFC 7234 caching, error-limit tracking, retry) are del
 
 ---
 
-## Decision 8 — Library major version = ESI compatibility_date
+## Decision 8 — ~~Library major version = ESI compatibility_date~~ (SUPERSEDED by Decision 10)
 
-### Context
+Kept for the record. This decision failed in production; the postmortem is the
+valuable part.
+
+### Original context
 ESI uses `compatibility_date` to gate breaking changes behind an opt-in date.
 
-### Decision
-The library's major version tracks the `compatibility_date` in use:
+### Original decision
+The library's major version tracked the `compatibility_date` in use, with a
+long-lived `N.x` freeze branch per date. A daily action regenerated onto a new
+`N.x` branch and opened a `[REVIEW ONLY]` pull request that was explicitly
+labelled **DO NOT MERGE**, to be merged and hand-tagged by a maintainer.
 
-| Library major | ESI compatibility_date | Composer |
-|---|---|---|
-| `1.x` | `2025-12-16` | `^1.0` |
+### What actually happened
+
+Between 2026-05-20 and 2026-08-03 the scheme produced **56 major-version branches
+(`1.x`…`56.x`) for 3 distinct compatibility dates**, 55 unmerged pull requests, 56
+junk `N.x-dev` versions on Packagist, and **zero releases**. `main` stayed on
+`2026-05-19` for two and a half months while the README claimed it was "always the
+latest". `git diff origin/3.x origin/39.x` is empty: 37 of those branches were one
+identical tree.
+
+Four causes, none of which were the version scheme alone:
+
+1. **The pull requests were unmergeable, not merely ignored.** The action pushed
+   with `GITHUB_TOKEN`, and `GITHUB_TOKEN`-authored events do not trigger
+   workflows. CI therefore never ran on any bot branch, so `main`'s required status
+   check never reported and every PR sat `BEHIND` forever. Nobody failed to merge
+   them; nobody could.
+2. **The dedup baseline was `main`,** which never advanced because the PRs were
+   never merged — so every daily run saw the current date as new.
+3. **Branch naming was `maxMajor+1`,** a counter that increments on *attempts*
+   rather than outcomes.
+4. **The date was stamped into all ~525 generated docblocks,** so a regeneration
+   churned the whole tree. Of the 527-file `main`→`56.x` diff, only 20 files
+   differed in anything else — a renamed operation and a reshaped DTO hid under 507
+   files of noise.
+
+And the scheme's own premise did not hold: **`^2.0` cannot encode a date.** A caret
+constraint spans an open-ended range of future releases, so the moment any patch
+landed on a freeze branch the date would drift. Worse, the freeze branches were
+never installable at all — no tags were ever cut on them and `composer.json` has no
+`branch-alias`, so `^56.0` could not resolve to anything. The advertised upgrade
+path did not exist.
+
+The general lesson, recorded because it outlives this repository: **a review gate
+that fires on a schedule and is never actioned is worse than no gate.** It
+accumulates artifacts, and any state derived from those artifacts silently rots.
+
+---
+
+## Decision 10 — Version is semver over the generated PHP surface
+
+### Context
+Decision 8 conflated two independent axes: the shape of this package's PHP API,
+which changes rarely, and ESI's `compatibility_date`, which CCP moves roughly 4–8
+times a year. Binding them made every CCP date a major, so consumers faced an
+upgrade decision monthly for a diff that was usually a handful of new classes.
+
+### Decision
+The version number describes the **generated PHP surface**. The compatibility date
+is data carried by a release, exposed as `GeneratedSpec::COMPATIBILITY_DATE`.
+
+| Bump | Trigger |
+|---|---|
+| **major** | A class, property, method or constant was removed or retyped; a property gained nullability; a required parameter was added or parameters reordered; a return type or `@return` generic changed; a new in-game role became required. |
+| **minor** | The surface grew (new class/property/constant, appended optional parameter); a property lost nullability; `REQUIRED_SCOPE` changed; **or** the compatibility date advanced without breaking anything. |
+| **patch** | Metadata constant values (`CACHE_AGE`, `RATE_LIMIT_*`, `USES_CURSOR`), formatting, docs. |
+
+A date advance is *at least* a minor, because a transport derives the
+`X-Compatibility-Date` header from `GeneratedSpec` — so the date is observable
+behaviour, not a comment. It is never automatically a major.
+
+**No `N.x` branches.** Packagist serves every constraint from tags, and generated
+code is committed, so each date remains installable at its own tag forever. To pin
+a date, pin an exact version.
 
 ### Rationale
-- **Unambiguous compatibility** — the version number tells you which spec the types represent.
-- **Regeneration is cheap** — the generator is a single PHP script.
+- **The verdict is mechanical.** `bin/api-diff.php` compares two
+  `.esi/surface.json` manifests, so "is this breaking?" is computed, not argued.
+- **The diff is reviewable.** With the per-file date stamp gone and pruning in
+  place, a real change is ~20 files and the report is ~20 lines.
+- **State cannot rot.** The baseline is the newest semver tag, read out of that
+  tag's own tree — immutable, and exactly what a consumer can install.
+- **Majors are not force-fed.** Composer never upgrades a `^3.0` consumer to
+  `4.0.0`.
 
 ### Consequences
-- Upgrading from `1.x` to `2.x` may require updating import paths if type shapes changed.
+- Patch and minor releases are published unattended, via a bot pull request with
+  auto-merge enabled. Note the correction to Decision 8's postmortem: the lesson was
+  *not* "never open a pull request". Those 55 PRs were unmergeable because
+  `GITHUB_TOKEN`-authored pushes do not trigger workflows, so the required status
+  check never reported. An App-authored PR does trigger CI, so the check passes
+  honestly and auto-merge lands it. Nothing bypasses branch protection.
+- Tagging keys off *state on `main` versus the newest tag*, not off who pushed, so a
+  bot-merged sync and a human-merged PR follow the identical path. There is no
+  separate bot release route that can drift.
+- A major is held back: `esi-sync.yml` opens one issue and a human dispatches
+  `release.yml`. This is not Decision 8's gate returning — the artifact is a single
+  reused issue rather than an accumulating pull request, the classifier explains
+  exactly what broke, and nothing about the pipeline's future state depends on
+  anyone acting on it.
+- Anything the classifier cannot categorise escalates to `undecidable` and blocks
+  the release. The bias is asymmetric on purpose: a needless major costs one
+  version number nobody must take, whereas a break shipped as a minor reaches every
+  consumer on their next `composer update` and a Packagist tag cannot be withdrawn.
+
+---
+
+## Decision 11 — Constructor argument order is not part of the contract
+
+### Context
+The generator emits promoted constructor parameters in spec property order. CCP
+inserting a field mid-schema therefore reorders them, which would break positional
+construction even though nothing was removed. Treating that as a major would make
+almost every additive spec change breaking.
+
+### Decision
+DTOs under `src/Responses` are constructed **only** via `Dto::from($data)` or with
+named arguments. Positional construction is unsupported, and parameter order is not
+covered by semver.
+
+`from()` already uses named arguments exclusively, and no consumer constructs a
+`Responses\*` DTO directly.
+
+### Consequences
+- A property changing between required and optional, with its type unchanged, is a
+  minor: it is reader-safe.
+- This assumption is what lets additive syncs release as minors. Before adding a
+  `new SomeResponseDto(...)` anywhere, note that doing so would invalidate it.
 
 ---
 
@@ -264,7 +377,7 @@ The original API was tag-based Resource instances: `new AssetsResource($transpor
 At one point the tag-grouped classes were removed entirely. However, `seatplus/esi-client` (and consumers that use its `$esiClient->assets()->getCharactersCharacterIdAssets(...)` fluent interface) depend on them. They were restored as thin delegation wrappers.
 
 ### Decision
-The 33 flat `{Tag}Resource.php` files exist at `src/Resources/` alongside the per-route subdirectories. Each method delegates to its per-route static class:
+The 36 flat `{Tag}Resource.php` files exist at `src/Resources/` alongside the per-route subdirectories. Each method delegates to its per-route static class:
 
 ```php
 // src/Resources/AssetsResource.php
@@ -280,7 +393,7 @@ final class AssetsResource
 }
 ```
 
-These classes are **fully generated** — `bin/generate.php` groups all operations by ESI tag and emits one wrapper class per tag (33 total).
+These classes are **fully generated** — `bin/generate.php` groups all operations by ESI tag and emits one wrapper class per tag (36 total).
 
 ### Rationale
 - **Single source of truth** — the per-route statics hold all metadata and call logic. Tag wrappers add zero logic; they are just delegation glue.

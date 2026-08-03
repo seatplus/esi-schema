@@ -4,9 +4,9 @@
 
 `seatplus/esi-schema` is a **code-generated PHP library** that wraps the EVE Online ESI (Swagger/OpenAPI) API. It provides:
 
-- **208 per-route Resource classes** (`src/Resources/{Tag}/`) — one static class per ESI endpoint, with typed constants, `meta()`, and `execute()`.
-- **33 tag-group wrapper classes** (`src/Resources/{Tag}Resource.php`) — one per ESI tag; store the transport and delegate to the per-route statics. Entry points for the fluent API.
-- **~218 DTO classes** (`src/Responses/`) — typed value objects for every ESI response schema.
+- **218 per-route Resource classes** (`src/Resources/{Tag}/`) — one static class per ESI endpoint, with typed constants, `meta()`, and `execute()`.
+- **36 tag-group wrapper classes** (`src/Resources/{Tag}Resource.php`) — one per ESI tag; store the transport and delegate to the per-route statics. Entry points for the fluent API.
+- **268 DTO classes** (`src/Responses/`) — typed value objects for every ESI response schema.
 - **Zero runtime dependencies** — pure PHP 8.3, no Guzzle, no HTTP client, no framework.
 
 ---
@@ -16,8 +16,12 @@
 The following directories contain **only generated code**:
 
 ```
-src/Responses/        ← ~218 DTO classes, one per ESI schema object
-src/Resources/        ← 33 flat tag wrapper classes + 208 per-route classes in 33 subfolders
+src/Responses/        ← 268 DTO classes, one per ESI schema object
+src/Resources/        ← 36 flat tag wrapper classes + 218 per-route classes in 36 subfolders
+src/GeneratedSpec.php ← provenance constants (compatibility date, spec hash, counts)
+.esi/surface.json     ← public API manifest; drives release classification
+.esi/state.json       ← compatibility date, spec hash, manifest hash, counts
+.esi/openapi.yaml     ← the exact OpenAPI document consumed
 ```
 
 If you need to change generated output, **edit `bin/generate.php`**, then re-run:
@@ -35,7 +39,7 @@ Hand-editing a generated file will be overwritten the next time the generator ru
 
 ```
 bin/
-  generate.php              # The generator — reads ESI OpenAPI spec, emits all ~426 files
+  generate.php              # The generator — reads ESI OpenAPI spec, emits all ~522 files
 
 src/
   Contracts/
@@ -48,12 +52,12 @@ src/
   EsiResult.php                # Generic typed wrapper for array/paginated responses
   OperationMeta.php            # Pre-call metadata DTO (from Resource::meta())
 
-  Responses/                   # GENERATED — ~218 typed DTO classes
-  Resources/                   # GENERATED — 33 flat tag wrappers + 208 per-route classes
+  Responses/                   # GENERATED — 268 typed DTO classes
+  Resources/                   # GENERATED — 36 flat tag wrappers + 218 per-route classes
     AssetsResource.php           # tag wrapper — fluent entry: new AssetsResource($transport)
     CharacterResource.php        # tag wrapper
     MarketResource.php           # tag wrapper
-    …  (33 flat files total)
+    …  (36 flat files total)
     Assets/
       GetCharactersCharacterIdAssets.php
       GetCorporationsCorporationIdAssets.php
@@ -61,7 +65,7 @@ src/
     Market/
       GetMarketsPrices.php
       …
-    (33 tag subfolders total)
+    (36 tag subfolders total)
 
 tests/
   Unit/
@@ -200,7 +204,8 @@ composer test:type-coverage # Pest --type-coverage --min=100
 composer lint               # Pint auto-format (modifies files)
 ```
 
-**100% type coverage is required.** PHPStan is configured at max level via `phpstan.neon.dist`.
+**100% type coverage is required.** PHPStan runs at `level: 4` over both `src` and
+`bin` (see `phpstan.neon.dist`) — the release scripts are analysed too.
 
 Tests use an in-memory mock of `EsiTransportInterface`. No network access required.
 
@@ -208,15 +213,28 @@ Tests use an in-memory mock of `EsiTransportInterface`. No network access requir
 
 ## Versioning policy
 
-The library major version tracks the **ESI `compatibility_date`** in use:
+The version is **plain semver over the generated PHP surface**. The ESI
+`compatibility_date` is data carried by a release, not part of the version number.
+Read it from `Seatplus\EsiSchema\GeneratedSpec::COMPATIBILITY_DATE` — never
+hard-code a date literal, and never reintroduce a `{major} = {date}` mapping table.
 
-| Library major | ESI compatibility_date |
+| Bump | Trigger |
 |---|---|
-| `1.x` | `2025-12-16` |
+| major | Something was removed or retyped; a property gained nullability; a required parameter was added or parameters reordered |
+| minor | The surface grew; a property lost nullability; `REQUIRED_SCOPE` changed; or the compatibility date advanced without breaking anything |
+| patch | Metadata constant values (`CACHE_AGE`, `RATE_LIMIT_*`, `USES_CURSOR`), formatting, docs |
 
-When CCP introduces a new breaking spec date, a new major version is created. Regenerate with:
+The verdict is computed, not judged: `bin/api-diff.php` compares two
+`.esi/surface.json` manifests. See `ARCHITECTURE.md` Decisions 10 and 11 — and
+Decision 8 for why the previous `N.x`-branch-per-date scheme was abandoned.
+
+There are **no `N.x` branches**. Do not create one, and do not add a workflow that
+does; `.github/workflows/esi-sync.yml` releases from `main` by tagging.
+
+Regenerate with:
 ```bash
 php bin/generate.php --compatibility-date=YYYY-MM-DD
+vendor/bin/pint
 ```
 
 ---
@@ -237,7 +255,7 @@ php bin/generate.php --compatibility-date=YYYY-MM-DD
 
 ## ESI spec reference
 
-- OpenAPI YAML: `https://esi.evetech.net/meta/openapi.yaml?compatibility_date=2025-12-16`
+- OpenAPI YAML: `https://esi.evetech.net/meta/openapi.yaml?compatibility_date=<date>` (the date in use is `GeneratedSpec::COMPATIBILITY_DATE`; the exact bytes consumed are vendored at `.esi/openapi.yaml`)
 - ESI docs: `https://github.com/esi/esi-docs`
 - Rate limit groups: `https://github.com/esi/esi-docs/tree/main/docs/services/esi`
 

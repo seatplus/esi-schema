@@ -2,7 +2,9 @@
 
 **Typed ESI schema for PHP.** Every EVE Online ESI endpoint has its own generated class with typed pre-call metadata and a typed call method — no magic strings, no `array` guesswork.
 
-Generated from the ESI OpenAPI spec (`compatibility_date=2026-05-19`). Zero runtime dependencies.
+Generated from the ESI OpenAPI spec. Zero runtime dependencies.
+
+The compatibility date a given install was generated for is `Seatplus\EsiSchema\GeneratedSpec::COMPATIBILITY_DATE` — see [Versioning](#versioning).
 
 ---
 
@@ -87,7 +89,7 @@ Each `{Tag}Resource` method is a thin wrapper — it simply calls `{OperationCla
 
 ### Namespace table
 
-Resource classes are grouped by ESI tag into 33 subfolders, each with a corresponding tag-group wrapper:
+Resource classes are grouped by ESI tag into 36 subfolders, each with a corresponding tag-group wrapper:
 
 | Subfolder | Example class | Tag wrapper |
 |---|---|---|
@@ -100,7 +102,7 @@ Resource classes are grouped by ESI tag into 33 subfolders, each with a correspo
 | `Resources\Universe` | `GetUniverseTypesTypeId` | `UniverseResource` |
 | `Resources\Wallet` | `GetCharactersCharacterIdWallet` | `WalletResource` |
 | `Resources\Skills` | `GetCharactersCharacterIdSkills` | `SkillsResource` |
-| … (33 total) | | |
+| … (36 total) | | |
 
 Per-route classes: `Seatplus\EsiSchema\Resources\{Tag}\{PascalCaseOperationId}`  
 Tag wrappers: `Seatplus\EsiSchema\Resources\{Tag}Resource` (e.g. `Seatplus\EsiSchema\Resources\AssetsResource`)
@@ -174,12 +176,12 @@ The reference implementation is [seatplus/esi-client](https://github.com/seatplu
 ```
 EsiTransportInterface              # Contract: any transport implements this
        │
-       ├── Resources/{Tag}Resource  # 33 generated tag wrappers — fluent API entry points
+       ├── Resources/{Tag}Resource  # 36 generated tag wrappers — fluent API entry points
        │    └── AssetsResource
        │         ├── __construct(EsiTransportInterface $transport)
        │         └── getCharactersCharacterIdAssets($id, $page)  # delegates to ↓
        │
-       └── Resources/{Tag}/         # 208 generated classes — one per ESI endpoint
+       └── Resources/{Tag}/         # 218 generated classes — one per ESI endpoint
             └── Assets/
                  └── GetCharactersCharacterIdAssets
                       ├── REQUIRED_SCOPE = 'esi-assets.read_assets.v1'  (typed const)
@@ -238,7 +240,7 @@ Token validation logic is **not** in this library — `tokenSatisfies()` was rem
 
 ### 4. Tag-based subfolders
 
-The 208 resource classes live in `src/Resources/{Tag}/` (33 subfolders), matching ESI's tag taxonomy:
+The 218 resource classes live in `src/Resources/{Tag}/` (36 subfolders), matching ESI's tag taxonomy:
 
 - **Group imports** are idiomatic: `use Seatplus\EsiSchema\Resources\Assets\{GetCharactersCharacterIdAssets, GetCorporationsCorporationIdAssets}`.
 - Tag names with spaces become PascalCase: `Faction Warfare` → `FactionWarfare`.
@@ -251,41 +253,120 @@ The 208 resource classes live in `src/Resources/{Tag}/` (33 subfolders), matchin
 
 All network I/O is delegated to a single `invoke()` method. The library knows nothing about Guzzle, cURL, OAuth tokens, or HTTP caching. Tests mock this interface — no network required.
 
-### 7. Versioning tied to ESI compatibility_date
+### 7. The version is semver over the PHP surface; the ESI date is metadata
 
-| Branch / Major | ESI compatibility_date | Composer | Notes |
-|---|---|---|---|
-| `main` | `2026-05-19` | `dev-main` | Always the latest — updated automatically |
-| `2.x` | `2026-05-19` | `^2.0` | Stable freeze |
-| `1.x` | `2025-12-16` | `^1.0` | Stable freeze |
-
-When CCP introduces a new breaking compatibility date, the action regenerates on a new `N.x` branch, opens a `[REVIEW ONLY]` PR to `main`, and after merging both `main` and `N.x` point to the same commit.
+The library version describes **this package's PHP API**, not ESI's calendar. A new
+compatibility date is data carried by a release, not a component of the version
+number. See [Versioning](#versioning).
 
 ---
 
 ## Versioning
 
-| Branch / Major | ESI Compatibility Date | Composer constraint |
-|---|---|---|
-| `main` | `2026-05-19` | `dev-main` |
-| `2.x` | `2026-05-19` | `^2.0` |
-| `1.x` | `2025-12-16` | `^1.0` |
+`seatplus/esi-schema` follows plain semver **over its generated PHP surface**:
+
+| Bump | Means |
+|---|---|
+| **major** | The PHP API broke — a class, property, method or constant was removed or retyped, a property gained nullability, or a required parameter was added. |
+| **minor** | The PHP API grew, **or** the ESI compatibility date advanced without breaking anything. |
+| **patch** | Neither — metadata constant values (`CACHE_AGE`, rate limits), formatting, docs. |
+
+A new compatibility date is therefore *at least* a minor — it changes the
+`X-Compatibility-Date` a transport sends, which is real behaviour — but is never
+automatically a major.
+
+### How to pin
+
+| You want | Use |
+|---|---|
+| Keep working, ride ESI forward (the default) | `^3.0` |
+| Freeze the PHP surface, still take fixes | `~3.4.0` |
+| Freeze one exact ESI compatibility date | an exact version, e.g. `3.4.2` |
+
+Pinning an exact version is the only honest way to pin a date: a caret constraint
+spans an open-ended range of future releases, so `^3.0` cannot express "the
+2026-05-19 wire contract".
+
+**There are no `N.x` branches.** Packagist serves every constraint from tags, and
+generated code is committed, so every compatibility date this package ever shipped
+remains installable at its own tag forever.
+
+### Which date am I on?
+
+```php
+use Seatplus\EsiSchema\GeneratedSpec;
+
+GeneratedSpec::COMPATIBILITY_DATE;         // '2026-05-19'
+GeneratedSpec::COMPATIBILITY_DATE_HEADER;  // 'X-Compatibility-Date'
+```
+
+A transport **must** send `COMPATIBILITY_DATE_HEADER: COMPATIBILITY_DATE` on every
+request. Reading it from here rather than hard-coding a literal is what keeps the
+generated types and the server's response shape from disagreeing — a
+`composer update` then moves both together.
+
+### How releases happen
+
+`.github/workflows/esi-sync.yml` runs daily. It regenerates against the newest
+published compatibility date and compares the resulting API surface manifest
+(`.esi/surface.json`) with the one in the newest semver tag:
+
+- **nothing changed** → nothing happens;
+- **patch or minor** → it opens a pull request with **auto-merge enabled**. CI runs,
+  the required check passes, the PR merges itself, and `release.yml` tags it. No
+  human involved.
+- **major, or unclassifiable** → no pull request, nothing released; one issue is
+  opened for a human, who reviews the report and dispatches `release.yml` with an
+  explicit `bump=major`.
+
+`release.yml` watches `main`, so a bot-merged sync and a human-merged PR take the
+identical path to a tag. It refuses to auto-tag a major, refuses to re-tag an
+existing version, and afterwards checks the release is actually resolvable on
+Packagist.
+
+Nothing in this pipeline bypasses branch protection — the bot goes through the same
+required check as anyone else.
+
+Majors are held back deliberately. Composer never force-upgrades a `^3.0` consumer
+to `4.0.0`, but it also cannot protect anyone from a bug in the classifier
+publishing a removal as a minor — and a Packagist tag cannot be withdrawn.
 
 ---
 
 ## Regenerating
 
 ```bash
-php bin/generate.php    # fetches latest spec, regenerates all DTOs + Resources
-vendor/bin/pint         # auto-format generated output (run after generate if needed)
+php bin/generate.php --compatibility-date=2026-05-19
+vendor/bin/pint         # generated output is raw; format it afterwards
 ```
 
-The generator reads the live OAS3 spec from `https://esi.evetech.net/meta/openapi.yaml?compatibility_date=2026-05-19`.
+Omit `--compatibility-date` for a local run and the newest published date is used.
+It is **required** under `--strict` (implied in CI) so that an unattended run can
+never guess which spec to build from.
 
-It emits:
-- `src/Responses/*.php` — ~218 typed DTO classes (one per ESI schema object)
-- `src/Resources/{Tag}/*.php` — 208 per-route static classes grouped by ESI tag (33 subfolders)
-- `src/Resources/{Tag}Resource.php` — 33 flat tag-group wrapper classes for the fluent API
+The generator reads `https://esi.evetech.net/meta/openapi.yaml?compatibility_date=<date>`
+and vendors the exact bytes it consumed to `.esi/openapi.yaml`, so the tree can be
+reproduced offline:
+
+```bash
+php bin/generate.php --spec=.esi/openapi.yaml \
+  --compatibility-date="$(jq -r .compatibility_date .esi/state.json)"
+vendor/bin/pint && git diff --exit-code -- src/
+```
+
+It emits (current counts are asserted by `tests/Unit/GeneratedSpecTest.php` and
+recorded in `GeneratedSpec`):
+
+- `src/Responses/*.php` — 268 typed DTO classes, one per ESI schema object
+- `src/Resources/{Tag}/*.php` — 218 per-route static classes in 36 tag subfolders
+- `src/Resources/{Tag}Resource.php` — 36 tag-group wrappers for the fluent API
+- `src/GeneratedSpec.php` — provenance constants
+- `.esi/surface.json` — the public API manifest that drives release classification
+- `.esi/state.json` — compatibility date, spec hash, manifest hash, counts
+
+Generation **prunes**: anything under `src/Responses` or `src/Resources` that the
+spec no longer describes is deleted. Without that, removed endpoints linger and no
+diff can ever see a removal.
 
 **Do not manually edit generated files.** Changes are overwritten on next regeneration. To change generated output, edit `bin/generate.php`.
 

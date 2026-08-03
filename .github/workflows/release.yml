@@ -1,0 +1,206 @@
+name: Release
+
+# Tags whatever reaches main. Keying off "state on main vs newest tag" rather than
+# off who pushed means the bot's auto-merged sync and a human's merged PR take the
+# identical path — there is no separate bot release route to drift out of sync.
+#
+# Two entry points:
+#
+#   push to main       Computes the bump with api-diff.php and tags automatically,
+#                      but only for patch and minor. A major is left alone: it needs
+#                      the explicit dispatch below.
+#   workflow_dispatch  An explicit bump. Needed for a surface-breaking sync, and for
+#                      hand-written changes to src/Contracts and friends, which are
+#                      not classified against a spec.
+#
+# A dispatch refuses a bump lower than the computed one, so "I'll just call it a
+# patch" is not available without an explicit override and a stated reason.
+#
+# No loop is possible: this pushes a *tag*, and the trigger below is branch-scoped.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".esi/**"
+      - "src/**"
+      - "bin/**"
+      - "composer.json"
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Version bump to apply"
+        required: true
+        type: choice
+        options: [patch, minor, major]
+      allow_lower_than_computed:
+        description: "Release even if api-diff computes a higher bump (requires a reason)"
+        type: boolean
+        default: false
+      reason:
+        description: "Why this bump, if overriding the computed one"
+        required: false
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Mint an App token
+        uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          fetch-tags: true
+          token: ${{ steps.app-token.outputs.token }}
+
+      # On a push, HEAD may already be tagged (a re-run, or an unrelated commit
+      # after a release). Bail before spending a full verify on it.
+      #
+      # Note this guard belongs *here* and not in esi-sync.yml: the release commit
+      # is itself tagged, so the same check in the detection workflow would make it
+      # one-shot — every later run would exit before ever querying ESI.
+      - name: Skip if HEAD is already released
+        id: guard
+        run: |
+          set -euo pipefail
+          if git tag --points-at HEAD | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "HEAD is already tagged $(git tag --points-at HEAD | tr '\n' ' ')— nothing to do."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Verify
+        if: steps.guard.outputs.skip == 'false'
+        uses: ./.github/actions/verify
+
+      - name: Compute the version
+        if: steps.guard.outputs.skip == 'false'
+        id: plan
+        run: |
+          set -euo pipefail
+          TAG="$(git tag -l --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -1)"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+          if git show "refs/tags/${TAG}:.esi/surface.json" > "$RUNNER_TEMP/old-surface.json" 2>/dev/null; then
+            set +e
+            php bin/api-diff.php --old="$RUNNER_TEMP/old-surface.json" \
+              --new=.esi/surface.json --format=bump > "$RUNNER_TEMP/computed"
+            DIFF_EXIT=$?
+            php bin/api-diff.php --old="$RUNNER_TEMP/old-surface.json" \
+              --new=.esi/surface.json --format=markdown > "$RUNNER_TEMP/report.md"
+            set -e
+            COMPUTED="$(tr -d '\n' < "$RUNNER_TEMP/computed")"
+            [ "$DIFF_EXIT" -eq 2 ] && COMPUTED="undecidable"
+          else
+            # The bootstrap case: the baseline tag predates surface manifests.
+            # Treat it as major rather than making it a permanent special case.
+            COMPUTED="major"
+            echo "Baseline ${TAG} has no surface manifest; treating as major." > "$RUNNER_TEMP/report.md"
+          fi
+
+          echo "computed=$COMPUTED"
+          REQUESTED="${{ inputs.bump }}"
+
+          if [ -z "$REQUESTED" ]; then
+            # push to main — take the computed bump, but never a major unattended.
+            case "$COMPUTED" in
+              patch|minor)
+                BUMP="$COMPUTED"
+                ;;
+              none)
+                echo "The API surface is unchanged since ${TAG} — nothing to release."
+                echo "release=false" >> "$GITHUB_OUTPUT"
+                exit 0
+                ;;
+              *)
+                echo "::notice::computed '${COMPUTED}'. A major or unclassifiable change is not"
+                echo "::notice::released automatically — dispatch this workflow with an explicit bump."
+                echo "release=false" >> "$GITHUB_OUTPUT"
+                exit 0
+                ;;
+            esac
+          else
+            # workflow_dispatch — an explicit bump, floored by the computed one.
+            BUMP="$REQUESTED"
+            rank() { case "$1" in patch) echo 1;; minor) echo 2;; major) echo 3;; *) echo 99;; esac; }
+            if [ "$(rank "$BUMP")" -lt "$(rank "$COMPUTED")" ]; then
+              if [ "${{ inputs.allow_lower_than_computed }}" != "true" ]; then
+                echo "::error::api-diff computed '${COMPUTED}' but '${BUMP}' was requested."
+                echo "Re-dispatch with allow_lower_than_computed=true and a reason if this is intended."
+                exit 1
+              fi
+              if [ -z "${{ inputs.reason }}" ]; then
+                echo "::error::overriding the computed bump requires a reason."
+                exit 1
+              fi
+              echo "::warning::Overriding computed '${COMPUTED}' with '${BUMP}': ${{ inputs.reason }}"
+            fi
+          fi
+
+          VERSION="$(php bin/next-version.php --current="$TAG" --bump="$BUMP")"
+          echo "release=true"      >> "$GITHUB_OUTPUT"
+          echo "bump=$BUMP"        >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION"  >> "$GITHUB_OUTPUT"
+          echo "Releasing ${VERSION} (${BUMP}, computed ${COMPUTED})"
+
+      - name: Refuse to re-tag an existing version
+        if: steps.plan.outputs.release == 'true'
+        run: |
+          set -euo pipefail
+          if git rev-parse -q --verify "refs/tags/${{ steps.plan.outputs.version }}" >/dev/null; then
+            echo "::error::tag ${{ steps.plan.outputs.version }} already exists."
+            exit 1
+          fi
+
+      - name: Tag and publish
+        if: steps.plan.outputs.release == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.plan.outputs.version }}"
+          DATE="$(jq -r .compatibility_date .esi/state.json)"
+
+          git config user.name  "seatplus-release[bot]"
+          git config user.email "seatplus-release[bot]@users.noreply.github.com"
+
+          git tag -a "$VERSION" -F "$RUNNER_TEMP/report.md"
+          git push origin "refs/tags/${VERSION}"
+
+          gh release create "$VERSION" \
+            --title "${VERSION} — ESI ${DATE}" \
+            --notes-file "$RUNNER_TEMP/report.md"
+
+      # "We tagged" and "consumers can install it" are different claims.
+      - name: Confirm the release is installable
+        if: steps.plan.outputs.release == 'true'
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.plan.outputs.version }}"
+          for _ in $(seq 1 30); do
+            if curl -sS https://repo.packagist.org/p2/seatplus/esi-schema.json \
+                 | jq -e --arg v "$VERSION" \
+                   '.packages["seatplus/esi-schema"][] | select(.version == $v)' >/dev/null; then
+              echo "::notice::${VERSION} is live on Packagist"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::warning::${VERSION} not visible on Packagist after 5 minutes; check the webhook"

@@ -1,0 +1,13 @@
+# Generated artifacts. Suppressing the diff keeps a 4000-line manifest from
+# burying the handful of lines that actually matter in a pull request — the
+# failure mode that let a renamed operation and a reshaped DTO sit unreviewed
+# under 505 files of docblock churn for two months.
+.esi/surface.json  -diff linguist-generated
+.esi/state.json    -diff linguist-generated
+.esi/openapi.yaml  -diff linguist-generated
+
+# Generated PHP. Still reviewed, but marked so GitHub collapses it by default
+# and it does not skew language statistics.
+src/Responses/**   linguist-generated
+src/Resources/**   linguist-generated
+src/GeneratedSpec.php linguist-generated

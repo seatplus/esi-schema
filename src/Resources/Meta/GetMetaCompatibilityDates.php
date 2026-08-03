@@ -30,7 +30,7 @@ final class GetMetaCompatibilityDates implements EsiOperationInterface
     public const ?string RATE_LIMIT_WINDOW = '15m';
 
     /** Cache TTL in seconds. Null for non-cached endpoints. */
-    public const ?int CACHE_AGE = 0;
+    public const ?int CACHE_AGE = 600;
 
     /**
      * EVE corporation roles required (e.g. ['Director']).

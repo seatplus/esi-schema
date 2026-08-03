@@ -13,6 +13,7 @@ final class Error extends AbstractEsiDto
     public function __construct(
         public readonly string $error,
         public readonly ?array $details = null,
+        public readonly ?int $status = null,
     ) {
     }
 
@@ -21,6 +22,7 @@ final class Error extends AbstractEsiDto
         return new static(
             error: (string) ($data->error ?? ''),
             details: isset($data->details) ? (array) $data->details : null,
+            status: $data->status ?? null,
         );
     }
 }
