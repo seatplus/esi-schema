@@ -30,7 +30,7 @@ final class GetCorporationsFreelanceJobsParticipants implements EsiOperationInte
     public const ?string RATE_LIMIT_WINDOW = '15m';
 
     /** Cache TTL in seconds. Null for non-cached endpoints. */
-    public const ?int CACHE_AGE = 0;
+    public const ?int CACHE_AGE = null;
 
     /**
      * EVE corporation roles required (e.g. ['Director']).
