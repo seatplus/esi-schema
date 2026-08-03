@@ -26,7 +26,7 @@ use Symfony\Component\Yaml\Yaml;
 // ---------------------------------------------------------------------------
 
 $args = [];
-foreach (array_slice($argv, 1) as $arg) {
+foreach (array_slice($_SERVER['argv'] ?? [], 1) as $arg) {
     if (str_starts_with($arg, '--')) {
         [$k, $v] = explode('=', ltrim($arg, '-'), 2) + [1 => 'true'];
         $args[$k] = $v;
@@ -44,8 +44,13 @@ $strict   = (isset($args['strict']) || getenv('CI') !== false) && ! isset($args[
  * a TypeError somewhere downstream — a crash with a useless message. Fail here
  * instead, with the URL and status in the message.
  */
-function fetchUrl(string $url, int $attempts = 3): string
+function fetchUrl(string $url, array &$headers = [], int $attempts = 3): string
 {
+    // $http_response_header is populated in *function* scope by the HTTP stream
+    // wrapper, so it has to be handed back explicitly — a caller reading the
+    // global would never see these.
+    $headers = [];
+
     $context = stream_context_create([
         'http' => [
             'method'        => 'GET',
@@ -58,9 +63,11 @@ function fetchUrl(string $url, int $attempts = 3): string
     $lastError = 'unknown error';
 
     for ($attempt = 1; $attempt <= $attempts; $attempt++) {
-        $body   = @file_get_contents($url, false, $context);
-        $status = 0;
-        foreach ($http_response_header ?? [] as $headerLine) {
+        $http_response_header = [];
+        $body                 = @file_get_contents($url, false, $context);
+        $headers              = $http_response_header;
+        $status               = 0;
+        foreach ($headers as $headerLine) {
             if (preg_match('#^HTTP/\S+\s+(\d{3})#', $headerLine, $m) === 1) {
                 $status = (int) $m[1];
             }
@@ -162,11 +169,12 @@ if ($specFile) {
 } else {
     $specUrl = "{$SPEC_BASE_URL}?compatibility_date={$compatDate}";
     echo "Fetching spec from {$specUrl}...\n";
-    $rawSpec = fetchUrl($specUrl);
+    $specHeaders = [];
+    $rawSpec     = fetchUrl($specUrl, $specHeaders);
 
     // ESI echoes the date it actually served. A proxy or cache handing back a
     // different spec is a failure no size check would notice.
-    foreach ($http_response_header ?? [] as $headerLine) {
+    foreach ($specHeaders as $headerLine) {
         if (stripos($headerLine, 'x-compatibility-date:') === 0) {
             $served = trim(substr($headerLine, strlen('x-compatibility-date:')));
             if ($served !== $compatDate) {
@@ -981,6 +989,73 @@ if ($dryRun) {
     }
 }
 
+/**
+ * Extract the public API surface of one generated file as a list of symbol strings.
+ *
+ * Derived from the source this script just rendered, in-process — not by reflection.
+ * Reflection cannot see the `@return EsiResult<array<X>>` generics, which exist only
+ * in docblocks and are the declared payload type for ~200 operations; a manifest
+ * without them would call a payload retype "no change". Parsing our own freshly
+ * rendered output is safe precisely because the emission format is fixed a few
+ * hundred lines above.
+ *
+ * Each symbol embeds its type, so a retype shows up as one removal plus one
+ * addition under set difference — no separate comparison logic needed.
+ *
+ * @return list<string>
+ */
+function surfaceSymbols(string $source): array
+{
+    if (preg_match('/^namespace\s+([^;]+);/m', $source, $m) !== 1) {
+        return [];
+    }
+    $namespace = trim($m[1]);
+
+    if (preg_match('/^(?:final\s+|abstract\s+)*(?:readonly\s+)?class\s+(\w+)/m', $source, $m) !== 1) {
+        return [];
+    }
+    $fqcn = $namespace . '\\' . $m[1];
+
+    $symbols = ["class {$fqcn}"];
+
+    // Typed public constants: `public const ?int CACHE_AGE = 3600;`
+    if (preg_match_all('/^\s*public const\s+(\S+)\s+(\w+)\s*=\s*(.+?);\s*$/m', $source, $matches, PREG_SET_ORDER) > 0) {
+        foreach ($matches as $match) {
+            $symbols[] = "const {$fqcn}::{$match[2]} {$match[1]} = " . preg_replace('/\s+/', ' ', trim($match[3]));
+        }
+    }
+
+    // Promoted readonly constructor properties: `public readonly ?string $title = null,`
+    if (preg_match_all('/^\s*public readonly\s+(\S+)\s+\$(\w+)(\s*=\s*[^,]+)?,\s*$/m', $source, $matches, PREG_SET_ORDER) > 0) {
+        foreach ($matches as $match) {
+            $optional = ($match[3] ?? '') !== '' ? 'optional' : 'required';
+            $symbols[] = "prop {$fqcn}::\${$match[2]} {$match[1]} {$optional}";
+        }
+    }
+
+    // Public methods, with the preceding @return generic when there is one.
+    $lines      = explode("\n", $source);
+    $lastReturn = null;
+    foreach ($lines as $line) {
+        if (preg_match('/^\s*\*\s*@return\s+(.+?)\s*$/', $line, $match) === 1) {
+            $lastReturn = trim($match[1]);
+
+            continue;
+        }
+        if (preg_match('/^\s*public (?:static )?function\s+(\w+)\s*\((.*?)\)\s*:\s*(\S+)/', $line, $match) === 1) {
+            $params    = preg_replace('/\s+/', ' ', trim($match[2]));
+            $signature = "method {$fqcn}::{$match[1]}({$params}): {$match[3]}";
+            if ($lastReturn !== null && str_contains($lastReturn, '<')) {
+                $signature .= " [@return {$lastReturn}]";
+            }
+            $symbols[] = $signature;
+            $lastReturn = null;
+        }
+    }
+
+    return $symbols;
+}
+
 function relativeToRoot(string $path): string
 {
     // Paths are built from __DIR__ . '/../src/...', so collapse the '..' segment
@@ -991,8 +1066,121 @@ function relativeToRoot(string $path): string
     return str_starts_with($normalised, $root) ? substr($normalised, strlen($root)) : $normalised;
 }
 
+// ---------------------------------------------------------------------------
+// Surface manifest, state, provenance
+//
+// .esi/surface.json is the release authority: the daily sync compares it against
+// the newest tag's copy, and bin/api-diff.php classifies the difference. It is
+// therefore deliberately free of the compatibility date and the spec hash —
+// src/GeneratedSpec.php is not part of the write set and so never lands in the
+// manifest. If it did, its COMPATIBILITY_DATE and SPEC_SHA256 constants would sit
+// inside the release-authority hash, the hash would flip on every cosmetic spec
+// edit (destroying the one property the manifest is chosen for), and a date-only
+// advance could never be recognised as one.
+// ---------------------------------------------------------------------------
+
+$symbols = [];
+foreach ($writeSet as $source) {
+    foreach (surfaceSymbols($source) as $symbol) {
+        $symbols[] = $symbol;
+    }
+}
+sort($symbols);
+
+$surfaceJson = json_encode(
+    ['schemaVersion' => 1, 'symbols' => $symbols],
+    JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR,
+) . "\n";
+
+$stateJson = json_encode(
+    [
+        'schemaVersion'      => 1,
+        'compatibility_date' => $compatDate,
+        'spec_sha256'        => ESI_SPEC_SHA256,
+        'surface_sha256'     => hash('sha256', $surfaceJson),
+        'counts'             => [
+            'dtos'     => $writtenDtos,
+            'routes'   => $writtenResources,
+            'wrappers' => $writtenTags,
+            'symbols'  => count($symbols),
+        ],
+    ],
+    JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR,
+) . "\n";
+
+$generatedSpecSource = <<<PHP
+<?php
+
+declare(strict_types=1);
+
+namespace Seatplus\\EsiSchema;
+
+/**
+ * Provenance of this build of seatplus/esi-schema.
+ *
+ * Generated by bin/generate.php — do not edit manually.
+ *
+ * The ESI compatibility date is data carried by a release, not a component of the
+ * library's version number. Read it from here rather than hard-coding a literal:
+ * a transport MUST send COMPATIBILITY_DATE_HEADER: COMPATIBILITY_DATE on every
+ * request, so the generated types and the server's response shape cannot disagree.
+ */
+final class GeneratedSpec
+{
+    /** ESI compatibility date these types were generated for. */
+    public const string COMPATIBILITY_DATE = '{$compatDate}';
+
+    /** The header ESI uses to select a compatibility date. */
+    public const string COMPATIBILITY_DATE_HEADER = 'X-Compatibility-Date';
+
+    /** sha256 of the OpenAPI document consumed (.esi/openapi.yaml). */
+    public const string SPEC_SHA256 = '{$specSha256}';
+
+    /** Number of generated DTO classes under src/Responses. */
+    public const int DTO_COUNT = {$writtenDtos};
+
+    /** Number of generated per-route classes under src/Resources/{Tag}. */
+    public const int ROUTE_COUNT = {$writtenResources};
+
+    /** Number of generated tag wrapper classes under src/Resources. */
+    public const int WRAPPER_COUNT = {$writtenTags};
+
+    private function __construct() {}
+}
+
+PHP;
+
+$esiDir = dirname(__DIR__) . '/.esi';
+
+if ($dryRun) {
+    echo "  [dry-run][write] src/GeneratedSpec.php\n";
+    echo "  [dry-run][write] .esi/surface.json (" . count($symbols) . " symbols)\n";
+    echo "  [dry-run][write] .esi/state.json\n";
+} else {
+    if (! is_dir($esiDir)) {
+        mkdir($esiDir, 0755, true);
+    }
+
+    file_put_contents(dirname(__DIR__) . '/src/GeneratedSpec.php', $generatedSpecSource);
+    echo "  [write] src/GeneratedSpec.php\n";
+
+    file_put_contents("{$esiDir}/surface.json", $surfaceJson);
+    echo '  [write] .esi/surface.json (' . count($symbols) . " symbols)\n";
+
+    file_put_contents("{$esiDir}/state.json", $stateJson);
+    echo "  [write] .esi/state.json\n";
+
+    // Vendor the exact document consumed, so the tree can be reproduced offline.
+    if (! $specFile) {
+        file_put_contents("{$esiDir}/openapi.yaml", $rawSpec);
+        echo "  [write] .esi/openapi.yaml\n";
+    }
+}
+
 echo "\nDone.\n";
+echo "  Compat date: {$compatDate}\n";
 echo "  DTOs:        {$writtenDtos} files\n";
 echo "  Resources:   {$writtenResources} files\n";
 echo "  Tag classes: {$writtenTags} files\n";
 echo '  Pruned:      ' . count($stale) . " files\n";
+echo '  Symbols:     ' . count($symbols) . "\n";

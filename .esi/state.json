@@ -1,0 +1,12 @@
+{
+    "schemaVersion": 1,
+    "compatibility_date": "2026-05-19",
+    "spec_sha256": "41b28c3182de223d0a8455d380f1b77b57f9aa6e9407fff067990733f31b2756",
+    "surface_sha256": "d89d5e6c79c7b738a13f1f599b137fdeddbeaa206a3e3f4e9af8449e25e99738",
+    "counts": {
+        "dtos": 268,
+        "routes": 218,
+        "wrappers": 36,
+        "symbols": 4242
+    }
+}
