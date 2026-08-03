@@ -46,18 +46,31 @@ jobs:
           CURRENT_HASH=$(sha256sum /tmp/current-spec.json | awk '{print $1}')
           echo "spec_hash=$CURRENT_HASH" >> "$GITHUB_OUTPUT"
 
-          # Compare against main (checked out) — no git show tricks needed
+          # Dedup against the branches that carry prior runs, NOT main. The
+          # review-only PRs are never merged, so main's tracking files go stale
+          # and every daily run would otherwise look "new" — spawning a fresh
+          # freeze branch + duplicate PR for a date/spec we already handled.
+          # Instead, gather every date and spec-hash already captured by an
+          # existing branch (freeze N.x + update/spec-*) and compare to those.
+          SEEN_DATES=""
+          SEEN_HASHES=""
+          for ref in $(git branch -r --format='%(refname:short)' | grep -vE '/HEAD$'); do
+            branch_dates=$(git show "${ref}:compatibility-dates.txt" 2>/dev/null || true)
+            [ -n "$branch_dates" ] && SEEN_DATES="${SEEN_DATES}"$'\n'"${branch_dates}"
+            branch_hash=$(git show "${ref}:.spec-hash" 2>/dev/null || true)
+            [ -n "$branch_hash" ] && SEEN_HASHES="${SEEN_HASHES}"$'\n'"${branch_hash}"
+          done
+
           DATE_IS_NEW=false
-          if ! grep -qx "$LATEST" compatibility-dates.txt 2>/dev/null; then
+          if ! grep -qxF "$LATEST" <<< "$SEEN_DATES"; then
             DATE_IS_NEW=true
             echo "New compatibility date found: $LATEST"
           fi
 
           SPEC_IS_NEW=false
-          STORED_HASH=$(cat .spec-hash 2>/dev/null || echo "")
-          if [ "$CURRENT_HASH" != "$STORED_HASH" ]; then
+          if ! grep -qxF "$CURRENT_HASH" <<< "$SEEN_HASHES"; then
             SPEC_IS_NEW=true
-            echo "Spec content changed (hash: $CURRENT_HASH, stored: $STORED_HASH)"
+            echo "Spec content changed (hash: $CURRENT_HASH)"
           fi
 
           if [ "$DATE_IS_NEW" = "true" ] || [ "$SPEC_IS_NEW" = "true" ]; then
