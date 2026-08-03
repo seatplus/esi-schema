@@ -1,10 +1,24 @@
 includes:
     # Pest-aware static analysis (understands it()/expect()/$this).
     - vendor/pestphp/pest-plugin-phpstan/extension.neon
+    # Understands Mockery's dynamic API (shouldReceive(), etc.).
+    - vendor/phpstan/phpstan-mockery/extension.neon
 
 parameters:
     editorUrl: 'phpstorm://open?file=%%file%%&line=%%line%%'
     level: 4
     paths:
         - src
+        - tests
     tmpDir: build/phpstan
+    ignoreErrors:
+        # Style rule (assertions a strict type already guarantees);
+        # pest.expectation.impossible (real bugs) stays active.
+        -
+            identifier: pest.expectation.redundant
+        # By-reference spy: the anonymous transport's `&$scope` is bound to the
+        # caller's variable, so the write is observed externally via the reference —
+        # PHPStan's onlyWritten check can't see that.
+        -
+            identifier: property.onlyWritten
+            path: tests/Unit/AssertScopeTest.php
