@@ -1,12 +1,12 @@
 {
     "schemaVersion": 1,
-    "compatibility_date": "2026-05-19",
-    "spec_sha256": "41b28c3182de223d0a8455d380f1b77b57f9aa6e9407fff067990733f31b2756",
-    "surface_sha256": "d89d5e6c79c7b738a13f1f599b137fdeddbeaa206a3e3f4e9af8449e25e99738",
+    "compatibility_date": "2026-07-21",
+    "spec_sha256": "f2a7c402eb7ccdd8342702eea8eb01d95a1a355bfed6c260fee25b46cb90e605",
+    "surface_sha256": "0d356fdc0e695f282f719f995b2c2ac6210bfc85c7f4f936794cebbec233774b",
     "counts": {
-        "dtos": 268,
-        "routes": 218,
+        "dtos": 272,
+        "routes": 219,
         "wrappers": 36,
-        "symbols": 4242
+        "symbols": 4276
     }
 }
