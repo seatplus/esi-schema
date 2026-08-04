@@ -516,31 +516,6 @@ php -d zend_extension=/path/to/xdebug.so -d xdebug.mode=coverage \
     vendor/bin/pest --tia
 ```
 
-### Type coverage runs single-process
-
-`composer test:type-coverage` opts `pest-plugin-type-coverage` out of forking pokio
-workers, via `__PEST_PLUGIN_ENV=1`. Its per-file cache writes race under an
-advisory lock that gives up and writes anyway, splicing the shared cache into
-invalid PHP; the plugin then `include`s that file, so one bad run breaks every
-later run. With `src` being 536 generated files this reproduced on every cold run.
-The cost is that the gate is single-threaded: ~18s on a cold cache, ~8s warm.
-
-The script also pins `php -d variables_order=EGPCS`, because the plugin tests
-`isset($_ENV[...])` and `$_ENV` is only populated from the environment when
-`variables_order` contains `E` — the `php.ini` files PHP ships use `GPCS`, which
-would make the flag silently do nothing.
-
-**Known blind spot.** The plugin skips any file whose contents match the substring
-`trait ` ([Plugin.php][tc-plugin]), and `GetCharactersCharacterIdPortrait` matches
-that by accident — "Po*rtrait i*mplements". Such a file is dropped from both the
-analysis and the percentage, so the gate reports `100.0%` and exits 0 even if that
-file were untyped; any future endpoint named `…trait` inherits the hole. It is
-fully typed today and PHPStan at `level: 4` still analyses it, but its param,
-return and property types are not enforced at 100%. Treat that one file as
-hand-reviewed.
-
-[tc-plugin]: https://github.com/pestphp/pest-plugin-type-coverage/blob/5.x/src/Plugin.php
-
 ---
 
 ## Contributing

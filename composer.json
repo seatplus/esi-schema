@@ -53,7 +53,7 @@
         "test:lint": "vendor/bin/pint --test",
         "lint": "vendor/bin/pint",
         "test:types": "vendor/bin/phpstan analyse --no-progress",
-        "test:type-coverage": "__PEST_PLUGIN_ENV=1 php -d variables_order=EGPCS vendor/bin/pest --type-coverage --min=100"
+        "test:type-coverage": "vendor/bin/pest --type-coverage --min=100"
     },
     "config": {
         "sort-packages": true,

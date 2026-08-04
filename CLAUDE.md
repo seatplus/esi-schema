@@ -36,16 +36,3 @@ replayed from a cached dependency graph rather than executed. It only engages wh
 a coverage driver (pcov / Xdebug) is present. CI runs `vendor/bin/pest --ci`
 instead, which opts out. Use `vendor/bin/pest --no-tia` when you want a full local
 run — for example before claiming the suite is green.
-
-`composer test:type-coverage` forces `pest-plugin-type-coverage` to run
-single-process (`__PEST_PLUGIN_ENV=1`, plus `-d variables_order=EGPCS` so `$_ENV`
-is actually populated). Leave that in place: with 536 generated files under `src`,
-its forked workers corrupt the plugin's shared cache on every cold run, and the
-corruption is sticky (the bad file is `include`d, so every later run fails until it
-is deleted).
-
-Two caveats on that gate: it costs ~18s cold, and the plugin silently skips any
-file containing the substring `trait ` — which `GetCharactersCharacterIdPortrait`
-matches by accident, so that one file is not type-coverage-gated at all and would
-still report 100% if untyped. Both are documented in README.md under "Type
-coverage runs single-process".
