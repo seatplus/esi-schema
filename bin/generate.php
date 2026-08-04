@@ -18,6 +18,7 @@
 declare(strict_types=1);
 
 require __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/lib/response-shape.php';
 
 use Symfony\Component\Yaml\Yaml;
 
@@ -207,22 +208,8 @@ $responsesDir   = __DIR__ . '/../src/Responses';
 $resourcesDir   = __DIR__ . '/../src/Resources';
 
 // ---------------------------------------------------------------------------
-// Helper: convert OAS3 type/format to PHP type
+// oas3TypeToPhp() and resolveRef() live in bin/lib/response-shape.php
 // ---------------------------------------------------------------------------
-
-function oas3TypeToPhp(array $prop): string
-{
-    $type = $prop['type'] ?? 'mixed';
-
-    return match (true) {
-        $type === 'integer' => 'int',
-        $type === 'number'  => 'float',
-        $type === 'boolean' => 'bool',
-        $type === 'string'  => 'string',
-        $type === 'array'   => 'array',
-        default             => 'mixed',
-    };
-}
 
 function phpTypeZeroValue(string $phpType): string
 {
@@ -247,12 +234,6 @@ foreach ($schemas as $name => $schema) {
     if ($schema['x-common-model'] ?? false) {
         $commonModelTypes[$name] = oas3TypeToPhp($schema);
     }
-}
-
-function resolveRef(string $ref, array $commonModelTypes): string
-{
-    $name = basename(str_replace('#/components/schemas/', '', $ref));
-    return $commonModelTypes[$name] ?? $name;
 }
 
 function propToPhpType(array $prop, array $commonModelTypes, array $schemas): string
@@ -781,47 +762,7 @@ foreach ($paths as $path => $pathItem) {
         $isAuth = ! empty($op['security']);
         $scopes = $op['security'][0]['OAuth2'] ?? [];
 
-        $resp200    = $op['responses']['200'] ?? [];
-        $respSchema = $resp200['content']['application/json']['schema'] ?? null;
-        $schemaRef  = $respSchema['$ref'] ?? null;
-        $schemaName = $schemaRef ? basename(str_replace('#/components/schemas/', '', $schemaRef)) : null;
-        $xPages     = isset($resp200['headers']['X-Pages']);
-
-        $schema       = $schemaName ? ($schemas[$schemaName] ?? []) : [];
-        $schemaType   = $schema['type'] ?? 'void';
-        $responseType = 'void';
-        $dtoClass     = null;
-        $phpDocReturn = 'EsiResult<null>';
-        $primitiveType = null;
-        $primitivePhp  = null;
-
-        if ($schemaName) {
-            if ($schemaType === 'object') {
-                $responseType = 'object';
-                $dtoClass     = $schemaName;
-                $phpDocReturn = $schemaName;
-            } elseif ($schemaType === 'array') {
-                $items = $schema['items'] ?? [];
-                if (isset($items['$ref'])) {
-                    $itemClass    = resolveRef($items['$ref'], $commonModelTypes);
-                    $responseType = 'array_ref';
-                    $dtoClass     = $itemClass;
-                    $phpDocReturn = "EsiResult<array<{$itemClass}>>";
-                } elseif (($items['type'] ?? '') === 'object') {
-                    $responseType = 'array_item';
-                    $dtoClass     = $schemaName . 'Item';
-                    $phpDocReturn = "EsiResult<array<{$schemaName}Item>>";
-                } else {
-                    $primitiveType = oas3TypeToPhp($items);
-                    $responseType  = 'array_primitive';
-                    $phpDocReturn  = "EsiResult<array<{$primitiveType}>>";
-                }
-            } elseif ($schemaType !== 'void') {
-                $responseType = 'primitive';
-                $primitivePhp = oas3TypeToPhp($schema);
-                $phpDocReturn = "EsiResult<{$primitivePhp}>";
-            }
-        }
+        $shape = resolveResponseShape($op, $schemas, $commonModelTypes);
 
         $tagOps[$tag][] = [
             'path'              => $path,
@@ -832,12 +773,12 @@ foreach ($paths as $path => $pathItem) {
             'requestBody'       => $requestBody,
             'isAuth'            => $isAuth,
             'scopes'            => $scopes,
-            'schemaName'        => $schemaName,
-            'responseType'      => $responseType,
-            'dtoClass'          => $dtoClass,
-            'phpDocReturn'      => $phpDocReturn,
-            'xPages'            => $xPages,
-            'primitiveType'     => $primitiveType ?? ($primitivePhp ?? null),
+            'schemaName'        => $shape['schemaName'],
+            'responseType'      => $shape['responseType'],
+            'dtoClass'          => $shape['dtoClass'],
+            'phpDocReturn'      => $shape['phpDocReturn'],
+            'xPages'            => $shape['xPages'],
+            'primitiveType'     => $shape['primitiveType'],
             '_commonModelTypes' => $commonModelTypes,
             // ESI spec extensions — baked in at generation time
             'cacheAge'          => isset($op['x-cache-age']) ? (int) $op['x-cache-age'] : null,
