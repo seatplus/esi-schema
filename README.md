@@ -1,10 +1,101 @@
 # seatplus/esi-schema
 
-**Typed ESI schema for PHP.** Every EVE Online ESI endpoint has its own generated class with typed pre-call metadata and a typed call method — no magic strings, no `array` guesswork.
+[![Packagist Version](https://img.shields.io/packagist/v/seatplus/esi-schema.svg?style=flat-square)](https://packagist.org/packages/seatplus/esi-schema)
+[![Total Downloads](https://img.shields.io/packagist/dt/seatplus/esi-schema.svg?style=flat-square)](https://packagist.org/packages/seatplus/esi-schema)
+[![PHP Version](https://img.shields.io/packagist/dependency-v/seatplus/esi-schema/php.svg?style=flat-square)](https://packagist.org/packages/seatplus/esi-schema)
+[![License](https://img.shields.io/packagist/l/seatplus/esi-schema.svg?style=flat-square)](LICENSE.md)
+[![CI](https://img.shields.io/github/actions/workflow/status/seatplus/esi-schema/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/seatplus/esi-schema/actions/workflows/ci.yml)
+[![ESI compatibility](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fseatplus%2Fesi-schema%2Fmain%2F.esi%2Fstate.json&query=%24.compatibility_date&label=ESI%20compatibility&style=flat-square&color=0f4c81)](#versioning)
 
-Generated from the ESI OpenAPI spec. Zero runtime dependencies.
+**A fully typed PHP SDK for EVE Online's ESI API, generated from the official OpenAPI
+spec.** Every one of the ~218 endpoints gets its own class, with its required OAuth
+scope, cache lifetime, rate-limit group and response shape available as typed
+constants and DTOs — so your IDE and PHPStan know them, instead of you looking them
+up.
 
-The compatibility date a given install was generated for is `Seatplus\EsiSchema\GeneratedSpec::COMPATIBILITY_DATE` — see [Versioning](#versioning).
+Zero runtime dependencies. PHP 8.3+.
+
+---
+
+## What problem does this solve?
+
+[ESI](https://developers.eveonline.com/) is EVE Online's official REST API. Calling it
+from PHP normally means untyped arrays and a lot of tribal knowledge that lives in
+documentation rather than in your code:
+
+```php
+// Without this package
+$response = $httpClient->get("https://esi.evetech.net/characters/{$characterId}/assets/");
+$items    = json_decode((string) $response->getBody(), true);
+
+foreach ($items as $item) {
+    $item['type_id'];   // int? string? is the key even present?
+}
+
+// And the things you actually need to know before calling:
+//   Which OAuth scope does this require?      → read the docs
+//   How long may I cache the response?        → read the docs
+//   Which rate-limit bucket does it share?    → read the docs
+//   Does it need an in-game corporation role? → find out in production
+```
+
+With this package, all of that is code:
+
+```php
+use Seatplus\EsiSchema\Resources\Assets\GetCharactersCharacterIdAssets;
+
+// Known before you make the call — no instance, no network, no allocation
+GetCharactersCharacterIdAssets::REQUIRED_SCOPE;        // 'esi-assets.read_assets.v1'
+GetCharactersCharacterIdAssets::CACHE_AGE;             // 3600
+GetCharactersCharacterIdAssets::RATE_LIMIT_GROUP;      // 'char-asset'
+GetCharactersCharacterIdAssets::REQUIRED_ROLES;        // []
+
+$result = GetCharactersCharacterIdAssets::execute($transport, characterId: $characterId);
+
+foreach ($result->data as $item) {
+    $item->type_id;    // int — your IDE autocompletes it, PHPStan checks it
+    $item->quantity;   // int
+}
+
+$result->pages;        // int, from the X-Pages header
+$result->isCachedLoad; // bool, true when served from cache
+```
+
+That means a mistyped field name is a static-analysis error rather than a runtime
+`null`, and a missing OAuth scope is something you can check *before* dispatching a
+job instead of discovering from a 403.
+
+## What you get
+
+- **~218 endpoint classes** — one per ESI route, grouped into 36 tag namespaces.
+- **268 response DTOs** — typed, readonly value objects for every response schema.
+- **Pre-call metadata as typed constants** — scope, cache age, rate-limit group and
+  window, required in-game roles, cursor pagination.
+- **Two call styles** — static calls for jobs and services, or a fluent
+  `{Tag}Resource` API when you already hold a transport.
+- **Zero runtime dependencies** — no HTTP client, no framework, no YAML parsing at
+  runtime. Everything is baked into generated PHP at build time.
+- **Honest versioning** — the version tracks this package's PHP API, and the ESI
+  compatibility date is readable at runtime. See [Versioning](#versioning).
+
+## What this is *not*
+
+**It does not make HTTP requests.** There is no OAuth, no caching, no retry logic and
+no Guzzle in here — deliberately. Every endpoint takes an `EsiTransportInterface`,
+which is a single method you implement (or get from
+[seatplus/esi-client](https://github.com/seatplus/esi-client)). That keeps this
+package free of version conflicts and makes the whole test suite network-free.
+
+See [Implementing a Transport](#implementing-a-transport) if you want to wire it to
+your own HTTP client.
+
+## Who it's for
+
+- You call ESI from PHP and want the compiler and your IDE to help.
+- You run background jobs and need scope, cache and rate-limit facts *before*
+  dispatching.
+- You want ESI's breaking changes to show up as a reviewable diff and a semver bump
+  rather than a surprise in production.
 
 ---
 
@@ -15,6 +106,20 @@ composer require seatplus/esi-schema
 ```
 
 **Requirements:** PHP 8.3+
+
+Most applications will also want a transport implementation:
+
+```bash
+composer require seatplus/esi-client
+```
+
+## Related packages
+
+| Package | Role |
+|---|---|
+| [seatplus/esi-schema](https://github.com/seatplus/esi-schema) | This package — typed endpoints, DTOs and metadata |
+| [seatplus/esi-client](https://github.com/seatplus/esi-client) | Transport: OAuth, RFC 7234 caching, error-limit tracking, retries |
+| [seatplus/eveapi](https://github.com/seatplus/eveapi) | Laravel jobs and models built on top of both |
 
 ---
 
