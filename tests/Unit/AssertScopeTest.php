@@ -44,14 +44,19 @@ function allOperationClasses(): array
 
 function makeSpy(string &$capturedScope): EsiTransportInterface
 {
-    return new class ($capturedScope) implements EsiTransportInterface {
-        public function __construct(private string &$scope)
+    $capture = function (string $scope) use (&$capturedScope): void {
+        $capturedScope = $scope;
+    };
+
+    return new class ($capture) implements EsiTransportInterface {
+        /** @param Closure(string): void $capture */
+        public function __construct(private Closure $capture)
         {
         }
 
         public function assertScope(?string $scope): void
         {
-            $this->scope = $scope ?? '__null__';
+            ($this->capture)($scope ?? '__null__');
         }
 
         public function invoke(string $method, string $path, array $pathValues = [], array $queryParams = [], array $requestBody = []): EsiRawResponse
