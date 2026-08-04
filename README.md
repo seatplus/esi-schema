@@ -497,9 +497,10 @@ because the change detection hashes PHP with comments and whitespace stripped.
 
 This needs a coverage driver to record which source files each test touches.
 Without pcov or Xdebug, Pest prints `TIA as skipped as it needs Needs ext-pcov or
-Xdebug` and runs the full suite — so on a stock PHP nothing changes. **CI always
-executes everything**, and the dependency graph lives outside the repository
-(`~/.pest/tia/`), so there is nothing to gitignore.
+Xdebug` and runs the full suite — so on a stock PHP nothing changes. `composer
+test:unit` passes `--tia`; **CI installs no coverage driver, so it executes
+everything.** The dependency graph lives outside the repository (`~/.pest/tia/`),
+so there is nothing to gitignore.
 
 ```bash
 vendor/bin/pest --no-tia       # one full run, ignoring the cache

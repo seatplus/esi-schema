@@ -36,10 +36,11 @@ runs:
     # composer.json's `test` script is already the single definition of green:
     # pint --test, phpstan (level 4), pest --type-coverage --min=100, pest.
     #
-    # `coverage: none` above also means Pest's Test Impact Analysis cannot engage
-    # here even if it were enabled: it needs pcov/Xdebug to record which sources a
-    # test touches. tests/Pest.php gates it on `CI` as well, so this job always
-    # executes every test rather than replaying any from a cache.
+    # `test:unit` passes `--tia`, but `coverage: none` above is what keeps it off
+    # here: TIA needs pcov/Xdebug to record which sources a test touches, and
+    # without a driver Pest skips it and runs the full suite. Adding a coverage
+    # driver to this job would let CI start replaying tests from a cache — pass
+    # `--no-tia` if that ever happens.
     - name: Lint, analyse, test
       shell: bash
       run: composer test

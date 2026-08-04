@@ -33,7 +33,8 @@ composer run test        # Pint + PHPStan + 100% type-coverage + Pest
 
 Local Pest runs use Test Impact Analysis: tests your change cannot have affected
 are replayed from a cached dependency graph rather than executed. It only engages
-when a coverage driver (pcov / Xdebug) is present, and CI always runs everything.
+when a coverage driver (pcov / Xdebug) is present; CI installs none, so it runs
+everything.
 Use `vendor/bin/pest --no-tia` when you want a full local run — for example
 before claiming the suite is green.
 
