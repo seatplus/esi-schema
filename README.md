@@ -497,25 +497,38 @@ because the change detection hashes PHP with comments and whitespace stripped.
 
 This needs a coverage driver to record which source files each test touches.
 Without pcov or Xdebug, Pest prints `TIA as skipped as it needs Needs ext-pcov or
-Xdebug` and runs the full suite — so on a stock PHP nothing changes. `composer
-test:unit` passes `--tia`; **CI installs no coverage driver, so it executes
-everything.** The dependency graph lives outside the repository (`~/.pest/tia/`),
-so there is nothing to gitignore.
+Xdebug` and runs the full suite — so on a stock PHP nothing changes.
+
+`composer test:unit` passes `--tia` for local use. **CI runs `vendor/bin/pest --ci`
+instead, which opts out of TIA** — a release gate must execute every test, never
+replay one from a cache. The dependency graph lives outside the repository
+(`~/.pest/tia/`), so there is nothing to gitignore.
 
 ```bash
 vendor/bin/pest --no-tia       # one full run, ignoring the cache
 vendor/bin/pest --tia --fresh  # discard and re-record the dependency graph
 ```
 
+To actually exercise TIA locally, load a coverage driver:
+
+```bash
+php -d zend_extension=/path/to/xdebug.so -d xdebug.mode=coverage \
+    vendor/bin/pest --tia
+```
+
 ### Type coverage runs single-process
 
-`tests/Pest.php` opts `pest-plugin-type-coverage` out of forking pokio workers.
-Its per-file cache writes race under an advisory lock that gives up and writes
-anyway, splicing the shared cache into invalid PHP; the plugin then `include`s
-that file, so one bad run breaks every later run. With `src` being 536 generated
-files this reproduced on every cold run. The cost is that the gate is
-single-threaded: ~18s on a cold cache, ~8s warm. See the comment in
-`tests/Pest.php`.
+`composer test:type-coverage` opts `pest-plugin-type-coverage` out of forking pokio
+workers, via `__PEST_PLUGIN_ENV=1`. Its per-file cache writes race under an
+advisory lock that gives up and writes anyway, splicing the shared cache into
+invalid PHP; the plugin then `include`s that file, so one bad run breaks every
+later run. With `src` being 536 generated files this reproduced on every cold run.
+The cost is that the gate is single-threaded: ~18s on a cold cache, ~8s warm.
+
+The script also pins `php -d variables_order=EGPCS`, because the plugin tests
+`isset($_ENV[...])` and `$_ENV` is only populated from the environment when
+`variables_order` contains `E` — the `php.ini` files PHP ships use `GPCS`, which
+would make the flag silently do nothing.
 
 **Known blind spot.** The plugin skips any file whose contents match the substring
 `trait ` ([Plugin.php][tc-plugin]), and `GetCharactersCharacterIdPortrait` matches

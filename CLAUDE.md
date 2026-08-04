@@ -31,17 +31,18 @@ No database or Redis needed.
 composer run test        # Pint + PHPStan + 100% type-coverage + Pest
 ```
 
-Local Pest runs use Test Impact Analysis: tests your change cannot have affected
-are replayed from a cached dependency graph rather than executed. It only engages
-when a coverage driver (pcov / Xdebug) is present; CI installs none, so it runs
-everything.
-Use `vendor/bin/pest --no-tia` when you want a full local run — for example
-before claiming the suite is green.
+`composer test:unit` passes `--tia`: tests your change cannot have affected are
+replayed from a cached dependency graph rather than executed. It only engages when
+a coverage driver (pcov / Xdebug) is present. CI runs `vendor/bin/pest --ci`
+instead, which opts out. Use `vendor/bin/pest --no-tia` when you want a full local
+run — for example before claiming the suite is green.
 
-`tests/Pest.php` also forces `pest-plugin-type-coverage` to run single-process.
-Leave that in place: with 536 generated files under `src`, its forked workers
-corrupt the plugin's shared cache on every cold run, and the corruption is sticky
-(the bad file is `include`d, so every later run fails until it is deleted).
+`composer test:type-coverage` forces `pest-plugin-type-coverage` to run
+single-process (`__PEST_PLUGIN_ENV=1`, plus `-d variables_order=EGPCS` so `$_ENV`
+is actually populated). Leave that in place: with 536 generated files under `src`,
+its forked workers corrupt the plugin's shared cache on every cold run, and the
+corruption is sticky (the bad file is `include`d, so every later run fails until it
+is deleted).
 
 Two caveats on that gate: it costs ~18s cold, and the plugin silently skips any
 file containing the substring `trait ` — which `GetCharactersCharacterIdPortrait`

@@ -33,17 +33,22 @@ runs:
       shell: bash
       run: composer install --no-interaction --prefer-dist
 
-    # composer.json's `test` script is already the single definition of green:
-    # pint --test, phpstan (level 4), pest --type-coverage --min=100, pest.
-    #
-    # `test:unit` passes `--tia`, but `coverage: none` above is what keeps it off
-    # here: TIA needs pcov/Xdebug to record which sources a test touches, and
-    # without a driver Pest skips it and runs the full suite. Adding a coverage
-    # driver to this job would let CI start replaying tests from a cache — pass
-    # `--no-tia` if that ever happens.
-    - name: Lint, analyse, test
+    # The composer scripts stay the definition of each gate, so CI cannot drift
+    # from what developers run: pint --test, phpstan (level 4), and
+    # pest --type-coverage --min=100.
+    - name: Lint, analyse, type coverage
       shell: bash
-      run: composer test
+      run: |
+        composer test:lint
+        composer test:types
+        composer test:type-coverage
+
+    # Not `composer test:unit`, which passes `--tia` for local use. `--ci` is
+    # Pest's own opt-out: a release gate must execute every test, never replay one
+    # from a cached dependency graph. Same split as seatplus/eveapi.
+    - name: Test
+      shell: bash
+      run: vendor/bin/pest --ci --no-coverage
 
     # Proves src/ is exactly what the committed spec produces. Catches a
     # hand-edited generated file, a stale manifest, and a spec swapped without
