@@ -41,6 +41,9 @@ concurrency:
 
 permissions:
   contents: read
+  # Escalation opens an issue with GITHUB_TOKEN rather than the App token — see the
+  # "Escalate for a human" step for why that distinction matters.
+  issues: write
 
 jobs:
   sync:
@@ -284,16 +287,32 @@ jobs:
           echo "Opened $BRANCH with auto-merge; expected version ${VERSION}"
 
       # --- 8. Escalate: one issue, created or updated --------------------
+      #
+      # Deliberately GITHUB_TOKEN, not the App token. The very first step of this
+      # job is minting the App token, and if that fails — a missing secret, an
+      # expired key, the App uninstalled — then an escalation authenticated with it
+      # cannot run either, and the failure is silent apart from a red run nobody
+      # reads. That is the failure mode this whole pipeline exists to avoid, so the
+      # channel that reports failures must not depend on the thing most likely to
+      # break. GITHUB_TOKEN needs no setup and can open an issue; the fact that it
+      # cannot trigger workflows is irrelevant for an issue.
+      #
+      # `always()` rather than `failure()` alone, so a major or unclassifiable
+      # verdict on an otherwise green run still reports.
       - name: Escalate for a human
         if: |
-          always() && steps.change.outputs.todo == 'true' && inputs.dry_run != true &&
+          always() && inputs.dry_run != true &&
           (failure() || steps.classify.outputs.bump == 'major' || steps.classify.outputs.bump == 'undecidable')
         env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           BUMP="${{ steps.classify.outputs.bump }}"
           DATE="${{ steps.date.outputs.date }}"
+
+          # The job can fail before either of those is set — e.g. at App-token
+          # minting, which is the very first step.
+          [ -n "$DATE" ] || DATE="unknown"
 
           {
             if [ "$BUMP" = "major" ]; then
@@ -332,7 +351,9 @@ jobs:
         if: success() && steps.change.outputs.todo == 'true' && inputs.dry_run != true &&
             (steps.classify.outputs.bump == 'patch' || steps.classify.outputs.bump == 'minor')
         env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          # Same token as the escalation that opened it, so the pair cannot end up
+          # split across two identities.
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           EXISTING="$(gh issue list --label esi-sync --state open --limit 1 --json number --jq '.[0].number // ""')"
