@@ -146,10 +146,18 @@ function resolveResponseShape(array $op, array $schemas, array $commonModelTypes
                 $responseType  = 'array_primitive';
                 $phpDocReturn  = "EsiResult<array<{$primitiveType}>>";
             }
-        } elseif ($schemaType !== 'void') {
-            $responseType = 'primitive';
-            $primitivePhp = oas3TypeToPhp($schema);
-            $phpDocReturn = "EsiResult<{$primitivePhp}>";
+        } else {
+            // Only a genuine scalar becomes 'primitive'. Anything else — an inline
+            // object, a type we don't know, no type at all — would cast to (mixed),
+            // which is not a PHP cast, so it must reach the guard rather than be
+            // emitted. Previously unreachable: a `type: object` schema always had a
+            // component name and took the branch above.
+            $scalar = oas3TypeToPhp($schema);
+            if (in_array($scalar, ['int', 'float', 'bool', 'string'], true)) {
+                $responseType = 'primitive';
+                $primitivePhp = $scalar;
+                $phpDocReturn = "EsiResult<{$scalar}>";
+            }
         }
     }
 
