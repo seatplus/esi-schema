@@ -13,7 +13,7 @@ scope, cache lifetime, rate-limit group and response shape available as typed
 constants and DTOs — so your IDE and PHPStan know them, instead of you looking them
 up.
 
-Zero runtime dependencies. PHP 8.3+.
+Zero runtime dependencies. PHP 8.5+.
 
 ---
 
@@ -105,7 +105,7 @@ your own HTTP client.
 composer require seatplus/esi-schema
 ```
 
-**Requirements:** PHP 8.3+
+**Requirements:** PHP 8.5+
 
 Most applications will also want a transport implementation:
 
@@ -352,7 +352,7 @@ The 218 resource classes live in `src/Resources/{Tag}/` (36 subfolders), matchin
 
 ### 5. Zero runtime dependencies
 
-`composer.json` has **no `require` entries** (only `require-dev` for `symfony/yaml` used by the generator). The published library is pure PHP 8.3.
+`composer.json` has **no `require` entries** (only `require-dev` for `symfony/yaml` used by the generator). The published library is pure PHP 8.5.
 
 ### 6. `EsiTransportInterface` as the sole injection boundary
 

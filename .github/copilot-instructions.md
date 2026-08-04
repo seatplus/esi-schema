@@ -7,7 +7,7 @@
 - **218 per-route Resource classes** (`src/Resources/{Tag}/`) — one static class per ESI endpoint, with typed constants, `meta()`, and `execute()`.
 - **36 tag-group wrapper classes** (`src/Resources/{Tag}Resource.php`) — one per ESI tag; store the transport and delegate to the per-route statics. Entry points for the fluent API.
 - **268 DTO classes** (`src/Responses/`) — typed value objects for every ESI response schema.
-- **Zero runtime dependencies** — pure PHP 8.3, no Guzzle, no HTTP client, no framework.
+- **Zero runtime dependencies** — pure PHP 8.5, no Guzzle, no HTTP client, no framework.
 
 ---
 

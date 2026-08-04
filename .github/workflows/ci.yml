@@ -10,11 +10,16 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    # DO NOT RENAME. This exact string is main's required status check
-    # (`required_status_checks.contexts`). Renaming it means the required context
-    # never reports and every pull request hangs forever "waiting for status" —
-    # which is half of why 55 bot PRs were unmergeable.
-    name: PHP 8.3 — Tests + Static Analysis
+    # This exact string is main's required status check
+    # (`required_status_checks.contexts`). If you change it, update branch
+    # protection in the same change — a required context that never reports leaves
+    # every pull request hanging forever "waiting for status", which is half of why
+    # 55 bot PRs were unmergeable.
+    #
+    # Deliberately version-agnostic: it used to read "PHP 8.3 — Tests + Static
+    # Analysis", which meant a routine PHP bump could not be done without breaking
+    # branch protection. Keep the PHP version out of this string.
+    name: Tests + Static Analysis
 
     steps:
       - name: Checkout
@@ -23,4 +28,4 @@ jobs:
       - name: Verify
         uses: ./.github/actions/verify
         with:
-          php-version: "8.3"
+          php-version: "8.5"
