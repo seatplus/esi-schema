@@ -34,7 +34,12 @@ runs:
       run: composer install --no-interaction --prefer-dist
 
     # composer.json's `test` script is already the single definition of green:
-    # pint --test, phpstan, pest, pest --type-coverage --min=100.
+    # pint --test, phpstan (level 4), phpstan (100% type coverage), pest.
+    #
+    # `coverage: none` above also means Pest's Test Impact Analysis cannot engage
+    # here even if it were enabled: it needs pcov/Xdebug to record which sources a
+    # test touches. tests/Pest.php gates it on `CI` as well, so this job always
+    # executes every test rather than replaying any from a cache.
     - name: Lint, analyse, test
       shell: bash
       run: composer test

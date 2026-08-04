@@ -483,8 +483,27 @@ diff can ever see a removal.
 composer test               # lint + types + type-coverage + unit
 composer test:unit          # Pest tests only
 composer test:types         # PHPStan static analysis
-composer test:type-coverage # 100% type coverage check
+composer test:type-coverage # 100% param/return/property types over src
 composer lint               # Pint auto-format (modifies files)
+```
+
+### Test Impact Analysis
+
+Local runs replay the tests your change cannot have affected instead of executing
+them. Edit one source file and only the test files that touch it actually run —
+here that is ~3.9s down to ~1.5s, and an untouched tree replays in ~0.9s.
+Comment-only and formatting-only edits affect nothing, because the change
+detection hashes PHP with comments and whitespace stripped.
+
+This needs a coverage driver (pcov, or Xdebug in coverage mode) to record which
+source files each test touches. Without one, nothing changes — runs behave
+exactly as they did before. **CI always executes the full suite**, and the
+dependency graph lives outside the repository (`~/.pest/tia/`), so there is
+nothing to gitignore.
+
+```bash
+vendor/bin/pest --no-tia       # one full run, ignoring the cache
+vendor/bin/pest --tia --fresh  # discard and re-record the dependency graph
 ```
 
 ---
