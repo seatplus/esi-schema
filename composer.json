@@ -22,7 +22,7 @@
         "source": "https://github.com/seatplus/esi-schema"
     },
     "require": {
-        "php": "^8.3"
+        "php": "^8.5"
     },
     "require-dev": {
         "monolog/monolog": "^3.0",

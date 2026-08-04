@@ -76,9 +76,8 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          # Same version as ci.yml and composer.json's floor. The old workflow
-          # generated on 8.5 while CI verified on 8.3.
-          php-version: "8.3"
+          # Same version as ci.yml and composer.json's floor.
+          php-version: "8.5"
           extensions: json
           coverage: none
           tools: composer:v2

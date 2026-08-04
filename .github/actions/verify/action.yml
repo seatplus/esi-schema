@@ -11,7 +11,7 @@ description: The single definition of "this tree is releasable"
 inputs:
   php-version:
     description: PHP version to verify against
-    default: "8.3"
+    default: "8.5"
 
 runs:
   using: composite
