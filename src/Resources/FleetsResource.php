@@ -19,9 +19,11 @@ use Seatplus\EsiSchema\Resources\Fleets\DeleteFleetsFleetIdSquadsSquadId;
 use Seatplus\EsiSchema\Resources\Fleets\PutFleetsFleetIdSquadsSquadId;
 use Seatplus\EsiSchema\Resources\Fleets\GetFleetsFleetIdWings;
 use Seatplus\EsiSchema\Resources\Fleets\PostFleetsFleetIdWings;
+use Seatplus\EsiSchema\Responses\FleetsFleetIdWingsPost;
 use Seatplus\EsiSchema\Resources\Fleets\DeleteFleetsFleetIdWingsWingId;
 use Seatplus\EsiSchema\Resources\Fleets\PutFleetsFleetIdWingsWingId;
 use Seatplus\EsiSchema\Resources\Fleets\PostFleetsFleetIdWingsWingIdSquads;
+use Seatplus\EsiSchema\Responses\FleetsFleetIdWingsWingIdSquadsPost;
 
 /**
  * ESI Fleets resource — fluent wrapper around per-route static classes.
@@ -126,10 +128,10 @@ final class FleetsResource
     }
 
     /**
-     * @return EsiResult
+     * @return FleetsFleetIdWingsPost
      * @scope esi-fleets.write_fleet.v1
      */
-    public function postFleetsFleetIdWings(int $fleetId): EsiResult
+    public function postFleetsFleetIdWings(int $fleetId): FleetsFleetIdWingsPost
     {
         return PostFleetsFleetIdWings::execute($this->transport, $fleetId);
     }
@@ -153,10 +155,10 @@ final class FleetsResource
     }
 
     /**
-     * @return EsiResult
+     * @return FleetsFleetIdWingsWingIdSquadsPost
      * @scope esi-fleets.write_fleet.v1
      */
-    public function postFleetsFleetIdWingsWingIdSquads(int $fleetId, int $wingId): EsiResult
+    public function postFleetsFleetIdWingsWingIdSquads(int $fleetId, int $wingId): FleetsFleetIdWingsWingIdSquadsPost
     {
         return PostFleetsFleetIdWingsWingIdSquads::execute($this->transport, $fleetId, $wingId);
     }

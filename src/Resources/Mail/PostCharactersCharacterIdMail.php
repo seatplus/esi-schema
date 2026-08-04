@@ -56,15 +56,17 @@ final class PostCharactersCharacterIdMail implements EsiOperationInterface
     }
 
     /**
-     * @return EsiResult<null>
+     * @return EsiResult<int>
      * @scope esi-mail.send_mail.v1
      */
     public static function execute(EsiTransportInterface $transport, mixed $requestBody, int $characterId): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('post', '/characters/{character_id}/mail', ['character_id' => $characterId], [], (array) $requestBody);
+        /** @var int $scalar */
+        $scalar = (int) $response->data;
         return new EsiResult(
-            data: null,
+            data: $scalar,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
             rateLimitRemaining: $response->rateLimitRemaining,

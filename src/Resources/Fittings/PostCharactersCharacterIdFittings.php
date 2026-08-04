@@ -6,8 +6,8 @@ namespace Seatplus\EsiSchema\Resources\Fittings;
 
 use Seatplus\EsiSchema\Contracts\EsiOperationInterface;
 use Seatplus\EsiSchema\Contracts\EsiTransportInterface;
-use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\OperationMeta;
+use Seatplus\EsiSchema\Responses\CharactersCharacterIdFittingsPost;
 
 /**
  * ESI operation: postCharactersCharacterIdFittings
@@ -56,18 +56,17 @@ final class PostCharactersCharacterIdFittings implements EsiOperationInterface
     }
 
     /**
-     * @return EsiResult<null>
+     * @return CharactersCharacterIdFittingsPost
      * @scope esi-fittings.write_fittings.v1
      */
-    public static function execute(EsiTransportInterface $transport, mixed $requestBody, int $characterId): EsiResult
+    public static function execute(EsiTransportInterface $transport, mixed $requestBody, int $characterId): CharactersCharacterIdFittingsPost
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('post', '/characters/{character_id}/fittings', ['character_id' => $characterId], [], (array) $requestBody);
-        return new EsiResult(
-            data: null,
-            pages: $response->pages,
-            isCachedLoad: $response->isCachedLoad,
-            rateLimitRemaining: $response->rateLimitRemaining,
-        );
+        $dto = CharactersCharacterIdFittingsPost::from((object) $response->data);
+        $dto->isCachedLoad = $response->isCachedLoad;
+        $dto->pages = $response->pages;
+        $dto->rateLimitRemaining = $response->rateLimitRemaining;
+        return $dto;
     }
 }

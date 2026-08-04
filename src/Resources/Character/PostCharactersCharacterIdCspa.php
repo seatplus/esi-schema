@@ -56,15 +56,17 @@ final class PostCharactersCharacterIdCspa implements EsiOperationInterface
     }
 
     /**
-     * @return EsiResult<null>
+     * @return EsiResult<float>
      * @scope esi-characters.read_contacts.v1
      */
     public static function execute(EsiTransportInterface $transport, mixed $requestBody, int $characterId): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('post', '/characters/{character_id}/cspa', ['character_id' => $characterId], [], (array) $requestBody);
+        /** @var float $scalar */
+        $scalar = (float) $response->data;
         return new EsiResult(
-            data: null,
+            data: $scalar,
             pages: $response->pages,
             isCachedLoad: $response->isCachedLoad,
             rateLimitRemaining: $response->rateLimitRemaining,
