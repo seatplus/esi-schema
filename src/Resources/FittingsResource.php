@@ -8,6 +8,7 @@ use Seatplus\EsiSchema\Contracts\EsiTransportInterface;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\Resources\Fittings\GetCharactersCharacterIdFittings;
 use Seatplus\EsiSchema\Resources\Fittings\PostCharactersCharacterIdFittings;
+use Seatplus\EsiSchema\Responses\CharactersCharacterIdFittingsPost;
 use Seatplus\EsiSchema\Resources\Fittings\DeleteCharactersCharacterIdFittingsFittingId;
 
 /**
@@ -32,10 +33,10 @@ final class FittingsResource
     }
 
     /**
-     * @return EsiResult
+     * @return CharactersCharacterIdFittingsPost
      * @scope esi-fittings.write_fittings.v1
      */
-    public function postCharactersCharacterIdFittings(mixed $requestBody, int $characterId): EsiResult
+    public function postCharactersCharacterIdFittings(mixed $requestBody, int $characterId): CharactersCharacterIdFittingsPost
     {
         return PostCharactersCharacterIdFittings::execute($this->transport, $requestBody, $characterId);
     }

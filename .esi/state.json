@@ -2,7 +2,7 @@
     "schemaVersion": 1,
     "compatibility_date": "2026-07-21",
     "spec_sha256": "f2a7c402eb7ccdd8342702eea8eb01d95a1a355bfed6c260fee25b46cb90e605",
-    "surface_sha256": "0d356fdc0e695f282f719f995b2c2ac6210bfc85c7f4f936794cebbec233774b",
+    "surface_sha256": "a478dc0418921d0e2bf519d28ed0afe1e11db18c1eb538f52cd80c6e190d13e8",
     "counts": {
         "dtos": 272,
         "routes": 219,

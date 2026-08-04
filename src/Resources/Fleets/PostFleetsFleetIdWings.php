@@ -6,8 +6,8 @@ namespace Seatplus\EsiSchema\Resources\Fleets;
 
 use Seatplus\EsiSchema\Contracts\EsiOperationInterface;
 use Seatplus\EsiSchema\Contracts\EsiTransportInterface;
-use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\OperationMeta;
+use Seatplus\EsiSchema\Responses\FleetsFleetIdWingsPost;
 
 /**
  * ESI operation: postFleetsFleetIdWings
@@ -56,18 +56,17 @@ final class PostFleetsFleetIdWings implements EsiOperationInterface
     }
 
     /**
-     * @return EsiResult<null>
+     * @return FleetsFleetIdWingsPost
      * @scope esi-fleets.write_fleet.v1
      */
-    public static function execute(EsiTransportInterface $transport, int $fleetId): EsiResult
+    public static function execute(EsiTransportInterface $transport, int $fleetId): FleetsFleetIdWingsPost
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('post', '/fleets/{fleet_id}/wings', ['fleet_id' => $fleetId], [], []);
-        return new EsiResult(
-            data: null,
-            pages: $response->pages,
-            isCachedLoad: $response->isCachedLoad,
-            rateLimitRemaining: $response->rateLimitRemaining,
-        );
+        $dto = FleetsFleetIdWingsPost::from((object) $response->data);
+        $dto->isCachedLoad = $response->isCachedLoad;
+        $dto->pages = $response->pages;
+        $dto->rateLimitRemaining = $response->rateLimitRemaining;
+        return $dto;
     }
 }

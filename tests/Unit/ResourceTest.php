@@ -6,9 +6,14 @@ use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\Resources\Alliance\GetAlliancesAllianceId;
 use Seatplus\EsiSchema\Resources\Assets\GetCharactersCharacterIdAssets;
 use Seatplus\EsiSchema\Resources\Assets\GetCorporationsCorporationIdAssets;
+use Seatplus\EsiSchema\Resources\Character\PostCharactersCharacterIdCspa;
+use Seatplus\EsiSchema\Resources\Fleets\PostFleetsFleetIdWings;
 use Seatplus\EsiSchema\Resources\FreelanceJobs\GetFreelanceJobsListing;
+use Seatplus\EsiSchema\Resources\Skills\GetCharactersCharacterIdSkillqueue;
 use Seatplus\EsiSchema\Responses\AllianceDetail;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdAssetsGetItem;
+use Seatplus\EsiSchema\Responses\CharactersSkillqueueSkill;
+use Seatplus\EsiSchema\Responses\FleetsFleetIdWingsPost;
 
 // ---------------------------------------------------------------------------
 // Helper
@@ -122,6 +127,67 @@ it('GetCharactersCharacterIdAssets::execute returns EsiResult with typed array',
         ->and($result->data)->toBeArray()->toHaveCount(1)
         ->and($result->data[0])->toBeInstanceOf(CharactersCharacterIdAssetsGetItem::class)
         ->and($result->data[0]->item_id)->toBe(1001);
+});
+
+/**
+ * Issue #81. The skill queue is the one endpoint in the document that declares its
+ * body inline instead of behind a component $ref, so it was the one endpoint whose
+ * payload the generator dropped — silently, because `EsiResult<null>` reads as a
+ * correct annotation for the 20 endpoints that really do return nothing.
+ *
+ * It is also the only operation that reaches the generator's array-of-$ref emitter,
+ * so this is the only runtime coverage that branch has.
+ */
+it('GetCharactersCharacterIdSkillqueue::execute maps its inline array body', function (): void {
+    $payload = [
+        (object) [
+            'finished_level'    => 5,
+            'queue_position'    => 0,
+            'skill_id'          => 3300,
+            'finish_date'       => '2026-08-05T12:00:00Z',
+            'level_end_sp'      => 256000,
+            'level_start_sp'    => 45255,
+            'start_date'        => '2026-08-04T12:00:00Z',
+            'training_start_sp' => 50000,
+        ],
+        (object) [
+            'finished_level' => 3,
+            'queue_position' => 1,
+            'skill_id'       => 3301,
+        ],
+    ];
+
+    $result = GetCharactersCharacterIdSkillqueue::execute(mockTransport($payload, pages: 1), 12345);
+
+    expect($result)->toBeInstanceOf(EsiResult::class)
+        ->and($result->data)->toBeArray()->toHaveCount(2)
+        ->and($result->data[0])->toBeInstanceOf(CharactersSkillqueueSkill::class)
+        ->and($result->data[0]->skill_id)->toBe(3300)
+        ->and($result->data[0]->finished_level)->toBe(5)
+        ->and($result->data[0]->finish_date)->toBe('2026-08-05T12:00:00Z')
+        ->and($result->data[1])->toBeInstanceOf(CharactersSkillqueueSkill::class)
+        ->and($result->data[1]->queue_position)->toBe(1)
+        ->and($result->data[1]->finish_date)->toBeNull();
+});
+
+/**
+ * The other seven operations #81 repaired declare their body under 201 rather than
+ * 200, which the generator also discarded. The payload is the id of the thing just
+ * created, so without it the endpoint cannot be chained — a new wing's id is a
+ * required argument to the call that adds a squad to it.
+ */
+it('PostFleetsFleetIdWings::execute returns the created wing id', function (): void {
+    $dto = PostFleetsFleetIdWings::execute(mockTransport((object) ['wing_id' => 2000000001]), 99);
+
+    expect($dto)->toBeInstanceOf(FleetsFleetIdWingsPost::class)
+        ->and($dto->wing_id)->toBe(2000000001);
+});
+
+it('PostCharactersCharacterIdCspa::execute returns the cost as a float', function (): void {
+    $result = PostCharactersCharacterIdCspa::execute(mockTransport(2950.5), (object) ['characters' => [1]], 12345);
+
+    expect($result)->toBeInstanceOf(EsiResult::class)
+        ->and($result->data)->toBe(2950.5);
 });
 
 it('EsiResult::fromRaw carries isCachedLoad', function (): void {

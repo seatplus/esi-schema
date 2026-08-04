@@ -18,6 +18,7 @@
 declare(strict_types=1);
 
 require __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/lib/response-shape.php';
 
 use Symfony\Component\Yaml\Yaml;
 
@@ -207,22 +208,8 @@ $responsesDir   = __DIR__ . '/../src/Responses';
 $resourcesDir   = __DIR__ . '/../src/Resources';
 
 // ---------------------------------------------------------------------------
-// Helper: convert OAS3 type/format to PHP type
+// oas3TypeToPhp() and resolveRef() live in bin/lib/response-shape.php
 // ---------------------------------------------------------------------------
-
-function oas3TypeToPhp(array $prop): string
-{
-    $type = $prop['type'] ?? 'mixed';
-
-    return match (true) {
-        $type === 'integer' => 'int',
-        $type === 'number'  => 'float',
-        $type === 'boolean' => 'bool',
-        $type === 'string'  => 'string',
-        $type === 'array'   => 'array',
-        default             => 'mixed',
-    };
-}
 
 function phpTypeZeroValue(string $phpType): string
 {
@@ -247,12 +234,6 @@ foreach ($schemas as $name => $schema) {
     if ($schema['x-common-model'] ?? false) {
         $commonModelTypes[$name] = oas3TypeToPhp($schema);
     }
-}
-
-function resolveRef(string $ref, array $commonModelTypes): string
-{
-    $name = basename(str_replace('#/components/schemas/', '', $ref));
-    return $commonModelTypes[$name] ?? $name;
 }
 
 function propToPhpType(array $prop, array $commonModelTypes, array $schemas): string
@@ -738,6 +719,9 @@ $SKIP_PARAMS = ['AcceptLanguage', 'IfNoneMatch', 'CompatibilityDate', 'Tenant', 
 /** @var array<string, array<array<mixed>>> $tagOps */
 $tagOps = [];
 
+/** @var list<string> $untypeableBodies operations whose declared response body defeated the resolver */
+$untypeableBodies = [];
+
 foreach ($paths as $path => $pathItem) {
     foreach ($pathItem as $httpMethod => $op) {
         if (! is_array($op) || ! isset($op['operationId'])) {
@@ -781,46 +765,24 @@ foreach ($paths as $path => $pathItem) {
         $isAuth = ! empty($op['security']);
         $scopes = $op['security'][0]['OAuth2'] ?? [];
 
-        $resp200    = $op['responses']['200'] ?? [];
-        $respSchema = $resp200['content']['application/json']['schema'] ?? null;
-        $schemaRef  = $respSchema['$ref'] ?? null;
-        $schemaName = $schemaRef ? basename(str_replace('#/components/schemas/', '', $schemaRef)) : null;
-        $xPages     = isset($resp200['headers']['X-Pages']);
+        $shape = resolveResponseShape($op, $schemas, $commonModelTypes);
 
-        $schema       = $schemaName ? ($schemas[$schemaName] ?? []) : [];
-        $schemaType   = $schema['type'] ?? 'void';
-        $responseType = 'void';
-        $dtoClass     = null;
-        $phpDocReturn = 'EsiResult<null>';
-        $primitiveType = null;
-        $primitivePhp  = null;
-
-        if ($schemaName) {
-            if ($schemaType === 'object') {
-                $responseType = 'object';
-                $dtoClass     = $schemaName;
-                $phpDocReturn = $schemaName;
-            } elseif ($schemaType === 'array') {
-                $items = $schema['items'] ?? [];
-                if (isset($items['$ref'])) {
-                    $itemClass    = resolveRef($items['$ref'], $commonModelTypes);
-                    $responseType = 'array_ref';
-                    $dtoClass     = $itemClass;
-                    $phpDocReturn = "EsiResult<array<{$itemClass}>>";
-                } elseif (($items['type'] ?? '') === 'object') {
-                    $responseType = 'array_item';
-                    $dtoClass     = $schemaName . 'Item';
-                    $phpDocReturn = "EsiResult<array<{$schemaName}Item>>";
-                } else {
-                    $primitiveType = oas3TypeToPhp($items);
-                    $responseType  = 'array_primitive';
-                    $phpDocReturn  = "EsiResult<array<{$primitiveType}>>";
-                }
-            } elseif ($schemaType !== 'void') {
-                $responseType = 'primitive';
-                $primitivePhp = oas3TypeToPhp($schema);
-                $phpDocReturn = "EsiResult<{$primitivePhp}>";
-            }
+        // A declared body the resolver cannot type would be emitted as `data: null`:
+        // indistinguishable from a genuinely body-less endpoint, invisible to PHPStan
+        // (the @return generic agrees with it), and invisible to the reproducibility
+        // check, because a regenerated `data: null` diffs clean against a committed
+        // one. That silence is how issue #81 survived two regenerations. Refuse.
+        if ($shape['responseType'] === 'void' && $shape['statusCode'] !== null) {
+            $untypeableBodies[] = sprintf(
+                '  %s — %s application/json schema (%s)',
+                $op['operationId'],
+                $shape['statusCode'],
+                match (true) {
+                    $shape['schemaName'] !== null => "#/components/schemas/{$shape['schemaName']}",
+                    $shape['schema'] !== []       => 'declared inline: ' . implode(' + ', array_keys($shape['schema'])),
+                    default                       => 'declared inline',
+                },
+            );
         }
 
         $tagOps[$tag][] = [
@@ -832,12 +794,12 @@ foreach ($paths as $path => $pathItem) {
             'requestBody'       => $requestBody,
             'isAuth'            => $isAuth,
             'scopes'            => $scopes,
-            'schemaName'        => $schemaName,
-            'responseType'      => $responseType,
-            'dtoClass'          => $dtoClass,
-            'phpDocReturn'      => $phpDocReturn,
-            'xPages'            => $xPages,
-            'primitiveType'     => $primitiveType ?? ($primitivePhp ?? null),
+            'schemaName'        => $shape['schemaName'],
+            'responseType'      => $shape['responseType'],
+            'dtoClass'          => $shape['dtoClass'],
+            'phpDocReturn'      => $shape['phpDocReturn'],
+            'xPages'            => $shape['xPages'],
+            'primitiveType'     => $shape['primitiveType'],
             '_commonModelTypes' => $commonModelTypes,
             // ESI spec extensions — baked in at generation time
             'cacheAge'          => isset($op['x-cache-age']) ? (int) $op['x-cache-age'] : null,
@@ -846,6 +808,18 @@ foreach ($paths as $path => $pathItem) {
             'cursor'            => ($op['x-pagination'] ?? null) === 'cursor',
         ];
     }
+}
+
+// Unconditional, like the write-set floor below and unlike assertSpecSane(): that
+// one guards input plausibility with heuristic thresholds that can legitimately
+// false-positive, so it earns a --no-strict escape. This guards correctness of the
+// emitted payload type, where there is nothing to trade off — a body we cannot type
+// must never be published as `EsiResult<null>`.
+if ($untypeableBodies !== []) {
+    fwrite(STDERR, 'FATAL: ' . count($untypeableBodies) . " operation(s) declare a response body the generator could not type:\n");
+    fwrite(STDERR, implode("\n", $untypeableBodies) . "\n");
+    fwrite(STDERR, "Refusing to emit `data: null` for a declared body — teach resolveResponseShape() the shape.\n");
+    exit(1);
 }
 
 /** @var array<array<mixed>> $allOps — flat list of all operations for operation-class generation */

@@ -99,6 +99,65 @@ it('surface manifest excludes GeneratedSpec and carries no date or spec hash', f
         ->and($manifest)->not->toContain(GeneratedSpec::SPEC_SHA256);
 });
 
+/**
+ * The #81 guard, from the manifest side.
+ *
+ * `EsiResult<null>` is correct for an endpoint that returns nothing and a silent
+ * bug for one that declares a body — the two are indistinguishable in the emitted
+ * code, which is why a dropped payload survived two regenerations. So pin the set
+ * rather than a pattern: these 20 are every operation in the document with no 2xx
+ * `application/json` body. An operation that quietly stops mapping its payload
+ * joins this list and fails here, whatever its HTTP verb.
+ *
+ * A verb heuristic cannot do this job — 6 of the 20 legitimate voids are POSTs,
+ * and 7 of the 8 operations #81 repaired were POSTs too.
+ *
+ * Adding a name here is a deliberate act: it asserts CCP really did drop the body.
+ */
+it('only endpoints with no declared response body return EsiResult<null>', function (): void {
+    /** @var array{symbols: list<string>} $surface */
+    $surface = json_decode(
+        (string) file_get_contents(repoRoot() . '/.esi/surface.json'),
+        true,
+        512,
+        JSON_THROW_ON_ERROR,
+    );
+
+    $void = [];
+    foreach ($surface['symbols'] as $symbol) {
+        if (! str_contains($symbol, '[@return EsiResult<null>]')) {
+            continue;
+        }
+        if (preg_match('/^method \S+\\\\Resources\\\\\w+\\\\(\w+)::execute\(/', $symbol, $match) === 1) {
+            $void[] = $match[1];
+        }
+    }
+    sort($void);
+
+    expect($void)->toBe([
+        'DeleteCharactersCharacterIdContacts',
+        'DeleteCharactersCharacterIdFittingsFittingId',
+        'DeleteCharactersCharacterIdMailLabelsLabelId',
+        'DeleteCharactersCharacterIdMailMailId',
+        'DeleteFleetsFleetIdMembersMemberId',
+        'DeleteFleetsFleetIdSquadsSquadId',
+        'DeleteFleetsFleetIdWingsWingId',
+        'PostFleetsFleetIdMembers',
+        'PostUiAutopilotWaypoint',
+        'PostUiOpenwindowContract',
+        'PostUiOpenwindowInformation',
+        'PostUiOpenwindowMarketdetails',
+        'PostUiOpenwindowNewmail',
+        'PutCharactersCharacterIdCalendarEventId',
+        'PutCharactersCharacterIdContacts',
+        'PutCharactersCharacterIdMailMailId',
+        'PutFleetsFleetId',
+        'PutFleetsFleetIdMembersMemberId',
+        'PutFleetsFleetIdSquadsSquadId',
+        'PutFleetsFleetIdWingsWingId',
+    ]);
+});
+
 it('every generated file is represented in the surface manifest', function (): void {
     /** @var array{symbols: list<string>} $surface */
     $surface = json_decode(

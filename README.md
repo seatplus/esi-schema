@@ -384,13 +384,13 @@ automatically a major.
 
 | You want | Use |
 |---|---|
-| Keep working, ride ESI forward (the default) | `^3.0` |
-| Freeze the PHP surface, still take fixes | `~3.4.0` |
-| Freeze one exact ESI compatibility date | an exact version, e.g. `3.4.2` |
+| Keep working, ride ESI forward (the default) | `^4.0` |
+| Freeze the PHP surface, still take fixes | `~4.0.0` |
+| Freeze one exact ESI compatibility date | an exact version, e.g. `4.0.1` |
 
 Pinning an exact version is the only honest way to pin a date: a caret constraint
-spans an open-ended range of future releases, so `^3.0` cannot express "the
-2026-05-19 wire contract".
+spans an open-ended range of future releases, so `^4.0` cannot express "the
+2026-07-21 wire contract".
 
 **There are no `N.x` branches.** Packagist serves every constraint from tags, and
 generated code is committed, so every compatibility date this package ever shipped
