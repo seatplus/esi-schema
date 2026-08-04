@@ -200,17 +200,24 @@ All test commands run from the repository root:
 composer test               # Full suite: lint + PHPStan + type-coverage + Pest
 composer test:unit          # Pest unit tests only
 composer test:types         # PHPStan static analysis
-composer test:type-coverage # 100% param/return/property types over src
+composer test:type-coverage # Pest --type-coverage --min=100
 composer lint               # Pint auto-format (modifies files)
 ```
 
-**100% type coverage is required.** PHPStan runs at `level: 4` over both `src` and
-`bin` (see `phpstan.neon.dist`) — the release scripts are analysed too. The
-coverage thresholds themselves live in `phpstan-type-coverage.neon`.
+**100% type coverage is required**, enforced by `pest-plugin-type-coverage`.
+PHPStan separately runs at `level: 4` over both `src` and `bin` (see
+`phpstan.neon.dist`) — the release scripts are analysed too.
+
+`tests/Pest.php` forces the type-coverage pass to run single-process; do not
+remove that without reading the comment there, or cold runs corrupt the plugin's
+cache. The plugin also silently skips files containing the substring `trait `,
+which `GetCharactersCharacterIdPortrait` matches by accident — see README.md.
 
 Local `composer test:unit` runs use Pest's Test Impact Analysis and may replay
-unaffected tests from cache instead of executing them. Use `vendor/bin/pest
---no-tia` for a guaranteed full run. CI always executes everything.
+unaffected tests from cache instead of executing them — but only when pcov or
+Xdebug is installed; otherwise Pest skips TIA and runs everything. Use
+`vendor/bin/pest --no-tia` for a guaranteed full run. CI always executes
+everything.
 
 Tests use an in-memory mock of `EsiTransportInterface`. No network access required.
 
