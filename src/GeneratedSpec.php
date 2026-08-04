@@ -17,19 +17,19 @@ namespace Seatplus\EsiSchema;
 final class GeneratedSpec
 {
     /** ESI compatibility date these types were generated for. */
-    public const string COMPATIBILITY_DATE = '2026-05-19';
+    public const string COMPATIBILITY_DATE = '2026-07-21';
 
     /** The header ESI uses to select a compatibility date. */
     public const string COMPATIBILITY_DATE_HEADER = 'X-Compatibility-Date';
 
     /** sha256 of the OpenAPI document consumed (.esi/openapi.yaml). */
-    public const string SPEC_SHA256 = '41b28c3182de223d0a8455d380f1b77b57f9aa6e9407fff067990733f31b2756';
+    public const string SPEC_SHA256 = 'f2a7c402eb7ccdd8342702eea8eb01d95a1a355bfed6c260fee25b46cb90e605';
 
     /** Number of generated DTO classes under src/Responses. */
-    public const int DTO_COUNT = 268;
+    public const int DTO_COUNT = 272;
 
     /** Number of generated per-route classes under src/Resources/{Tag}. */
-    public const int ROUTE_COUNT = 218;
+    public const int ROUTE_COUNT = 219;
 
     /** Number of generated tag wrapper classes under src/Resources. */
     public const int WRAPPER_COUNT = 36;

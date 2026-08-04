@@ -9,6 +9,8 @@ use Seatplus\EsiSchema\Resources\Meta\GetMetaChangelog;
 use Seatplus\EsiSchema\Responses\MetaChangelog;
 use Seatplus\EsiSchema\Resources\Meta\GetMetaCompatibilityDates;
 use Seatplus\EsiSchema\Responses\MetaCompatibilityDates;
+use Seatplus\EsiSchema\Resources\Meta\GetMetaName;
+use Seatplus\EsiSchema\Responses\MetaName;
 use Seatplus\EsiSchema\Resources\Meta\GetMetaStatus;
 use Seatplus\EsiSchema\Responses\MetaStatus;
 
@@ -38,6 +40,14 @@ final class MetaResource
     public function getMetaCompatibilityDates(): MetaCompatibilityDates
     {
         return GetMetaCompatibilityDates::execute($this->transport);
+    }
+
+    /**
+     * @return MetaName
+     */
+    public function getMetaName(): MetaName
+    {
+        return GetMetaName::execute($this->transport);
     }
 
     /**
