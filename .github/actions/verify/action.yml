@@ -33,22 +33,11 @@ runs:
       shell: bash
       run: composer install --no-interaction --prefer-dist
 
-    # The composer scripts stay the definition of each gate, so CI cannot drift
-    # from what developers run: pint --test, phpstan (level 4), and
-    # pest --type-coverage --min=100.
-    - name: Lint, analyse, type coverage
+    # composer.json's `test` script is already the single definition of green:
+    # pint --test, phpstan, pest, pest --type-coverage --min=100.
+    - name: Lint, analyse, test
       shell: bash
-      run: |
-        composer test:lint
-        composer test:types
-        composer test:type-coverage
-
-    # Not `composer test:unit`, which passes `--tia` for local use. `--ci` is
-    # Pest's own opt-out: a release gate must execute every test, never replay one
-    # from a cached dependency graph. Same split as seatplus/eveapi.
-    - name: Test
-      shell: bash
-      run: vendor/bin/pest --ci --no-coverage
+      run: composer test
 
     # Proves src/ is exactly what the committed spec produces. Catches a
     # hand-edited generated file, a stale manifest, and a spec swapped without

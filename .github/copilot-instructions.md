@@ -204,14 +204,8 @@ composer test:type-coverage # Pest --type-coverage --min=100
 composer lint               # Pint auto-format (modifies files)
 ```
 
-**100% type coverage is required**, enforced by `pest-plugin-type-coverage`.
-PHPStan separately runs at `level: 4` over both `src` and `bin` (see
-`phpstan.neon.dist`) — the release scripts are analysed too.
-
-`composer test:unit` passes `--tia` and may replay unaffected tests from cache
-instead of executing them — but only when pcov or Xdebug is installed; otherwise
-Pest skips TIA and runs everything. Use `vendor/bin/pest --no-tia` for a guaranteed
-full run. CI runs `vendor/bin/pest --ci`, which opts out of TIA.
+**100% type coverage is required.** PHPStan runs at `level: 4` over both `src` and
+`bin` (see `phpstan.neon.dist`) — the release scripts are analysed too.
 
 Tests use an in-memory mock of `EsiTransportInterface`. No network access required.
 

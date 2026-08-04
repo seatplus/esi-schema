@@ -483,37 +483,8 @@ diff can ever see a removal.
 composer test               # lint + types + type-coverage + unit
 composer test:unit          # Pest tests only
 composer test:types         # PHPStan static analysis
-composer test:type-coverage # Pest --type-coverage --min=100
+composer test:type-coverage # 100% type coverage check
 composer lint               # Pint auto-format (modifies files)
-```
-
-### Test Impact Analysis
-
-Local runs replay the tests your change cannot have affected instead of executing
-them. Edit one source file and only the test files that touch it actually run —
-measured on a checkout with pcov, that is ~3.9s down to ~1.5s, and an untouched
-tree replays in ~0.9s. Comment-only and formatting-only edits affect nothing,
-because the change detection hashes PHP with comments and whitespace stripped.
-
-This needs a coverage driver to record which source files each test touches.
-Without pcov or Xdebug, Pest prints `TIA as skipped as it needs Needs ext-pcov or
-Xdebug` and runs the full suite — so on a stock PHP nothing changes.
-
-`composer test:unit` passes `--tia` for local use. **CI runs `vendor/bin/pest --ci`
-instead, which opts out of TIA** — a release gate must execute every test, never
-replay one from a cache. The dependency graph lives outside the repository
-(`~/.pest/tia/`), so there is nothing to gitignore.
-
-```bash
-vendor/bin/pest --no-tia       # one full run, ignoring the cache
-vendor/bin/pest --tia --fresh  # discard and re-record the dependency graph
-```
-
-To actually exercise TIA locally, load a coverage driver:
-
-```bash
-php -d zend_extension=/path/to/xdebug.so -d xdebug.mode=coverage \
-    vendor/bin/pest --tia
 ```
 
 ---

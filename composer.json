@@ -49,7 +49,7 @@
             "@test:type-coverage",
             "@test:unit"
         ],
-        "test:unit": "vendor/bin/pest --tia --no-coverage",
+        "test:unit": "vendor/bin/pest --no-coverage",
         "test:lint": "vendor/bin/pint --test",
         "lint": "vendor/bin/pint",
         "test:types": "vendor/bin/phpstan analyse --no-progress",
