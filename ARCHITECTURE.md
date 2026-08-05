@@ -222,6 +222,8 @@ interface EsiTransportInterface
 
 All HTTP concerns (OAuth, RFC 7234 caching, error-limit tracking, retry) are delegated to the implementation.
 
+`$method` is part of the contract: generated Resources always pass an **uppercase** HTTP method token (`GET`, `POST`, `PUT`, `DELETE`), as RFC 9110 §9.1 requires. Method tokens are case-sensitive, so a transport can forward the value verbatim. Until issue #83 the generator passed the lowercase OpenAPI path-item key straight through and the interface said nothing about casing — which worked only because Guzzle silently uppercased. Guzzle 7.11 deprecated that and 8.0 preserves casing, so `bin/generate.php` now normalises at the spec boundary and the guarantee is written down here.
+
 ### Rationale
 - **Tests use a mock** — no network required for the entire test suite.
 - **Single seam** — when ESI changes its auth model, only the transport changes.
@@ -232,6 +234,7 @@ All HTTP concerns (OAuth, RFC 7234 caching, error-limit tracking, retry) are del
 
 ### Consequences
 - Reference implementation: [seatplus/esi-client](https://github.com/seatplus/esi-client).
+- An unspecified parameter contract is a defect even when every implementation happens to cope. `strtoupper()` in one transport cleared the symptom; only stating the guarantee lets the next transport rely on it.
 
 ---
 

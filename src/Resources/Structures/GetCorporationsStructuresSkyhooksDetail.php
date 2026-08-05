@@ -62,7 +62,7 @@ final class GetCorporationsStructuresSkyhooksDetail implements EsiOperationInter
     public static function execute(EsiTransportInterface $transport, int $skyhookId, int $corporationId): CorporationsStructuresSkyhooksDetail
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/corporations/{corporation_id}/structures/skyhooks/{skyhook_id}', ['skyhook_id' => $skyhookId, 'corporation_id' => $corporationId], []);
+        $response = $transport->invoke('GET', '/corporations/{corporation_id}/structures/skyhooks/{skyhook_id}', ['skyhook_id' => $skyhookId, 'corporation_id' => $corporationId], []);
         $dto = CorporationsStructuresSkyhooksDetail::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

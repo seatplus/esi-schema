@@ -62,7 +62,7 @@ final class GetCharactersCharacterIdImplants implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $characterId): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/characters/{character_id}/implants', ['character_id' => $characterId], []);
+        $response = $transport->invoke('GET', '/characters/{character_id}/implants', ['character_id' => $characterId], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
         return new EsiResult(

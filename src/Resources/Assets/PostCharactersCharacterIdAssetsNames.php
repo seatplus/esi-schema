@@ -63,7 +63,7 @@ final class PostCharactersCharacterIdAssetsNames implements EsiOperationInterfac
     public static function execute(EsiTransportInterface $transport, mixed $requestBody, int $characterId): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('post', '/characters/{character_id}/assets/names', ['character_id' => $characterId], [], (array) $requestBody);
+        $response = $transport->invoke('POST', '/characters/{character_id}/assets/names', ['character_id' => $characterId], [], (array) $requestBody);
         return new EsiResult(
             data: array_map(
                 fn (object $item) => CharactersCharacterIdAssetsNamesPostItem::from($item),

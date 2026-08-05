@@ -61,7 +61,7 @@ final class GetDogmaEffects implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/dogma/effects', [], []);
+        $response = $transport->invoke('GET', '/dogma/effects', [], []);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
         return new EsiResult(

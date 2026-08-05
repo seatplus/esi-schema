@@ -61,7 +61,7 @@ final class GetAlliancesAllianceIdIcons implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $allianceId): AlliancesAllianceIdIconsGet
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/alliances/{alliance_id}/icons', ['alliance_id' => $allianceId], []);
+        $response = $transport->invoke('GET', '/alliances/{alliance_id}/icons', ['alliance_id' => $allianceId], []);
         $dto = AlliancesAllianceIdIconsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

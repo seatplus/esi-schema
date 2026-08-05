@@ -61,7 +61,7 @@ final class GetUniverseTypesTypeId implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $typeId): UniverseTypesTypeIdGet
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/universe/types/{type_id}', ['type_id' => $typeId], []);
+        $response = $transport->invoke('GET', '/universe/types/{type_id}', ['type_id' => $typeId], []);
         $dto = UniverseTypesTypeIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

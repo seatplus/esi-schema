@@ -62,7 +62,7 @@ final class DeleteFleetsFleetIdWingsWingId implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $fleetId, int $wingId): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('delete', '/fleets/{fleet_id}/wings/{wing_id}', ['fleet_id' => $fleetId, 'wing_id' => $wingId], [], []);
+        $response = $transport->invoke('DELETE', '/fleets/{fleet_id}/wings/{wing_id}', ['fleet_id' => $fleetId, 'wing_id' => $wingId], [], []);
         return new EsiResult(
             data: null,
             pages: $response->pages,

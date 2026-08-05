@@ -61,7 +61,7 @@ final class GetUniverseAsteroidBeltsAsteroidBeltId implements EsiOperationInterf
     public static function execute(EsiTransportInterface $transport, int $asteroidBeltId): UniverseAsteroidBeltsAsteroidBeltIdGet
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/universe/asteroid_belts/{asteroid_belt_id}', ['asteroid_belt_id' => $asteroidBeltId], []);
+        $response = $transport->invoke('GET', '/universe/asteroid_belts/{asteroid_belt_id}', ['asteroid_belt_id' => $asteroidBeltId], []);
         $dto = UniverseAsteroidBeltsAsteroidBeltIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

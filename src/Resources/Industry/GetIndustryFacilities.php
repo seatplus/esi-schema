@@ -62,7 +62,7 @@ final class GetIndustryFacilities implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/industry/facilities', [], []);
+        $response = $transport->invoke('GET', '/industry/facilities', [], []);
         return new EsiResult(
             data: array_map(
                 fn (object $item) => IndustryFacilitiesGetItem::from($item),

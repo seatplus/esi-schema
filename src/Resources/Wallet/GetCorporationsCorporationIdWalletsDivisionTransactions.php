@@ -63,7 +63,7 @@ final class GetCorporationsCorporationIdWalletsDivisionTransactions implements E
     public static function execute(EsiTransportInterface $transport, int $corporationId, int $division, ?int $fromId = null): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/corporations/{corporation_id}/wallets/{division}/transactions', ['corporation_id' => $corporationId, 'division' => $division], ['from_id' => $fromId]);
+        $response = $transport->invoke('GET', '/corporations/{corporation_id}/wallets/{division}/transactions', ['corporation_id' => $corporationId, 'division' => $division], ['from_id' => $fromId]);
         return new EsiResult(
             data: array_map(
                 fn (object $item) => CorporationsCorporationIdWalletsDivisionTransactionsGetItem::from($item),

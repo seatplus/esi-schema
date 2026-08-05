@@ -62,7 +62,7 @@ final class PostFleetsFleetIdWings implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $fleetId): FleetsFleetIdWingsPost
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('post', '/fleets/{fleet_id}/wings', ['fleet_id' => $fleetId], [], []);
+        $response = $transport->invoke('POST', '/fleets/{fleet_id}/wings', ['fleet_id' => $fleetId], [], []);
         $dto = FleetsFleetIdWingsPost::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

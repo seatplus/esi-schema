@@ -61,7 +61,7 @@ final class GetUniverseSchematicsSchematicId implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $schematicId): UniverseSchematicsSchematicIdGet
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/universe/schematics/{schematic_id}', ['schematic_id' => $schematicId], []);
+        $response = $transport->invoke('GET', '/universe/schematics/{schematic_id}', ['schematic_id' => $schematicId], []);
         $dto = UniverseSchematicsSchematicIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

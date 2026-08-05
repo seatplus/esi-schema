@@ -61,7 +61,7 @@ final class GetUniverseStargatesStargateId implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $stargateId): UniverseStargatesStargateIdGet
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/universe/stargates/{stargate_id}', ['stargate_id' => $stargateId], []);
+        $response = $transport->invoke('GET', '/universe/stargates/{stargate_id}', ['stargate_id' => $stargateId], []);
         $dto = UniverseStargatesStargateIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

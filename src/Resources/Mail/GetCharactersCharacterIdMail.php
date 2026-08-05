@@ -63,7 +63,7 @@ final class GetCharactersCharacterIdMail implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $characterId, ?array $labels = null, ?int $lastMailId = null): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/characters/{character_id}/mail', ['character_id' => $characterId], ['labels' => $labels, 'last_mail_id' => $lastMailId]);
+        $response = $transport->invoke('GET', '/characters/{character_id}/mail', ['character_id' => $characterId], ['labels' => $labels, 'last_mail_id' => $lastMailId]);
         return new EsiResult(
             data: array_map(
                 fn (object $item) => CharactersCharacterIdMailGetItem::from($item),

@@ -61,7 +61,7 @@ final class GetMetaName implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport): MetaName
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/meta/name', [], []);
+        $response = $transport->invoke('GET', '/meta/name', [], []);
         $dto = MetaName::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

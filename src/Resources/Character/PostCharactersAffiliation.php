@@ -62,7 +62,7 @@ final class PostCharactersAffiliation implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, mixed $requestBody): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('post', '/characters/affiliation', [], [], (array) $requestBody);
+        $response = $transport->invoke('POST', '/characters/affiliation', [], [], (array) $requestBody);
         return new EsiResult(
             data: array_map(
                 fn (object $item) => CharactersAffiliationPostItem::from($item),

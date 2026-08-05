@@ -61,7 +61,7 @@ final class GetUniverseMoonsMoonId implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $moonId): UniverseMoonsMoonIdGet
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/universe/moons/{moon_id}', ['moon_id' => $moonId], []);
+        $response = $transport->invoke('GET', '/universe/moons/{moon_id}', ['moon_id' => $moonId], []);
         $dto = UniverseMoonsMoonIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

@@ -61,7 +61,7 @@ final class GetStatus implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport): StatusGet
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/status', [], []);
+        $response = $transport->invoke('GET', '/status', [], []);
         $dto = StatusGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

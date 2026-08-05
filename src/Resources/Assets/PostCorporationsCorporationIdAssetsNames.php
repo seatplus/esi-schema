@@ -63,7 +63,7 @@ final class PostCorporationsCorporationIdAssetsNames implements EsiOperationInte
     public static function execute(EsiTransportInterface $transport, mixed $requestBody, int $corporationId): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('post', '/corporations/{corporation_id}/assets/names', ['corporation_id' => $corporationId], [], (array) $requestBody);
+        $response = $transport->invoke('POST', '/corporations/{corporation_id}/assets/names', ['corporation_id' => $corporationId], [], (array) $requestBody);
         return new EsiResult(
             data: array_map(
                 fn (object $item) => CorporationsCorporationIdAssetsNamesPostItem::from($item),

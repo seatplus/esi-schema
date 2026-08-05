@@ -62,7 +62,7 @@ final class GetCharactersCharacterIdMailLabels implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $characterId): CharactersCharacterIdMailLabelsGet
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/characters/{character_id}/mail/labels', ['character_id' => $characterId], []);
+        $response = $transport->invoke('GET', '/characters/{character_id}/mail/labels', ['character_id' => $characterId], []);
         $dto = CharactersCharacterIdMailLabelsGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

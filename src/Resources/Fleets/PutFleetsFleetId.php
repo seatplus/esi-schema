@@ -62,7 +62,7 @@ final class PutFleetsFleetId implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, mixed $requestBody, int $fleetId): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('put', '/fleets/{fleet_id}', ['fleet_id' => $fleetId], [], (array) $requestBody);
+        $response = $transport->invoke('PUT', '/fleets/{fleet_id}', ['fleet_id' => $fleetId], [], (array) $requestBody);
         return new EsiResult(
             data: null,
             pages: $response->pages,

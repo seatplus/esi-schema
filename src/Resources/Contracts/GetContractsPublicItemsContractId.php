@@ -63,7 +63,7 @@ final class GetContractsPublicItemsContractId implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $contractId, int $page = 1): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/contracts/public/items/{contract_id}', ['contract_id' => $contractId], ['page' => $page]);
+        $response = $transport->invoke('GET', '/contracts/public/items/{contract_id}', ['contract_id' => $contractId], ['page' => $page]);
         return new EsiResult(
             data: array_map(
                 fn (object $item) => ContractsPublicItemsContractIdGetItem::from($item),

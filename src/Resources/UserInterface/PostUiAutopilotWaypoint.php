@@ -62,7 +62,7 @@ final class PostUiAutopilotWaypoint implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, bool $addToBeginning, bool $clearOtherWaypoints, int $destinationId): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('post', '/ui/autopilot/waypoint', [], ['add_to_beginning' => $addToBeginning, 'clear_other_waypoints' => $clearOtherWaypoints, 'destination_id' => $destinationId], []);
+        $response = $transport->invoke('POST', '/ui/autopilot/waypoint', [], ['add_to_beginning' => $addToBeginning, 'clear_other_waypoints' => $clearOtherWaypoints, 'destination_id' => $destinationId], []);
         return new EsiResult(
             data: null,
             pages: $response->pages,

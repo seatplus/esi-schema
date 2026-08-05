@@ -63,7 +63,7 @@ final class GetCharactersCharacterIdContractsContractIdItems implements EsiOpera
     public static function execute(EsiTransportInterface $transport, int $characterId, int $contractId): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/characters/{character_id}/contracts/{contract_id}/items', ['character_id' => $characterId, 'contract_id' => $contractId], []);
+        $response = $transport->invoke('GET', '/characters/{character_id}/contracts/{contract_id}/items', ['character_id' => $characterId, 'contract_id' => $contractId], []);
         return new EsiResult(
             data: array_map(
                 fn (object $item) => CharactersCharacterIdContractsContractIdItemsGetItem::from($item),

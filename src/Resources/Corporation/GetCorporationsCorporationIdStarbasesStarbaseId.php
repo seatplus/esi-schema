@@ -62,7 +62,7 @@ final class GetCorporationsCorporationIdStarbasesStarbaseId implements EsiOperat
     public static function execute(EsiTransportInterface $transport, int $corporationId, int $starbaseId, int $systemId): CorporationsCorporationIdStarbasesStarbaseIdGet
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/corporations/{corporation_id}/starbases/{starbase_id}', ['corporation_id' => $corporationId, 'starbase_id' => $starbaseId], ['system_id' => $systemId]);
+        $response = $transport->invoke('GET', '/corporations/{corporation_id}/starbases/{starbase_id}', ['corporation_id' => $corporationId, 'starbase_id' => $starbaseId], ['system_id' => $systemId]);
         $dto = CorporationsCorporationIdStarbasesStarbaseIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

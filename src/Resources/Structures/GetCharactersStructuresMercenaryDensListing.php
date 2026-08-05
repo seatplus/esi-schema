@@ -62,7 +62,7 @@ final class GetCharactersStructuresMercenaryDensListing implements EsiOperationI
     public static function execute(EsiTransportInterface $transport, int $characterId): CharactersStructuresMercenaryDensListing
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/characters/{character_id}/structures/mercenary-dens', ['character_id' => $characterId], []);
+        $response = $transport->invoke('GET', '/characters/{character_id}/structures/mercenary-dens', ['character_id' => $characterId], []);
         $dto = CharactersStructuresMercenaryDensListing::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

@@ -62,7 +62,7 @@ final class GetCharactersMercenaryTacticalOperationsDetail implements EsiOperati
     public static function execute(EsiTransportInterface $transport, string $operationId, int $characterId): CharactersMercenaryTacticalOperationsDetail
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/characters/{character_id}/mercenary-tactical-operations/{operation_id}', ['operation_id' => $operationId, 'character_id' => $characterId], []);
+        $response = $transport->invoke('GET', '/characters/{character_id}/mercenary-tactical-operations/{operation_id}', ['operation_id' => $operationId, 'character_id' => $characterId], []);
         $dto = CharactersMercenaryTacticalOperationsDetail::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

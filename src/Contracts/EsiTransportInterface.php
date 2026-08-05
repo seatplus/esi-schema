@@ -15,6 +15,14 @@ namespace Seatplus\EsiSchema\Contracts;
 interface EsiTransportInterface
 {
     /**
+     * Perform one ESI call.
+     *
+     * $method is guaranteed to be an uppercase HTTP method token as required by
+     * RFC 9110 §9.1 — 'GET', 'POST', 'PUT', 'DELETE'. Method tokens are
+     * case-sensitive, so implementations may forward it verbatim to any HTTP
+     * client and must not normalise it.
+     *
+     * @param  string  $method  Uppercase HTTP method token, e.g. 'GET'.
      * @param  array<string, mixed>  $pathValues
      * @param  array<string, mixed>  $queryParams
      * @param  array<mixed>          $requestBody
