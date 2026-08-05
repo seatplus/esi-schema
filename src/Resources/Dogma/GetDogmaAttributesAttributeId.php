@@ -61,7 +61,7 @@ final class GetDogmaAttributesAttributeId implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $attributeId): DogmaAttributesAttributeIdGet
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/dogma/attributes/{attribute_id}', ['attribute_id' => $attributeId], []);
+        $response = $transport->invoke('GET', '/dogma/attributes/{attribute_id}', ['attribute_id' => $attributeId], []);
         $dto = DogmaAttributesAttributeIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

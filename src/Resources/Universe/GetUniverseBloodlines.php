@@ -62,7 +62,7 @@ final class GetUniverseBloodlines implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/universe/bloodlines', [], []);
+        $response = $transport->invoke('GET', '/universe/bloodlines', [], []);
         return new EsiResult(
             data: array_map(
                 fn (object $item) => UniverseBloodlinesGetItem::from($item),

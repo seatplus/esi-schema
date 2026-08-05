@@ -63,7 +63,7 @@ final class GetFleetsFleetIdWings implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $fleetId): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/fleets/{fleet_id}/wings', ['fleet_id' => $fleetId], []);
+        $response = $transport->invoke('GET', '/fleets/{fleet_id}/wings', ['fleet_id' => $fleetId], []);
         return new EsiResult(
             data: array_map(
                 fn (object $item) => FleetsFleetIdWingsGetItem::from($item),

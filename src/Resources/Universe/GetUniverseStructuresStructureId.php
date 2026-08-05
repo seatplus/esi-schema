@@ -62,7 +62,7 @@ final class GetUniverseStructuresStructureId implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $structureId): UniverseStructuresStructureIdGet
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/universe/structures/{structure_id}', ['structure_id' => $structureId], []);
+        $response = $transport->invoke('GET', '/universe/structures/{structure_id}', ['structure_id' => $structureId], []);
         $dto = UniverseStructuresStructureIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

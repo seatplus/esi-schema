@@ -62,7 +62,7 @@ final class GetCharactersAccessListsListing implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $characterId): CharactersAccessListsListing
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/characters/{character_id}/access-lists', ['character_id' => $characterId], []);
+        $response = $transport->invoke('GET', '/characters/{character_id}/access-lists', ['character_id' => $characterId], []);
         $dto = CharactersAccessListsListing::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

@@ -272,6 +272,8 @@ class MyTransport implements EsiTransportInterface
 }
 ```
 
+`$method` always arrives as an **uppercase** HTTP method token — `GET`, `POST`, `PUT`, `DELETE` — as RFC 9110 §9.1 requires. Method tokens are case-sensitive, so forward it verbatim; there is no need to normalise it.
+
 The reference implementation is [seatplus/esi-client](https://github.com/seatplus/esi-client), which handles OAuth, RFC 7234 caching, error-limit tracking, and retry logic.
 
 ---

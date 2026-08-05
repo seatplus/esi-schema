@@ -61,7 +61,7 @@ final class GetUniverseGraphicsGraphicId implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $graphicId): UniverseGraphicsGraphicIdGet
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/universe/graphics/{graphic_id}', ['graphic_id' => $graphicId], []);
+        $response = $transport->invoke('GET', '/universe/graphics/{graphic_id}', ['graphic_id' => $graphicId], []);
         $dto = UniverseGraphicsGraphicIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

@@ -61,7 +61,7 @@ final class GetMetaStatus implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport): MetaStatus
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/meta/status', [], []);
+        $response = $transport->invoke('GET', '/meta/status', [], []);
         $dto = MetaStatus::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

@@ -61,7 +61,7 @@ final class GetMetaChangelog implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport): MetaChangelog
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/meta/changelog', [], []);
+        $response = $transport->invoke('GET', '/meta/changelog', [], []);
         $dto = MetaChangelog::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

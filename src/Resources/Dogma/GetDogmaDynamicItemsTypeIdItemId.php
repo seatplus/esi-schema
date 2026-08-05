@@ -61,7 +61,7 @@ final class GetDogmaDynamicItemsTypeIdItemId implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $itemId, int $typeId): DogmaDynamicItemsTypeIdItemIdGet
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/dogma/dynamic/items/{type_id}/{item_id}', ['item_id' => $itemId, 'type_id' => $typeId], []);
+        $response = $transport->invoke('GET', '/dogma/dynamic/items/{type_id}/{item_id}', ['item_id' => $itemId, 'type_id' => $typeId], []);
         $dto = DogmaDynamicItemsTypeIdItemIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

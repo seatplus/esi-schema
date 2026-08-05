@@ -63,7 +63,7 @@ final class GetAlliancesAllianceIdContactsLabels implements EsiOperationInterfac
     public static function execute(EsiTransportInterface $transport, int $allianceId): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/alliances/{alliance_id}/contacts/labels', ['alliance_id' => $allianceId], []);
+        $response = $transport->invoke('GET', '/alliances/{alliance_id}/contacts/labels', ['alliance_id' => $allianceId], []);
         return new EsiResult(
             data: array_map(
                 fn (object $item) => AlliancesAllianceIdContactsLabelsGetItem::from($item),

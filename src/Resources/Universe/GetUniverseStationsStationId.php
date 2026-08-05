@@ -61,7 +61,7 @@ final class GetUniverseStationsStationId implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $stationId): UniverseStationsStationIdGet
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/universe/stations/{station_id}', ['station_id' => $stationId], []);
+        $response = $transport->invoke('GET', '/universe/stations/{station_id}', ['station_id' => $stationId], []);
         $dto = UniverseStationsStationIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

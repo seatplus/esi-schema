@@ -61,7 +61,7 @@ final class GetSovereigntySystems implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport): SovereigntySystems
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/sovereignty/systems', [], []);
+        $response = $transport->invoke('GET', '/sovereignty/systems', [], []);
         $dto = SovereigntySystems::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

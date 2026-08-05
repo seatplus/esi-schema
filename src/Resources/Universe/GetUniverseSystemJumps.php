@@ -62,7 +62,7 @@ final class GetUniverseSystemJumps implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/universe/system_jumps', [], []);
+        $response = $transport->invoke('GET', '/universe/system_jumps', [], []);
         return new EsiResult(
             data: array_map(
                 fn (object $item) => UniverseSystemJumpsGetItem::from($item),

@@ -61,7 +61,7 @@ final class GetUniverseGroupsGroupId implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $groupId): UniverseGroupsGroupIdGet
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/universe/groups/{group_id}', ['group_id' => $groupId], []);
+        $response = $transport->invoke('GET', '/universe/groups/{group_id}', ['group_id' => $groupId], []);
         $dto = UniverseGroupsGroupIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

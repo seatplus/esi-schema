@@ -62,7 +62,7 @@ final class PutCharactersCharacterIdMailMailId implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, mixed $requestBody, int $characterId, int $mailId): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('put', '/characters/{character_id}/mail/{mail_id}', ['character_id' => $characterId, 'mail_id' => $mailId], [], (array) $requestBody);
+        $response = $transport->invoke('PUT', '/characters/{character_id}/mail/{mail_id}', ['character_id' => $characterId, 'mail_id' => $mailId], [], (array) $requestBody);
         return new EsiResult(
             data: null,
             pages: $response->pages,

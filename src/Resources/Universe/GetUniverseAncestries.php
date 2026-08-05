@@ -62,7 +62,7 @@ final class GetUniverseAncestries implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/universe/ancestries', [], []);
+        $response = $transport->invoke('GET', '/universe/ancestries', [], []);
         return new EsiResult(
             data: array_map(
                 fn (object $item) => UniverseAncestriesGetItem::from($item),

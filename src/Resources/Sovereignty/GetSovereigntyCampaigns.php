@@ -62,7 +62,7 @@ final class GetSovereigntyCampaigns implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/sovereignty/campaigns', [], []);
+        $response = $transport->invoke('GET', '/sovereignty/campaigns', [], []);
         return new EsiResult(
             data: array_map(
                 fn (object $item) => SovereigntyCampaignsGetItem::from($item),

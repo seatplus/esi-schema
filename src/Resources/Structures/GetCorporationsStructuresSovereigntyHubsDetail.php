@@ -62,7 +62,7 @@ final class GetCorporationsStructuresSovereigntyHubsDetail implements EsiOperati
     public static function execute(EsiTransportInterface $transport, int $sovereigntyHubId, int $corporationId): CorporationsStructuresSovereigntyHubsDetail
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/corporations/{corporation_id}/structures/sovereignty-hubs/{sovereignty_hub_id}', ['sovereignty_hub_id' => $sovereigntyHubId, 'corporation_id' => $corporationId], []);
+        $response = $transport->invoke('GET', '/corporations/{corporation_id}/structures/sovereignty-hubs/{sovereignty_hub_id}', ['sovereignty_hub_id' => $sovereigntyHubId, 'corporation_id' => $corporationId], []);
         $dto = CorporationsStructuresSovereigntyHubsDetail::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

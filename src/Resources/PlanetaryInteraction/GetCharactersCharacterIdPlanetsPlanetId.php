@@ -62,7 +62,7 @@ final class GetCharactersCharacterIdPlanetsPlanetId implements EsiOperationInter
     public static function execute(EsiTransportInterface $transport, int $characterId, int $planetId): CharactersCharacterIdPlanetsPlanetIdGet
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/characters/{character_id}/planets/{planet_id}', ['character_id' => $characterId, 'planet_id' => $planetId], []);
+        $response = $transport->invoke('GET', '/characters/{character_id}/planets/{planet_id}', ['character_id' => $characterId, 'planet_id' => $planetId], []);
         $dto = CharactersCharacterIdPlanetsPlanetIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

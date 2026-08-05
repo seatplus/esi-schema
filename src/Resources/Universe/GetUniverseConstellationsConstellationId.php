@@ -61,7 +61,7 @@ final class GetUniverseConstellationsConstellationId implements EsiOperationInte
     public static function execute(EsiTransportInterface $transport, int $constellationId): UniverseConstellationsConstellationIdGet
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/universe/constellations/{constellation_id}', ['constellation_id' => $constellationId], []);
+        $response = $transport->invoke('GET', '/universe/constellations/{constellation_id}', ['constellation_id' => $constellationId], []);
         $dto = UniverseConstellationsConstellationIdGet::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

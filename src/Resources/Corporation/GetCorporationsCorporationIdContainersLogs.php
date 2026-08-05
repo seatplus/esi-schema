@@ -64,7 +64,7 @@ final class GetCorporationsCorporationIdContainersLogs implements EsiOperationIn
     public static function execute(EsiTransportInterface $transport, int $corporationId, int $page = 1): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/corporations/{corporation_id}/containers/logs', ['corporation_id' => $corporationId], ['page' => $page]);
+        $response = $transport->invoke('GET', '/corporations/{corporation_id}/containers/logs', ['corporation_id' => $corporationId], ['page' => $page]);
         return new EsiResult(
             data: array_map(
                 fn (object $item) => CorporationsCorporationIdContainersLogsGetItem::from($item),

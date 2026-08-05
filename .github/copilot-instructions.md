@@ -95,6 +95,7 @@ The single injection boundary. Implementations handle HTTP, OAuth, caching. This
 ```php
 public function invoke(string $method, string $path, array $pathValues, array $queryParams, array $requestBody): EsiRawResponse;
 ```
+`$method` is always an **uppercase** token (`GET`, `POST`, `PUT`, `DELETE`) per RFC 9110 §9.1 — the generator normalises the lowercase OpenAPI path-item key. Implementations forward it verbatim.
 
 ### `OperationMeta`
 Pre-call DTO. A `final readonly class` — **access properties directly**, no accessor methods:

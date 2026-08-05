@@ -62,7 +62,7 @@ final class GetFwStats implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/fw/stats', [], []);
+        $response = $transport->invoke('GET', '/fw/stats', [], []);
         return new EsiResult(
             data: array_map(
                 fn (object $item) => FwStatsGetItem::from($item),

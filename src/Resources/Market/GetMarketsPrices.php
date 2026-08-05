@@ -62,7 +62,7 @@ final class GetMarketsPrices implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/markets/prices', [], []);
+        $response = $transport->invoke('GET', '/markets/prices', [], []);
         return new EsiResult(
             data: array_map(
                 fn (object $item) => MarketsPricesGetItem::from($item),

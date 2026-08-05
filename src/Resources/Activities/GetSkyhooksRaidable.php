@@ -61,7 +61,7 @@ final class GetSkyhooksRaidable implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport): SkyhooksRaidable
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/skyhooks/raidable', [], []);
+        $response = $transport->invoke('GET', '/skyhooks/raidable', [], []);
         $dto = SkyhooksRaidable::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

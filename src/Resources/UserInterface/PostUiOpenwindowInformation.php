@@ -62,7 +62,7 @@ final class PostUiOpenwindowInformation implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $targetId): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('post', '/ui/openwindow/information', [], ['target_id' => $targetId], []);
+        $response = $transport->invoke('POST', '/ui/openwindow/information', [], ['target_id' => $targetId], []);
         return new EsiResult(
             data: null,
             pages: $response->pages,

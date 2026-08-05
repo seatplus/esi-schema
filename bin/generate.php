@@ -379,7 +379,7 @@ function buildInvoke(array $op): string
     $queryStr = empty($queryData) ? '[]' : '[' . implode(', ', $queryData) . ']';
     $bodyStr  = $op['requestBody'] ? '(array) $requestBody' : '[]';
 
-    if ($op['requestBody'] || $method !== 'get') {
+    if ($op['requestBody'] || $method !== 'GET') {
         return "\$this->transport->invoke('{$method}', '{$path}', {$uriStr}, {$queryStr}, {$bodyStr})";
     }
 
@@ -787,7 +787,14 @@ foreach ($paths as $path => $pathItem) {
 
         $tagOps[$tag][] = [
             'path'              => $path,
-            'httpMethod'        => $httpMethod,
+            // OpenAPI path-item keys are lowercase; HTTP method tokens are not.
+            // RFC 9110 §9.1 makes them case-sensitive and every registered method is
+            // uppercase, so 'get' and 'GET' are different methods on the wire. Guzzle
+            // silently uppercased until 7.11 deprecated it; 8.0 preserves casing, at
+            // which point an unnormalised verb becomes a wire-level defect in all 219
+            // generated calls. Normalise once here, at the boundary, so nothing
+            // downstream — buildInvoke()'s GET guard included — has to think about it.
+            'httpMethod'        => strtoupper($httpMethod),
             'methodName'        => $methodName,
             'tag'               => $tag,
             'params'            => $params,

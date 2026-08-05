@@ -62,7 +62,7 @@ final class GetMarketsRegionIdTypes implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $regionId, int $page = 1): EsiResult
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/markets/{region_id}/types', ['region_id' => $regionId], ['page' => $page]);
+        $response = $transport->invoke('GET', '/markets/{region_id}/types', ['region_id' => $regionId], ['page' => $page]);
         /** @var array<int> $data */
         $data = array_map(fn (mixed $i) => (int) $i, (array) $response->data);
         return new EsiResult(

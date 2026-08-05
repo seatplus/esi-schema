@@ -62,7 +62,7 @@ final class PostCharactersCharacterIdFittings implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, mixed $requestBody, int $characterId): CharactersCharacterIdFittingsPost
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('post', '/characters/{character_id}/fittings', ['character_id' => $characterId], [], (array) $requestBody);
+        $response = $transport->invoke('POST', '/characters/{character_id}/fittings', ['character_id' => $characterId], [], (array) $requestBody);
         $dto = CharactersCharacterIdFittingsPost::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;

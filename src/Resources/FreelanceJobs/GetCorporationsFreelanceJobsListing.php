@@ -62,7 +62,7 @@ final class GetCorporationsFreelanceJobsListing implements EsiOperationInterface
     public static function execute(EsiTransportInterface $transport, int $corporationId, ?string $after = null, ?string $before = null, ?int $limit = null): CorporationsFreelanceJobsListing
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
-        $response = $transport->invoke('get', '/corporations/{corporation_id}/freelance-jobs', ['corporation_id' => $corporationId], ['after' => $after, 'before' => $before, 'limit' => $limit]);
+        $response = $transport->invoke('GET', '/corporations/{corporation_id}/freelance-jobs', ['corporation_id' => $corporationId], ['after' => $after, 'before' => $before, 'limit' => $limit]);
         $dto = CorporationsFreelanceJobsListing::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
