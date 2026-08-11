@@ -336,11 +336,21 @@ a date, pin an exact version.
 - Tagging keys off *state on `main` versus the newest tag*, not off who pushed, so a
   bot-merged sync and a human-merged PR follow the identical path. There is no
   separate bot release route that can drift.
-- A major is held back: `esi-sync.yml` opens one issue and a human dispatches
-  `release.yml`. This is not Decision 8's gate returning — the artifact is a single
-  reused issue rather than an accumulating pull request, the classifier explains
-  exactly what broke, and nothing about the pipeline's future state depends on
-  anyone acting on it.
+- A major is held back from *releasing*, not from being *prepared*. `esi-sync.yml`
+  regenerates it, verifies it, opens a pull request with auto-merge off, and reports
+  it on one reused issue; the maintainer authorises the release by labelling that PR
+  `release:major` and merging, which `release.yml` reads off the merged pull request.
+  This is not Decision 8's gate returning — the artifact is a single reused issue and
+  a single content-addressed PR rather than an accumulating pile, the classifier
+  explains exactly what broke, and nothing about the pipeline's future state depends
+  on anyone acting on it.
+  The earlier form of this decision held back the pull request too, and told the
+  maintainer to "regenerate on a branch" and then dispatch `release.yml` from memory.
+  That asked a human to hand-redo work the bot had just done and discarded, in the
+  one case where the pipeline should help most, and it made the authorising act a
+  form filled in after the fact rather than a label on the diff being authorised.
+  The invariant — no major without a deliberate human act — is unchanged; only the
+  toil is gone.
 - Anything the classifier cannot categorise escalates to `undecidable` and blocks
   the release. The bias is asymmetric on purpose: a needless major costs one
   version number nobody must take, whereas a break shipped as a minor reaches every
