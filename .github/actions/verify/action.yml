@@ -39,18 +39,40 @@ runs:
       shell: bash
       run: composer test
 
-    # Proves src/ is exactly what the committed spec produces. Catches a
+    # Proves src/ is exactly what the vendored spec produces. Catches a
     # hand-edited generated file, a stale manifest, and a spec swapped without
     # regenerating — none of which the test suite can see.
+    #
+    # The comparison is against a snapshot of the tree as handed to this action,
+    # NOT `git diff` against HEAD. The invariant is a property of the tree under
+    # test, and the two are not the same thing: esi-sync.yml runs this composite on
+    # a tree it has just regenerated and has not committed yet, so a HEAD-relative
+    # diff reports the sync's own — entirely correct — output as drift. That is not
+    # a hypothetical; it failed every scheduled sync from 2026-08-05 onward, because
+    # the diff is non-empty exactly when there is something to release.
+    #
+    # Snapshot-relative also strictly widens what is caught: `git diff` ignores
+    # untracked files, so a generated file that the committed tree lacks was
+    # previously invisible here. `diff -r` sees it.
     - name: Generated code is reproducible from the vendored spec
       shell: bash
       run: |
         set -euo pipefail
+        snapshot="$(mktemp -d)"
+        cp -a src "$snapshot/src"
+        cp -a .esi/surface.json .esi/state.json "$snapshot/"
+
+        # Read the date before regenerating; generate.php rewrites state.json.
         php bin/generate.php \
           --spec=.esi/openapi.yaml \
-          --compatibility-date="$(jq -r .compatibility_date .esi/state.json)"
+          --compatibility-date="$(jq -r .compatibility_date "$snapshot/state.json")"
         vendor/bin/pint --quiet
-        if ! git diff --exit-code -- src/ .esi/surface.json .esi/state.json; then
+
+        drift=0
+        diff -ru "$snapshot/src" src || drift=1
+        diff -u "$snapshot/surface.json" .esi/surface.json || drift=1
+        diff -u "$snapshot/state.json" .esi/state.json || drift=1
+        if [ "$drift" -ne 0 ]; then
           echo "::error::src/ or .esi/ does not match .esi/openapi.yaml + bin/generate.php."
           echo "Either a generated file was hand-edited, or the committed state is stale."
           echo "Fix: php bin/generate.php --compatibility-date=<date> && vendor/bin/pint"
