@@ -230,7 +230,9 @@ The verdict is computed, not judged: `bin/api-diff.php` compares two
 Decision 8 for why the previous `N.x`-branch-per-date scheme was abandoned.
 
 There are **no `N.x` branches**. Do not create one, and do not add a workflow that
-does; `.github/workflows/esi-sync.yml` releases from `main` by tagging.
+does; `.github/workflows/esi-sync.yml` opens the sync pull request and
+`.github/workflows/release.yml` releases from `main` by tagging whatever lands there.
+A major only tags when the merged pull request carries the `release:major` label.
 
 Regenerate with:
 ```bash
