@@ -6,7 +6,7 @@ namespace Seatplus\EsiSchema\Resources;
 
 use Seatplus\EsiSchema\Contracts\EsiTransportInterface;
 use Seatplus\EsiSchema\Resources\Status\GetStatus;
-use Seatplus\EsiSchema\Responses\StatusGet;
+use Seatplus\EsiSchema\Responses\Status;
 
 /**
  * ESI Status resource — fluent wrapper around per-route static classes.
@@ -21,9 +21,9 @@ final class StatusResource
     }
 
     /**
-     * @return StatusGet
+     * @return Status
      */
-    public function getStatus(): StatusGet
+    public function getStatus(): Status
     {
         return GetStatus::execute($this->transport);
     }
