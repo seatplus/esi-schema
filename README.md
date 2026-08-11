@@ -422,14 +422,23 @@ published compatibility date and compares the resulting API surface manifest
 - **patch or minor** → it opens a pull request with **auto-merge enabled**. CI runs,
   the required check passes, the PR merges itself, and `release.yml` tags it. No
   human involved.
-- **major, or unclassifiable** → no pull request, nothing released; one issue is
-  opened for a human, who reviews the report and dispatches `release.yml` with an
-  explicit `bump=major`.
+- **major** → it opens a pull request **without** auto-merge and reports it on one
+  reused issue. The regeneration, the classifier's report and the full `Verify` run
+  are already done; what is left is the decision. To release it, add the
+  **`release:major`** label and merge — `release.yml` reads that label off the merged
+  pull request and tags. Merge without the label and the code lands while nothing is
+  tagged, which is the safe default; `release.yml` can still be dispatched with
+  `bump=major` afterwards.
+- **unclassifiable** → no pull request, nothing released, one issue for a human.
 
 `release.yml` watches `main`, so a bot-merged sync and a human-merged PR take the
-identical path to a tag. It refuses to auto-tag a major, refuses to re-tag an
-existing version, and afterwards checks the release is actually resolvable on
-Packagist.
+identical path to a tag. It never tags a major that no human authorised, refuses to
+re-tag an existing version, and afterwards checks the release is actually resolvable
+on Packagist.
+
+The `release:major` label also *raises* a computed patch or minor to a major, for
+breakage the surface diff cannot see — a behavioural change, a corrected contract.
+It cannot lower a bump; that still needs a dispatch with a stated reason.
 
 Nothing in this pipeline bypasses branch protection — the bot goes through the same
 required check as anyone else.

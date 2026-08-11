@@ -6,12 +6,25 @@ name: Release
 #
 # Two entry points:
 #
-#   push to main       Computes the bump with api-diff.php and tags automatically,
-#                      but only for patch and minor. A major is left alone: it needs
-#                      the explicit dispatch below.
-#   workflow_dispatch  An explicit bump. Needed for a surface-breaking sync, and for
-#                      hand-written changes to src/Contracts and friends, which are
+#   push to main       Computes the bump with api-diff.php and tags automatically for
+#                      patch and minor. A major tags too, but only when the pull
+#                      request that introduced the commit carries the `release:major`
+#                      label — see "Authorise a major" below.
+#   workflow_dispatch  An explicit bump. The fallback when there is no labelled PR to
+#                      read: a direct push to main, a merge someone forgot to label,
+#                      or hand-written changes to src/Contracts and friends, which are
 #                      not classified against a spec.
+#
+# Authorise a major: label the pull request `release:major`, then merge it.
+#
+# The invariant is unchanged — a major is never tagged without a deliberate human
+# act — but the act is now a label on the diff being authorised rather than a
+# dispatch performed from memory afterwards. That is strictly more auditable (the
+# authorisation is attached to the PR, by a user with write access, before the
+# merge) and strictly harder to get wrong: the old flow asked the maintainer to
+# retype a bump into a form, with nothing connecting it to what they had reviewed,
+# and a merge that silently released nothing if they forgot. Forgetting is still
+# safe — the code lands, no tag appears, and the dispatch above still works.
 #
 # A dispatch refuses a bump lower than the computed one, so "I'll just call it a
 # patch" is not available without an explicit override and a stated reason.
@@ -93,8 +106,22 @@ jobs:
       - name: Compute the version
         if: steps.guard.outputs.skip == 'false'
         id: plan
+        env:
+          # For the label lookup below. The App token rather than GITHUB_TOKEN only
+          # because it is already minted here and already reads pull requests.
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           set -euo pipefail
+
+          # Did a human authorise a major for this commit? On a push that question is
+          # answered by the pull request the commit came from: GitHub maps a squashed
+          # merge back to its PR, so the label survives the squash. A direct push to
+          # main has no PR and therefore no authorisation, which is the correct
+          # answer rather than a gap — use the dispatch for that.
+          major_authorised() {
+            gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls" \
+              --jq '.[].labels[].name' 2>/dev/null | grep -qx 'release:major'
+          }
           TAG="$(git tag -l --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -1)"
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
@@ -119,19 +146,44 @@ jobs:
           REQUESTED="${{ inputs.bump }}"
 
           if [ -z "$REQUESTED" ]; then
-            # push to main — take the computed bump, but never a major unattended.
+            # push to main — take the computed bump, and a major only when labelled.
             case "$COMPUTED" in
               patch|minor)
-                BUMP="$COMPUTED"
+                # The label raises: it says "this release is major", which is a claim
+                # about breakage the surface diff cannot see (a behavioural change,
+                # a corrected contract). Raising never needed a reason on dispatch
+                # either — only lowering does.
+                if major_authorised; then
+                  echo "::warning::release:major on the merged pull request raises computed '${COMPUTED}' to major."
+                  BUMP="major"
+                else
+                  BUMP="$COMPUTED"
+                fi
+                ;;
+              major)
+                if major_authorised; then
+                  echo "::notice::major authorised by the release:major label on the merged pull request."
+                  BUMP="major"
+                else
+                  echo "::notice::computed 'major', and the merged pull request is not labelled"
+                  echo "::notice::release:major — the code has landed, nothing has been tagged."
+                  echo "::notice::To release it: dispatch this workflow with bump=major. To have the"
+                  echo "::notice::merge do it next time: label the pull request release:major first."
+                  echo "release=false" >> "$GITHUB_OUTPUT"
+                  exit 0
+                fi
                 ;;
               none)
+                # Deliberately not label-overridable: "nothing changed in the surface"
+                # is the one case where a version number would be pure noise. A
+                # behavioural-only release is a dispatch.
                 echo "The API surface is unchanged since ${TAG} — nothing to release."
                 echo "release=false" >> "$GITHUB_OUTPUT"
                 exit 0
                 ;;
               *)
-                echo "::notice::computed '${COMPUTED}'. A major or unclassifiable change is not"
-                echo "::notice::released automatically — dispatch this workflow with an explicit bump."
+                echo "::notice::computed '${COMPUTED}'. An unclassifiable change is never released"
+                echo "::notice::automatically — dispatch this workflow with an explicit bump."
                 echo "release=false" >> "$GITHUB_OUTPUT"
                 exit 0
                 ;;

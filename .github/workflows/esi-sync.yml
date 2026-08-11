@@ -229,15 +229,29 @@ jobs:
       #
       # Tagging is not done here. release.yml watches main and tags whatever lands,
       # so the bot's merge and a human's merge take the identical path.
+      #
+      # A major opens a pull request too, and this is a deliberate correction. The
+      # rule is "never *release* a major unattended", and that was implemented as
+      # "never *prepare* one" — so the maintainer was handed a runbook ("regenerate
+      # on a branch, and merge it") telling them to redo by hand the exact work this
+      # job had just done and thrown away, for the one case where the pipeline should
+      # be helping most. A pull request is not a release: what releases a patch or
+      # minor is auto-merge, and that is precisely what a major does not get. The
+      # human still decides, but they decide by reading a diff that already exists,
+      # already passed Verify, and is already classified.
       - name: Open a sync pull request
+        id: pr
         if: |
           steps.change.outputs.todo == 'true' &&
           inputs.dry_run != true &&
-          (steps.classify.outputs.bump == 'patch' || steps.classify.outputs.bump == 'minor')
+          (steps.classify.outputs.bump == 'patch' ||
+           steps.classify.outputs.bump == 'minor' ||
+           steps.classify.outputs.bump == 'major')
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           set -euo pipefail
+          BUMP="${{ steps.classify.outputs.bump }}"
 
           # Content-addressed branch name: identical results reuse the identical
           # branch, so a repeated run is a no-op push rather than a new branch.
@@ -249,10 +263,32 @@ jobs:
           git config user.name  "seatplus-release[bot]"
           git config user.email "seatplus-release[bot]@users.noreply.github.com"
 
+          VERSION="$(php bin/next-version.php \
+            --current='${{ steps.base.outputs.tag }}' \
+            --bump="$BUMP")"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
           git checkout -b "$BRANCH"
           git add -A
-          git commit -m "feat: sync ESI schema for compatibility date ${{ steps.date.outputs.date }}" \
-                     -m "$(cat "$RUNNER_TEMP/report.md")"
+
+          # Nothing to commit means main *already* carries this regeneration and only
+          # the tag is missing — the state you land in by merging a major and
+          # forgetting the label, or by release.yml failing after a merge. There is no
+          # pull request to open (`gh pr create` would refuse an empty diff), and the
+          # old code path died here on `git commit` with "nothing to commit", which
+          # says nothing about the tag that is actually missing.
+          if git diff --cached --quiet; then
+            echo "state=already-on-main" >> "$GITHUB_OUTPUT"
+            echo "::notice::main already carries the ${{ steps.date.outputs.date }} regeneration;"
+            echo "::notice::it was never tagged. Dispatch release.yml with bump=${BUMP} to tag ${VERSION}."
+            exit 0
+          fi
+
+          # `feat!:` for a major, so the squashed subject on main states the break.
+          SUBJECT="feat: sync ESI schema for compatibility date ${{ steps.date.outputs.date }}"
+          [ "$BUMP" = "major" ] && SUBJECT="feat!: sync ESI schema for compatibility date ${{ steps.date.outputs.date }}"
+
+          git commit -m "$SUBJECT" -m "$(cat "$RUNNER_TEMP/report.md")"
           git push --force-with-lease origin "$BRANCH"
 
           # Each regeneration is a complete state, so a newer sync PR fully
@@ -263,20 +299,48 @@ jobs:
               --comment "Superseded by a newer ESI sync (\`${BRANCH}\`)."
           done
 
-          if [ -n "$(gh pr list --state open --head "$BRANCH" --json number --jq '.[0].number // ""')" ]; then
+          EXISTING="$(gh pr list --state open --head "$BRANCH" --json url --jq '.[0].url // ""')"
+          if [ -n "$EXISTING" ]; then
+            # Recorded so the escalation step can stay quiet about a major that is
+            # already sitting in front of the maintainer. Re-reporting an unchanged
+            # verdict every morning is how #85 collected seven identical comments.
+            echo "state=existing"   >> "$GITHUB_OUTPUT"
+            echo "url=$EXISTING"    >> "$GITHUB_OUTPUT"
             echo "A PR for this exact state is already open — nothing further to do."
             exit 0
           fi
 
-          VERSION="$(php bin/next-version.php \
-            --current='${{ steps.base.outputs.tag }}' \
-            --bump='${{ steps.classify.outputs.bump }}')"
+          # The label the maintainer applies to authorise a major release. Created
+          # here so it exists by the time they read the PR body asking for it.
+          # Non-fatal: a missing label costs a click, not a sync.
+          if [ "$BUMP" = "major" ]; then
+            gh label create release:major --force --color B60205 \
+              --description "Authorises release.yml to tag this merge as a major" >/dev/null \
+              || echo "::warning::could not ensure the release:major label exists"
+          fi
 
-          gh pr create --base main --head "$BRANCH" \
-            --title "feat: sync ESI schema — ${{ steps.date.outputs.date }} (${{ steps.classify.outputs.bump }} → ${VERSION})" \
-            --body "$(printf '%s\n\n%s\n' \
-                "Opened automatically by \`esi-sync.yml\`. Auto-merge is enabled: this lands on its own once CI is green, and \`release.yml\` then tags \`${VERSION}\`." \
-                "$(cat "$RUNNER_TEMP/report.md")")"
+          TITLE="feat: sync ESI schema — ${{ steps.date.outputs.date }} (${BUMP} → ${VERSION})"
+          NOTE="Opened automatically by \`esi-sync.yml\`. Auto-merge is enabled: this lands on its own once CI is green, and \`release.yml\` then tags \`${VERSION}\`."
+          if [ "$BUMP" = "major" ]; then
+            TITLE="feat!: sync ESI schema — ${{ steps.date.outputs.date }} (major → ${VERSION})"
+            NOTE="$(printf '%s\n\n%s\n\n%s' \
+              "Opened automatically by \`esi-sync.yml\`. **This one is surface-breaking, so auto-merge is deliberately off** — it waits for you." \
+              "To release it as \`${VERSION}\`: add the **\`release:major\`** label, then merge. \`release.yml\` reads that label off the merged pull request and tags. Merging *without* the label lands the code and tags nothing, which is the safe default — you can still tag afterwards by dispatching \`release.yml\` with \`bump=major\`." \
+              "Verify has already run against this exact tree: \`composer test\`, the reproducibility gate, and the spec-hash check are all green, and both classification routes agree the change is breaking.")"
+          fi
+
+          # gh prints the new PR's URL last; take it from there rather than asking
+          # the API for something we were just told.
+          PR_URL="$(gh pr create --base main --head "$BRANCH" --title "$TITLE" \
+            --body "$(printf '%s\n\n%s\n' "$NOTE" "$(cat "$RUNNER_TEMP/report.md")")" | tail -1)"
+
+          echo "state=opened" >> "$GITHUB_OUTPUT"
+          echo "url=$PR_URL"  >> "$GITHUB_OUTPUT"
+
+          if [ "$BUMP" = "major" ]; then
+            echo "Opened $BRANCH for review — no auto-merge; ${VERSION} once labelled and merged."
+            exit 0
+          fi
 
           # Squash so main gets one commit per sync. If the required check fails,
           # auto-merge simply never fires and the PR waits — visibly, with a red
@@ -298,10 +362,19 @@ jobs:
       #
       # `always()` rather than `failure()` alone, so a major or unclassifiable
       # verdict on an otherwise green run still reports.
+      #
+      # The `state != 'existing'` clause suppresses the repeat. A major sits open
+      # until the maintainer acts on it, and every scheduled run in between reaches
+      # this step with an identical verdict; commenting each time buries the one
+      # message that mattered under six copies of itself. Nothing is lost by staying
+      # quiet — the pull request is the open item, and it is still there.
       - name: Escalate for a human
         if: |
           always() && inputs.dry_run != true &&
-          (failure() || steps.classify.outputs.bump == 'major' || steps.classify.outputs.bump == 'undecidable')
+          steps.pr.outputs.state != 'existing' &&
+          (failure() || steps.classify.outputs.bump == 'major' ||
+           steps.classify.outputs.bump == 'undecidable' ||
+           steps.pr.outputs.state == 'already-on-main')
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -314,12 +387,31 @@ jobs:
           [ -n "$DATE" ] || DATE="unknown"
 
           {
-            if [ "$BUMP" = "major" ]; then
+            if [ "${{ steps.pr.outputs.state }}" = "already-on-main" ]; then
+              echo "The \`${DATE}\` regeneration is **already on \`main\`** but was never tagged."
+              echo
+              echo "There is nothing to merge — \`main\` and the regenerated tree are identical."
+              echo "What is missing is the tag: dispatch \`release.yml\` with \`bump=${BUMP}\` to"
+              echo "publish \`${{ steps.pr.outputs.version }}\`."
+              echo
+              echo "The usual cause is a major that was merged without the \`release:major\`"
+              echo "label, which lands the code and deliberately tags nothing."
+            elif [ "$BUMP" = "major" ]; then
               echo "The ESI sync for compatibility date \`${DATE}\` is **surface-breaking**."
               echo
-              echo "No pull request was opened and nothing was released. Review the report,"
-              echo "regenerate on a branch, and merge it; \`release.yml\` will then need an"
-              echo "explicit \`bump=major\` dispatch to tag it."
+              PR_URL="${{ steps.pr.outputs.url }}"
+              if [ -n "$PR_URL" ]; then
+                echo "It is regenerated, verified and waiting for you: ${PR_URL}"
+                echo
+                echo "Auto-merge is off. To release it as \`${{ steps.pr.outputs.version }}\`, add the"
+                echo "**\`release:major\`** label to that pull request and merge it — \`release.yml\`"
+                echo "reads the label off the merged PR and tags. Merging without the label lands"
+                echo "the code and tags nothing."
+              else
+                echo "No pull request was opened. Regenerate on a branch and merge it; then either"
+                echo "label that PR \`release:major\` before merging, or dispatch \`release.yml\` with"
+                echo "an explicit \`bump=major\`."
+              fi
             elif [ "$BUMP" = "undecidable" ]; then
               echo "The ESI sync for compatibility date \`${DATE}\` **could not be classified**."
               echo
