@@ -24,7 +24,7 @@ final class GetFreelanceJobsListing implements EsiOperationInterface
     public const ?string RATE_LIMIT_GROUP = 'freelance-job';
 
     /** Maximum token bucket size for this rate-limit group. */
-    public const ?int RATE_LIMIT_MAX_TOKENS = 900;
+    public const ?int RATE_LIMIT_MAX_TOKENS = 12000;
 
     /** Rate-limit window duration (e.g. '15m'). */
     public const ?string RATE_LIMIT_WINDOW = '15m';
