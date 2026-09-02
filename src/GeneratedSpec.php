@@ -23,7 +23,7 @@ final class GeneratedSpec
     public const string COMPATIBILITY_DATE_HEADER = 'X-Compatibility-Date';
 
     /** sha256 of the OpenAPI document consumed (.esi/openapi.yaml). */
-    public const string SPEC_SHA256 = '8c5ffb610665fec749d3b992b6468d0539e8699328ef3c162d29dcf8a416dee6';
+    public const string SPEC_SHA256 = 'b9a779ae41923f9cb5d12fd29714ce3ef83f8ada5f653077389fb9a45e9ba14f';
 
     /** Number of generated DTO classes under src/Responses. */
     public const int DTO_COUNT = 304;

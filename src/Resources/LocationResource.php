@@ -6,11 +6,11 @@ namespace Seatplus\EsiSchema\Resources;
 
 use Seatplus\EsiSchema\Contracts\EsiTransportInterface;
 use Seatplus\EsiSchema\Resources\Location\GetCharactersCharacterIdLocation;
-use Seatplus\EsiSchema\Responses\CharactersCharacterIdLocationGet;
+use Seatplus\EsiSchema\Responses\CharactersLocation;
 use Seatplus\EsiSchema\Resources\Location\GetCharactersCharacterIdOnline;
-use Seatplus\EsiSchema\Responses\CharactersCharacterIdOnlineGet;
+use Seatplus\EsiSchema\Responses\CharactersOnline;
 use Seatplus\EsiSchema\Resources\Location\GetCharactersCharacterIdShip;
-use Seatplus\EsiSchema\Responses\CharactersCharacterIdShipGet;
+use Seatplus\EsiSchema\Responses\CharactersShip;
 
 /**
  * ESI Location resource — fluent wrapper around per-route static classes.
@@ -25,28 +25,28 @@ final class LocationResource
     }
 
     /**
-     * @return CharactersCharacterIdLocationGet
+     * @return CharactersLocation
      * @scope esi-location.read_location.v1
      */
-    public function getCharactersCharacterIdLocation(int $characterId): CharactersCharacterIdLocationGet
+    public function getCharactersCharacterIdLocation(int $characterId): CharactersLocation
     {
         return GetCharactersCharacterIdLocation::execute($this->transport, $characterId);
     }
 
     /**
-     * @return CharactersCharacterIdOnlineGet
+     * @return CharactersOnline
      * @scope esi-location.read_online.v1
      */
-    public function getCharactersCharacterIdOnline(int $characterId): CharactersCharacterIdOnlineGet
+    public function getCharactersCharacterIdOnline(int $characterId): CharactersOnline
     {
         return GetCharactersCharacterIdOnline::execute($this->transport, $characterId);
     }
 
     /**
-     * @return CharactersCharacterIdShipGet
+     * @return CharactersShip
      * @scope esi-location.read_ship_type.v1
      */
-    public function getCharactersCharacterIdShip(int $characterId): CharactersCharacterIdShipGet
+    public function getCharactersCharacterIdShip(int $characterId): CharactersShip
     {
         return GetCharactersCharacterIdShip::execute($this->transport, $characterId);
     }

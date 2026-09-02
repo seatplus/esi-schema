@@ -1,8 +1,8 @@
 {
     "schemaVersion": 1,
     "compatibility_date": "2026-08-18",
-    "spec_sha256": "8c5ffb610665fec749d3b992b6468d0539e8699328ef3c162d29dcf8a416dee6",
-    "surface_sha256": "a8a7c94a5d72676abbb12e117f63e778f658bf710f15c44d07aa906509c458ea",
+    "spec_sha256": "b9a779ae41923f9cb5d12fd29714ce3ef83f8ada5f653077389fb9a45e9ba14f",
+    "surface_sha256": "40e688b6ae8c56594dce9b86d9470be393b82c01ba07f3dec2630b9be6a24f0f",
     "counts": {
         "dtos": 304,
         "routes": 233,
