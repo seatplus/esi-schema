@@ -1446,20 +1446,6 @@ components:
           - killmail_hash
         type: object
       type: array
-    CharactersCharacterIdLocationGet:
-      properties:
-        solar_system_id:
-          format: int64
-          type: integer
-        station_id:
-          format: int64
-          type: integer
-        structure_id:
-          format: int64
-          type: integer
-      required:
-        - solar_system_id
-      type: object
     CharactersCharacterIdLoyaltyPointsGet:
       items:
         properties:
@@ -2032,26 +2018,6 @@ components:
           - timestamp
         type: object
       type: array
-    CharactersCharacterIdOnlineGet:
-      properties:
-        last_login:
-          description: Timestamp of the last login
-          format: date-time
-          type: string
-        last_logout:
-          description: Timestamp of the last logout
-          format: date-time
-          type: string
-        logins:
-          description: Total number of times the character has logged in
-          format: int64
-          type: integer
-        online:
-          description: If the character is online
-          type: boolean
-      required:
-        - online
-      type: object
     CharactersCharacterIdOrdersGet:
       items:
         properties:
@@ -2749,22 +2715,6 @@ components:
             type: integer
           type: array
       type: object
-    CharactersCharacterIdShipGet:
-      properties:
-        ship_item_id:
-          description: Item id's are unique to a ship and persist until it is repackaged. This value can be used to track repeated uses of a ship, or detect when a pilot changes into a different instance of the same ship type.
-          format: int64
-          type: integer
-        ship_name:
-          type: string
-        ship_type_id:
-          format: int64
-          type: integer
-      required:
-        - ship_type_id
-        - ship_item_id
-        - ship_name
-      type: object
     CharactersCharacterIdStandingsGet:
       items:
         properties:
@@ -3268,6 +3218,20 @@ components:
         - contributed
         - last_modified
       type: object
+    CharactersLocation:
+      properties:
+        solar_system_id:
+          $ref: "#/components/schemas/SolarSystemID"
+          description: Solar system the character is in
+        station_id:
+          $ref: "#/components/schemas/StationID"
+          description: Station the character is docked in
+        structure_id:
+          $ref: "#/components/schemas/ItemID"
+          description: Structure the character is docked in
+      required:
+        - solar_system_id
+      type: object
     CharactersMercenaryTacticalOperationsDetail:
       properties:
         dungeon_type_id:
@@ -3407,6 +3371,32 @@ components:
         - contributed
         - last_modified
       type: object
+    CharactersOnline:
+      properties:
+        last_login:
+          description: When the character last logged in
+          examples:
+            - "2017-01-02T03:04:05Z"
+          format: date-time
+          type: string
+        last_logout:
+          description: When the character last logged out
+          examples:
+            - "2017-01-02T04:05:06Z"
+          format: date-time
+          type: string
+        logins:
+          description: Total logins (all-time)
+          examples:
+            - 9001
+          format: int64
+          type: integer
+        online:
+          description: Whether the character is online
+          type: boolean
+      required:
+        - online
+      type: object
     CharactersParagonHubSkinr:
       properties:
         cursor:
@@ -3516,6 +3506,22 @@ components:
         - quantity
         - price
         - target
+      type: object
+    CharactersShip:
+      properties:
+        ship_item_id:
+          $ref: "#/components/schemas/ItemID"
+          description: Unique identifier for this ship
+        ship_name:
+          description: Name of this ship
+          type: string
+        ship_type_id:
+          $ref: "#/components/schemas/TypeID"
+          description: Type of the ship currently piloted
+      required:
+        - ship_type_id
+        - ship_item_id
+        - ship_name
       type: object
     CharactersSkillqueueSkill:
       properties:
@@ -15699,7 +15705,7 @@ paths:
       x-server-cache-ttl: 300
   /characters/{character_id}/location:
     get:
-      description: Information about the characters current location. Returns the current solar system id, and also the current station or structure ID if applicable
+      description: Get the current location of a character, including the station or structure it is docked in.
       operationId: GetCharactersCharacterIdLocation
       parameters:
         - description: The ID of the character
@@ -15708,6 +15714,7 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/CharacterID"
+            description: The ID of the character
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/IfNoneMatch"
         - $ref: "#/components/parameters/CompatibilityDate"
@@ -15718,7 +15725,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CharactersCharacterIdLocationGet"
+                $ref: "#/components/schemas/CharactersLocation"
           description: OK
           headers:
             Cache-Control:
@@ -15740,6 +15747,7 @@ paths:
       tags:
         - Location
       x-cache-age: 5
+      x-cache-mode: ttl-based
       x-client-cache-ttl: 5
       x-compatibility-date: "2020-01-01"
       x-rate-limit:
@@ -16830,7 +16838,7 @@ paths:
       x-server-cache-ttl: 600
   /characters/{character_id}/online:
     get:
-      description: Checks if the character is currently online
+      description: Get whether a character is online, and its login statistics.
       operationId: GetCharactersCharacterIdOnline
       parameters:
         - description: The ID of the character
@@ -16839,6 +16847,7 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/CharacterID"
+            description: The ID of the character
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/IfNoneMatch"
         - $ref: "#/components/parameters/CompatibilityDate"
@@ -16849,7 +16858,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CharactersCharacterIdOnlineGet"
+                $ref: "#/components/schemas/CharactersOnline"
           description: OK
           headers:
             Cache-Control:
@@ -16871,6 +16880,7 @@ paths:
       tags:
         - Location
       x-cache-age: 60
+      x-cache-mode: ttl-based
       x-client-cache-ttl: 60
       x-compatibility-date: "2020-01-01"
       x-rate-limit:
@@ -17356,7 +17366,7 @@ paths:
       x-server-cache-ttl: 3600
   /characters/{character_id}/ship:
     get:
-      description: Get the current ship type, name and id
+      description: Get the ship a character is currently in.
       operationId: GetCharactersCharacterIdShip
       parameters:
         - description: The ID of the character
@@ -17365,6 +17375,7 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/CharacterID"
+            description: The ID of the character
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/IfNoneMatch"
         - $ref: "#/components/parameters/CompatibilityDate"
@@ -17375,7 +17386,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CharactersCharacterIdShipGet"
+                $ref: "#/components/schemas/CharactersShip"
           description: OK
           headers:
             Cache-Control:
@@ -17397,6 +17408,7 @@ paths:
       tags:
         - Location
       x-cache-age: 5
+      x-cache-mode: ttl-based
       x-client-cache-ttl: 5
       x-compatibility-date: "2020-01-01"
       x-rate-limit:
