@@ -8,7 +8,7 @@ use Seatplus\EsiSchema\Contracts\EsiTransportInterface;
 use Seatplus\EsiSchema\EsiResult;
 use Seatplus\EsiSchema\Resources\Alliance\GetAlliances;
 use Seatplus\EsiSchema\Resources\Alliance\GetAlliancesAllianceId;
-use Seatplus\EsiSchema\Responses\AllianceDetail;
+use Seatplus\EsiSchema\Responses\AlliancesDetail;
 use Seatplus\EsiSchema\Resources\Alliance\GetAlliancesAllianceIdCorporations;
 use Seatplus\EsiSchema\Resources\Alliance\GetAlliancesAllianceIdIcons;
 use Seatplus\EsiSchema\Responses\AlliancesAllianceIdIconsGet;
@@ -34,9 +34,9 @@ final class AllianceResource
     }
 
     /**
-     * @return AllianceDetail
+     * @return AlliancesDetail
      */
-    public function getAlliancesAllianceId(int $allianceId): AllianceDetail
+    public function getAlliancesAllianceId(int $allianceId): AlliancesDetail
     {
         return GetAlliancesAllianceId::execute($this->transport, $allianceId);
     }

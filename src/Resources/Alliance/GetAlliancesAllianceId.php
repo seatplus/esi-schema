@@ -7,7 +7,7 @@ namespace Seatplus\EsiSchema\Resources\Alliance;
 use Seatplus\EsiSchema\Contracts\EsiOperationInterface;
 use Seatplus\EsiSchema\Contracts\EsiTransportInterface;
 use Seatplus\EsiSchema\OperationMeta;
-use Seatplus\EsiSchema\Responses\AllianceDetail;
+use Seatplus\EsiSchema\Responses\AlliancesDetail;
 
 /**
  * ESI operation: getAlliancesAllianceId
@@ -56,13 +56,13 @@ final class GetAlliancesAllianceId implements EsiOperationInterface
     }
 
     /**
-     * @return AllianceDetail
+     * @return AlliancesDetail
      */
-    public static function execute(EsiTransportInterface $transport, int $allianceId): AllianceDetail
+    public static function execute(EsiTransportInterface $transport, int $allianceId): AlliancesDetail
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('GET', '/alliances/{alliance_id}', ['alliance_id' => $allianceId], []);
-        $dto = AllianceDetail::from((object) $response->data);
+        $dto = AlliancesDetail::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
         $dto->rateLimitRemaining = $response->rateLimitRemaining;

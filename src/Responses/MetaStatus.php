@@ -18,7 +18,7 @@ final class MetaStatus extends AbstractEsiDto
     public static function from(object $data): static
     {
         return new static(
-            routes: array_map(fn (object $i) => MetaStatusRoutestatus::from($i), (array) ($data->routes ?? [])),
+            routes: array_map(fn (object $i) => MetaStatusRoute::from($i), (array) ($data->routes ?? [])),
         );
     }
 }

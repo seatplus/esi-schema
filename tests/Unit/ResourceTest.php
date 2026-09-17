@@ -10,7 +10,7 @@ use Seatplus\EsiSchema\Resources\Character\PostCharactersCharacterIdCspa;
 use Seatplus\EsiSchema\Resources\Fleets\PostFleetsFleetIdWings;
 use Seatplus\EsiSchema\Resources\FreelanceJobs\GetFreelanceJobsListing;
 use Seatplus\EsiSchema\Resources\Skills\GetCharactersCharacterIdSkillqueue;
-use Seatplus\EsiSchema\Responses\AllianceDetail;
+use Seatplus\EsiSchema\Responses\AlliancesDetail;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdAssetsGetItem;
 use Seatplus\EsiSchema\Responses\CharactersSkillqueueSkill;
 use Seatplus\EsiSchema\Responses\FleetsFleetIdWingsPost;
@@ -81,7 +81,7 @@ it('GetAlliancesAllianceId::execute returns typed DTO', function (): void {
 
     $dto = GetAlliancesAllianceId::execute(mockTransport($payload), 99000006);
 
-    expect($dto)->toBeInstanceOf(AllianceDetail::class)
+    expect($dto)->toBeInstanceOf(AlliancesDetail::class)
         ->and($dto->name)->toBe('Goonswarm Federation')
         ->and($dto->ticker)->toBe('CONDI')
         ->and($dto->isCachedLoad)->toBeFalse()
