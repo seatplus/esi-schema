@@ -1,14 +1,14 @@
 <?php
 
 use Seatplus\EsiSchema\AbstractEsiDto;
-use Seatplus\EsiSchema\Responses\AllianceDetail;
+use Seatplus\EsiSchema\Responses\AlliancesDetail;
 use Seatplus\EsiSchema\Responses\CharactersDetail;
 use Seatplus\EsiSchema\Responses\CharactersSkillsSkill;
 use Seatplus\EsiSchema\Responses\CharactersCharacterIdAssetsGetItem;
 use Seatplus\EsiSchema\Responses\AlliancesAllianceIdContactsGetItem;
 
 it('all DTOs extend AbstractEsiDto', function () {
-    $dto = AllianceDetail::from((object) [
+    $dto = AlliancesDetail::from((object) [
         'name' => 'Test Alliance',
         'creator_id' => 1,
         'creator_corporation_id' => 2,
@@ -20,7 +20,7 @@ it('all DTOs extend AbstractEsiDto', function () {
 });
 
 it('AbstractEsiDto metadata defaults are sane', function () {
-    $dto = AllianceDetail::from((object) [
+    $dto = AlliancesDetail::from((object) [
         'name' => 'Test Alliance',
         'creator_id' => 1,
         'creator_corporation_id' => 2,
@@ -34,7 +34,7 @@ it('AbstractEsiDto metadata defaults are sane', function () {
 });
 
 it('AbstractEsiDto metadata is mutable after construction', function () {
-    $dto = AllianceDetail::from((object) [
+    $dto = AlliancesDetail::from((object) [
         'name' => 'Test Alliance',
         'creator_id' => 1,
         'creator_corporation_id' => 2,

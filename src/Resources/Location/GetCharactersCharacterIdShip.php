@@ -7,7 +7,7 @@ namespace Seatplus\EsiSchema\Resources\Location;
 use Seatplus\EsiSchema\Contracts\EsiOperationInterface;
 use Seatplus\EsiSchema\Contracts\EsiTransportInterface;
 use Seatplus\EsiSchema\OperationMeta;
-use Seatplus\EsiSchema\Responses\CharactersCharacterIdShipGet;
+use Seatplus\EsiSchema\Responses\CharactersShip;
 
 /**
  * ESI operation: getCharactersCharacterIdShip
@@ -56,14 +56,14 @@ final class GetCharactersCharacterIdShip implements EsiOperationInterface
     }
 
     /**
-     * @return CharactersCharacterIdShipGet
+     * @return CharactersShip
      * @scope esi-location.read_ship_type.v1
      */
-    public static function execute(EsiTransportInterface $transport, int $characterId): CharactersCharacterIdShipGet
+    public static function execute(EsiTransportInterface $transport, int $characterId): CharactersShip
     {
         $transport->assertScope(self::REQUIRED_SCOPE);
         $response = $transport->invoke('GET', '/characters/{character_id}/ship', ['character_id' => $characterId], []);
-        $dto = CharactersCharacterIdShipGet::from((object) $response->data);
+        $dto = CharactersShip::from((object) $response->data);
         $dto->isCachedLoad = $response->isCachedLoad;
         $dto->pages = $response->pages;
         $dto->rateLimitRemaining = $response->rateLimitRemaining;
